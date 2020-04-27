@@ -49,8 +49,8 @@ Note that setting up ECS (as below) is entirely separate from setting up CloudRe
 5) Click the `Get started` button
 6) Choose the `nginx` container image and click the `Next` button
 7) On the next page, the defaults are sufficient, so hit `Next` again
-8) On the next page, name your cluster the name of your deployment environment -- for example `staging`. If you have an existing VPC and subnets you want to use to run your tasks, you can select them here. Otherwise, the console will create a new VPC and subnets for you.
-Aftering entering your desired cluster name, hit `Next` again.
+8) On the next page, name your cluster the desired name of your deployment environment -- for example `staging`. If you have an existing VPC and subnets you want to use to run your tasks, you can select them here. Otherwise, the console will create a new VPC and subnets for you.
+After entering your desired cluster name, hit `Next` again.
 9) On the next and final page, review your settings and hit the `Create` button. You'll see the status of the created resources on the next page. **If you didn't choose existing subnets, record the subnet IDs -- we'll use them for the deployment of this project.**
 
 After these steps, AWS should create:
@@ -74,13 +74,13 @@ create services, and trigger workflows by deploying the
 [CloudReactor AWS CloudFormation template](https://github.com/CloudReactor/aws-role-template).
 Follow the instructions in the [README.md](https://github.com/CloudReactor/aws-role-template/blob/master/README.md), 
 being sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExecutionRoleARN```,
-and ```WorkflowStarterARN``` values.
+```WorkflowStarterARN```, and ```WorkflowStarterAccessKey``` values.
 
 ### Set up a CloudReactor account
 
 Contact us at support@cloudreactor.io and we'll create an account for you
 and give you an API key.
-Then login to [taskes.cloudreactor.io](https://taskes.cloudreactor.io/) and
+Then login to [processes.cloudreactor.io](https://processes.cloudreactor.io/) and
 create a Run Environment -- this defines settings for how to run tasks in AWS.
 
 1. Click on "Run Environments", then "Add Environment"
