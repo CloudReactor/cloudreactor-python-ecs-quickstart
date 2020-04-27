@@ -1,0 +1,129 @@
+---
+# Task to deploy example-ecs-tasks
+
+- name: "{{project_name}}"
+  hosts: 127.0.0.1
+  connection: local
+  vars_files:
+    - vars/common.yml
+    - vars/{{env}}.yml
+  vars:
+    resolved_task_names: "{{ (task_name_to_config.keys() | list) if (task_names | upper) == 'ALL' else task_names.split(',') }}"
+    process_version_signature: "{{ lookup('env','CLOUDREACTOR_PROCESS_VERSION_SIGNATURE') | default(git_hash_cmd_result.stdout, true) }}"
+    docker_image_name: "{{project_name}}:{{env}}_{{process_version_signature}}"
+    run_environment_name: "{{ cloudreactor.run_environment | default(env) }}"
+    run_environment: "{{ run_environment_result.json.results[0] }}"
+    run_environment_exec_method: "{{ run_environment.execution_method_capabilities | selectattr('type', 'equalto', 'AWS ECS') | first }}"
+    aws: "{{ run_environment_aws | combine(project_aws | default({}), recursive=True) }}"
+    aws_region: "{{ aws.region | default(lookup('env','AWS_DEFAULT_REGION')) }}"
+    ecr_hostname: "{{ aws.account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
+    task_definition_arn: "{{ (register_task_result.stdout | from_json).taskDefinition.taskDefinitionArn }}"
+
+  tasks:
+  - name: Compute git hash
+    command: "git rev-parse HEAD"
+    register: git_hash_cmd_result
+    when: lookup('env', 'CLOUDREACTOR_PROCESS_VERSION_SIGNATURE') == ''
+    tags:
+      - version
+      - build
+      - upload
+    
+  - debug: msg="Process version signature is {{ process_version_signature }}"
+    tags: version
+
+  - name: Get configuration from CloudReactor Run Environment
+    uri:
+      url: "{{ cloudreactor.base_url }}/api/v1/run_environments/?name={{ run_environment_name | urlencode }}"
+      headers:
+        Accept: "application/json"
+        Authorization: "Token {{cloudreactor.api_key}}"
+      return_content: yes
+    register: run_environment_result
+    tags:
+      - upload
+
+  #- debug: msg="Runtime Environment is {{ run_environment }}, UUID = {{ run_environment.uuid }}"
+
+  - name: Ensure Runtime Environment is found
+    assert:
+      that:
+        - run_environment_result.json.count == 1
+      fail_msg: "Run Environment '{{ run_environment_name }}' not found in CloudReactor, please create it."
+
+  - name: Set default AWS configuration from Run Environment
+    set_fact:
+      run_environment_aws:
+        account_id: "{{ run_environment.aws_account_id }}"
+        region: "{{ run_environment.aws_default_region }}"
+        ecs:
+          cluster_name: "{{ run_environment_exec_method.default_cluster_arn }}"
+          execution_role_arn: "{{ run_environment_exec_method.default_execution_role }}"
+          task:
+            network:
+              security_groups: "{{ run_environment_exec_method.default_security_groups }}"
+              subnets: "{{ run_environment_exec_method.default_subnets }}"
+              assign_public_ip: "{{ run_environment_exec_method.default_assign_public_ip }}"
+            role_arn: "{{ run_environment_exec_method.task_execution_role | default(run_environment_exec_method.default_execution_role) }}"
+
+  #- debug: msg="Default AWS is {{ aws }}"
+
+  - name: Compute ECR login command
+    command: "aws ecr get-login --no-include-email"
+    register: ecr_login_cmd_result
+    tags:
+      - upload
+
+  - name: Login to ECR
+    command: "{{ecr_login_cmd_result.stdout}}"
+    tags:
+      - upload
+
+  - name: Create output directory
+    file:
+      path: ../build/{{env}}
+      state: directory
+    tags:
+      - build
+
+  - name: Copy runtime .env file read by python
+    copy: |
+      src=files/.env.{{env}}
+      dest=../build/{{env}}/.env
+    tags:
+      - build
+
+  - name: Create Dockerfile
+    template: src=templates/Dockerfile.j2
+              dest=../build/{{env}}/Dockerfile
+              lstrip_blocks=yes
+    tags:
+      - build
+
+  - name: Build Docker image
+    command: docker --debug build -t {{docker_image_name}} -f build/{{env}}/Dockerfile .
+    args:
+      chdir: ../
+    tags:
+      - build
+
+  - name: Create ECR repository
+    ecs_ecr:
+      name: "{{project_name}}"
+    tags:
+      - upload
+
+  - name: Tag Docker image
+    command: "docker tag {{docker_image_name}} {{ecr_hostname}}/{{docker_image_name}}"
+    tags:
+      - upload
+
+  - name: Push Docker image
+    command: "docker push {{ecr_hostname}}/{{docker_image_name}}"
+    tags:
+      - upload
+
+  - include_tasks: create_task.yml
+    with_items: "{{ resolved_task_names }}"
+    tags:
+      - create_process_types

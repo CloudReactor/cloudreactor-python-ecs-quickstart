@@ -1,0 +1,33 @@
+version: "3"
+
+services:
+  deployer:
+    build:
+      context: .
+      dockerfile: Dockerfile-deploy
+
+    container_name: cloudreactor_deployer
+    working_dir: /work
+    volumes:
+      # Use host's docker as the docker service in the container
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./:/work
+      - /work/.git/
+    command: ./deploy.sh $DEPLOYMENT_ENVIRONMENT
+    env_file:
+      - docker_deploy.env
+      - docker_deploy.$DEPLOYMENT_ENVIRONMENT.env
+    environment:
+      - DEPLOYMENT_ENVIRONMENT
+      - CLOUDREACTOR_PROCESS_VERSION_SIGNATURE
+      # Uncomment these to pass them from your host's environment to the deployer container.
+      # They will take precedence over the values in .env files.
+      # - AWS_ACCESS_KEY_ID
+      # - AWS_SECRET_ACCESS_KEY
+      # - AWS_DEFAULT_REGION
+      # - AWS_CA_BUNDLE
+      # - AWS_CONFIG_FILE
+      # - AWS_PROFILE
+      # - AWS_SESSION_TOKEN      
+      # - AWS_SHARED_CREDENTIALS_FILE
+      # - AWS_ROLE_SESSION_NAME  

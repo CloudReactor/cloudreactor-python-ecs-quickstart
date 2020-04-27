@@ -1,0 +1,179 @@
+{% set task_name=item %}{# from 'with_items' in the calling task #}
+{% set common_task_config=task_name_to_config[task_name] | default({}) %}
+{% set env_task_config=task_name_to_env_config[task_name] | default({}) %}
+{% set task_config=common_task_config | combine(env_task_config, recursive=True) %}
+{% set service_instance_count=task_config.service_instance_count | default('null') %}
+
+{% if task_config.is_service is defined %}
+  {% set is_service=task_config.is_service %}
+{% else %}
+  {% if service_instance_count is number %}
+    {% set is_service=service_instance_count > 0 %}
+  {% else %}
+    {% set is_service=false %}
+  {% endif %}
+{% endif %}
+
+{% set max_concurrency=task_config.max_concurrency | default(1) %}
+{% set global_process_version_number=project_version_number | default('null') %}
+{% set process_version_number=task_config.process_version_number | default(global_process_version_number) %}
+{% set global_process_version_text=project_version_text | default('null') %}
+{% set process_version_text=task_config.process_version_text | default(global_process_version_text) %}
+{% set wrapper=task_config.wrapper | default({}) %}
+{% set aws_ecs=aws.ecs | default({}) %}
+{% set task_ecs=task_config.ecs | default({}) %}
+{% set ecs=aws_ecs | combine(task_ecs, recursive=True) %}
+{% set cpu_units=ecs.cpu_units | default(256) %}
+{% set memory_mb=ecs.memory_mb | default(512) %}
+{% set extra_container_cpu_units=ecs.extra_container_cpu_units | default(0) %}
+{% set extra_container_memory_mb=ecs.extra_container_memory_mb | default(0) %}
+{% set environment_variables=task_config.env | default({}) %}
+{
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "family": {{ (project_name + '_' +  task_name + '_' + env) | to_json }},
+    "networkMode": "awsvpc",
+    "executionRoleArn": {{ ecs.execution_role_arn | to_json }},
+    {% if ecs.task_role_arn is defined %}
+    "taskRoleArn": {{ ecs.task_role_arn | to_json }},
+    {% endif %}
+    "cpu": "{{cpu_units}}",
+    "memory": "{{memory_mb}}",
+    "containerDefinitions": [
+        {
+            "name": {{ (project_name + '_' +  task_name + '_' + env) | to_json }},
+            "image": {{ (ecr_hostname + '/' + docker_image_name) | to_json }},
+            "cpu": {{ cpu_units - extra_container_cpu_units }},
+            "memory": {{ memory_mb - extra_container_memory_mb }},
+            "essential": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    {# Note: the ECS-CloudWatchLogs policy must be attached to your ecsTaskExecutionRole so that
+                       the log group can be created. Alternatively, you may create the group yourself before deploying and
+                       set this to "false".
+                       See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_cloudwatch_logs.html
+                    #}
+                    "awslogs-create-group": "true",
+                    "awslogs-group": {{ ('/aws/fargate/' + project_name + '-' + env + '-' + task_name) | to_json }},
+                    "awslogs-region": {{ aws_region | to_json }},
+                    "awslogs-stream-prefix": {{ (project_name + '-' + env) | to_json }}
+                }
+            },
+            "environment": [
+                {
+                    "name" : "TASK_COMMAND",
+                    "value" : {{ task_config.command | to_json }}
+                },
+                {% for name, value in environment_variables.items() %}
+                  {% if value is defined and value | string | length %}
+                {
+                    "name" : {{ name | string | to_json }},
+                    "value" : {{ value | string | to_json }}
+                },
+                  {% endif %}
+                {% endfor %}
+                {
+                    "name" : "PROC_WRAPPER_DEPLOYMENT",
+                    "value" : {{ env | to_json }}
+                },
+                {
+                    "name" : "PROC_WRAPPER_LOG_LEVEL",
+                    "value" : "{{ wrapper.log_level | default('DEBUG') | upper }}"
+                },
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_TYPE_NAME",
+                    "value" : {{ (project_name + '_' +  task_name + '_' + env) | to_json }}
+                },
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_IS_SERVICE",
+                    "value" : "{{ is_service | string | upper }}"
+                },
+                {
+                    "name" : "PROC_WRAPPER_MAX_CONCURRENCY",
+                    "value" : "{% if max_concurrency is number %}{{ max_concurrency }}{% else %}-1{% endif %}"
+                },
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_MAX_RETRIES",
+                    "value" : "{{ wrapper.max_retries | default(0) }}"
+                },
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_RETRY_DELAY_SECONDS",
+                    "value" : "{{ wrapper.retry_delay_seconds | default(60) }}"
+                },
+                {% if service_instance_count == 'null' %}
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_TIMEOUT_SECONDS",
+                    "value" : "{{ wrapper.process_timeout_seconds | default(-1) }}"
+                },
+                {% endif %}
+                {% if process_version_number != 'null' %}
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_VERSION_NUMBER",
+                    "value" : "{{process_version_number}}"
+                },
+                {% endif %}
+                {% if process_version_text != 'null' %}
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_VERSION_TEXT",
+                    "value" : {{ process_version_text | to_json }}
+                },
+                {% endif %}
+                {% if process_version_signature is defined %}
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_VERSION_SIGNATURE",
+                    "value" : {{ process_version_signature | to_json }}
+                },
+                {% endif %}
+                {% if wrapper.other_instance_metadata is defined %}
+                {
+                    "name" : "PROC_WRAPPER_PROCESS_INSTANCE_METADATA",
+                    "value" : {{ wrapper.other_instance_metadata | to_json | to_json }}
+                },
+                {% endif %}
+                {
+                    "name" : "PROC_WRAPPER_API_BASE_URL",
+                    "value" : {{ cloudreactor.base_url | to_json }}
+                },
+                {
+                    "name" : "PROC_WRAPPER_API_KEY",
+                    "value" : {{ cloudreactor.api_key | to_json }}
+                },
+                {
+                    "name" : "PROC_WRAPPER_API_HEARTBEAT_INTERVAL",
+                    "value" : "{{ wrapper.heartbeat_interval_seconds | default(300) }}"
+                },
+                {% if wrapper.rollbar_access_token is defined %}
+                {
+                    "name" : "PROC_WRAPPER_ROLLBAR_ACCESS_TOKEN",
+                    "value" : {{ wrapper.rollbar_access_token | to_json }}
+                },
+                {% endif %}
+                {
+                    "name" : "PROC_WRAPPER_ENABLE_STATUS_UPDATE_LISTENER",
+                    "value" : "{{ wrapper.enable_status_updates | default('FALSE') | upper }}"
+                }
+            ]
+
+            {% if ecs.extra_main_container_properties is defined %}
+            ,
+            {% for name, value in ecs.extra_main_container_properties.items() %}
+            {{ name | to_json }}: {{ value | to_json }}{{ '' if loop.last else ',' }}
+            {% endfor %}
+            {% endif %}
+        }
+        {% if ecs.extra_container_definitions[0] is defined %}
+        ,
+        {% for container_definition in ecs.extra_container_definitions %}
+        {{ container_definition | to_json }}{{ '' if loop.last else ',' }}
+        {% endfor %}
+        {% endif %}
+    ]
+    {% if ecs.extra_task_definition_properties is defined %}
+    ,
+    {% for name, value in ecs.extra_task_definition_properties.items() %}
+    {{ name | to_json }}: {{ value | to_json }}{{ '' if loop.last else ',' }}
+    {% endfor %}
+    {% endif %}
+}

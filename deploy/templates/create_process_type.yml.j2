@@ -1,0 +1,173 @@
+---
+{% set task_name=item %}{# from 'with_items' in the calling task #}
+{% set env_task_config=task_name_to_env_config[task_name] | default({}) %}
+{% set task_config=task_name_to_config[task_name] | default({}) | combine(env_task_config, recursive=True) %}
+{% set service_instance_count=task_config.service_instance_count | default('null') %}
+
+{% if task_config.is_service is defined %}
+  {% set is_service=task_config.is_service %}
+{% else %}
+  {% if service_instance_count is number %}
+    {% set is_service=service_instance_count > 0 %}
+  {% else %}
+    {% set is_service=false %}
+  {% endif %}
+{% endif %}
+
+{% set max_concurrency=task_config.max_concurrency | default(1) %}
+{% set wrapper=task_config.wrapper | default({}) %}
+{% set task_ecs=task_config.ecs | default({}) %}
+{% set ecs=aws.ecs | default({}) | combine(task_ecs, recursive=True) %}
+{% set cpu_units=ecs.cpu_units | default(256) %}
+{% set memory_mb=ecs.memory_mb | default(512) %}
+{% set aws_subnets = aws.subnets | default('null') %}
+{% set subnets=ecs.task.network.subnets | default(aws_subnets) %}
+{% set aws_security_groups = aws.security_groups | default('null') %}
+{% set security_groups = ecs.task.network.security_groups | default(aws_security_groups) %}
+
+# This should be the awslogs-group in ecs_task_definition.json
+{% set log_query="/aws/fargate/" + project_name + "-" + env + "-" + task_name %}
+
+# For debugging
+# task_config: {{ task_config | to_json }}
+# ECS: {{ ecs | to_json }}
+# wrapper: {{ wrapper | to_json }}
+# End debug
+
+name: "{{project_name}}_{{task_name}}_{{env}}"
+
+{% if task_config.description is defined %}
+description: "{{task_config.description}}"
+{% endif %}
+
+{% if task_config.enabled is defined %}
+enabled: {{ task_config.enabled }}
+{% endif %}
+
+{% if project_url is defined %}
+project_url: "{{project_url}}"
+{% endif %}
+
+{% if task_config.max_manual_start_delay_seconds is defined %}
+max_manual_start_delay_seconds: {{ task_config.max_manual_start_delay_seconds }}
+{% endif %}
+
+{% if wrapper.heartbeat_interval_seconds is defined %}
+heartbeat_interval_seconds: {{ wrapper.heartbeat_interval_seconds }}
+{% endif %}
+
+{% if task_config.max_heartbeat_lateness is defined %}
+max_heartbeat_lateness_seconds: {{ task_config.heartbeat_lateness_seconds }}
+{% endif %}
+
+{% if task_config.max_concurrency is defined %}
+max_concurrency: {% if max_concurrency is number %}{{ max_concurrency }}{% else %}null{% endif %}
+{% endif %}
+
+is_service: {{is_service}}
+
+{% if task_config.schedule is defined %}
+schedule: "{{ task_config.schedule }}"
+{% endif %}
+
+{% if service_instance_count != 'null' %}
+service_instance_count: {{service_instance_count}}
+{% endif %}
+
+{% if task_config.min_service_instance_count is defined %}
+min_service_instance_count: {{ task_config.min_service_instance_count }}
+{% endif %}
+
+max_age_seconds: {% if service_instance_count == 'null' %}{{task_config.max_age_seconds | default('3600') }}{% else %}null{% endif %}
+
+{% if wrapper.max_retries is defined %}
+default_max_retries: {{wrapper.max_retries}}
+{% endif %}
+
+run_environment:
+  name: "{{ task_config.run_environment | default(run_environment_name) }}"
+
+execution_method_capability:
+  type: "AWS ECS"
+  task_definition_arn: "{{ task_definition_arn }}"
+  default_launch_type: "FARGATE"
+  supported_launch_types:
+    - FARGATE
+
+  {% if ecs.cluster_name is defined %}
+  default_cluster_arn: "{{ ecs.cluster_name }}"
+  {% endif %}
+
+  {% if subnets != 'null' %}
+  default_subnets:
+  {% for subnet in subnets %}
+    - "{{ subnet }}"
+  {% endfor %}
+  {% endif %}
+
+  {% if security_groups != 'null' %}
+  default_security_groups:
+  {% for security_group in security_groups %}
+    - "{{ security_group }}"
+  {% endfor %}
+  {% endif %}
+
+  {% if ecs.task.network.assign_public_ip is defined %}
+  default_assign_public_ip: {{ecs.task.network.assign_public_ip }}
+  {% endif %}
+
+  {% if ecs.execution_role_arn is defined %}
+  default_execution_role: "{{ecs.execution_role_arn}}"
+  {% endif %}
+
+  {% if ecs.task_role_arn is defined %}
+  default_task_role: "{{ecs.task_role_arn}}"
+  {% endif %}
+
+  allocated_cpu_units: {{cpu_units}}
+  allocated_memory_mb: {{memory_mb}}
+  main_container_name: "{{project_name}}_{{task_name}}_{{env}}"
+
+  {% if ecs.service is defined %}
+  service_options:
+    {% if ecs.service.load_balancers is defined %}
+    {% if ecs.service.load_balancers[0] is defined %}
+    load_balancers:
+      {% for load_balancer in ecs.service.load_balancers %}
+      - target_group_arn: "{{load_balancer.target_group_arn}}"
+        container_name:  "{{project_name}}_{{task_name}}_{{env}}"
+        container_port: {{load_balancer.container_port}}
+      {% endfor %}
+    {% if ecs.service.load_balancer_health_check_grace_period_seconds is defined %}
+    load_balancer_health_check_grace_period_seconds: 300
+    {% endif %}
+    {% else %}
+    load_balancers: []
+    {% endif %}
+    {% endif %}
+  {% endif %}
+
+{% if task_config.alert_methods is defined %}
+  {% if task_config.alert_methods[0] is defined %}
+alert_methods:
+    {% for alert_method in task_config.alert_methods %}
+  - name: "{{alert_method}}"
+    {% endfor %}
+  {% else %}
+alert_methods: []
+  {% endif %}
+{% endif %}
+
+links:
+  - name: Rollbar
+    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
+    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
+  - name: SumoLogic
+    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
+    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
+    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
+    icon_url: "https://www.sumologic.com/favicon.ico"
+    description: "{{log_query}}"
+
+# This should be the awslogs-group in ecs_task_definition.json
+log_query: "{{log_query}}"

@@ -1,0 +1,20 @@
+.idea/
+build/
+
+*.pyc
+
+deploy/deploy.retry
+
+# Remove these lines if you are committing encrypted secret files to source control,
+# with either ansible-vault or git-encrypt.
+docker_deploy.env
+docker_deploy.*.env
+deploy/files/.env.*
+!deploy/files/.env.example
+deploy/vars/*.yml
+!deploy/vars/common.yml
+!deploy/vars/example.yml
+# End lines to remove if committing encrypted secrets
+
+
+.DS_Store

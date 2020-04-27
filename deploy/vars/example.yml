@@ -1,0 +1,82 @@
+# Copy this file to {environment}.yml where {environment} is the name of
+## your deployment environment (i.e. staging, production).
+# Then adjust the values according to your AWS settings.
+# Unless this file is encrypted with ansible-vault,
+# ensure this file is in .gitignore to avoid checking in secrets!
+
+# You can override your Run Environment's AWS settings here, but it shouldn't
+# be necessary unless you haven't specified security groups or subnets in
+# your Run Environment, or want to use custom settings for this project
+# (for security and/or isolation reasons).
+#project_aws:
+#  account_id: 123456789012
+#  region: "us-west-2"
+#  ecs:
+#    cluster_name: staging
+#    execution_role_arn: arn:aws:iam::12345678901:role/ecsTaskExecutionRole
+#    task:
+#      network:
+#        security_groups:
+#          - sg-1
+#          - sg-2
+#        subnets:
+#          - subnet-private-1
+#          - subnet-private-2
+#        # Set this to true if your subnets don't have access to a NAT gateway, for example public subnets
+#        assign_public_ip: false
+#      role_arn: arn:aws:iam::12345678901:role/ecsTaskExecutionRole
+
+cloudreactor:
+  base_url: https://processes.cloudreactor.io
+  api_key: xxx
+  # The name of the Run Environment in CloudReactor. The Run Environment stores
+  # AWS settings that apply to all tasks in the deployment environment.
+  # It defaults to the name of the deployment environment you pass in via
+  # command-line or the DEPLOYMENT_ENVIRONMENT variable if you use Docker to
+  # deploy.
+  #run_environment: Your Staging
+
+# Add task settings that apply to all tasks running in this deployment.
+# They will override the settings in common.yml.
+# In this example, no settings are overridden so the value is the empty hash ({}).
+# Remove the {} if you do override any settings.
+default_env_task_config: &default_env_task_config {}
+  #alert_methods:
+  #  - Some Alert Method
+
+# Per task overrides that apply to this deployment.
+task_name_to_env_config:
+  main:
+      <<: *default_env_task_config
+    ecs:
+      cpu_units: 512
+      memory_mb: 1024
+  fail:
+    <<: *default_env_task_config
+  timeout:
+    <<: *default_env_task_config
+  ondemand:
+    <<: *default_env_task_config
+  with_updates:
+    <<: *default_env_task_config
+    schedule: cron(9 15 * * ? *)
+  service:
+    <<: *default_env_task_config
+  file_io:
+    <<: *default_env_task_config
+# Uncomment to enable web server -- requires an IP target group and
+# load balancer setup in AWS
+#  web_server:
+#    <<: *default_env_task_config
+#    service_instance_count: 2
+#    ecs:
+#      task:
+#        network:
+#          subnets:
+#            - subnet-public-1
+#            - subnet-public-2
+#          assign_public_ip: true
+#      service:
+#        load_balancers:
+#          - target_group_arn: arn:aws:elasticloadbalancing:us-west-1:xxx:targetgroup/example-web/xxx
+#            container_port: 7070
