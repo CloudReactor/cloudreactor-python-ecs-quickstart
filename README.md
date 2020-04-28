@@ -80,24 +80,23 @@ being sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExe
 
 Contact us at support@cloudreactor.io and we'll create an account for you
 and give you an API key.
-Then login to [processes.cloudreactor.io](https://processes.cloudreactor.io/) and
-create a Run Environment -- this defines settings for how to run tasks in AWS.
+Then login to [processes.cloudreactor.io](https://processes.cloudreactor.io/). We'll create a Run Environment -- these settings tell CloudReactor how to run tasks in AWS.
 
 1. Click on "Run Environments", then "Add Environment"
 2. Name your environment (e.g. "staging", "production").
 **Note the exact name of your Run Environment**, as you'll need this later.
-3. Fill in your AWS account ID and default region.
+3. Fill in your AWS account ID and default region. Your AWS account ID is a 12-digit number that you can find by clicking "Support" then "Support Center". For default region, select the region that you want CloudReactor to run tasks / workflows in (e.g.`us-west-2`).
 4. For `Assumable Role ARN`
 fill in the value of `CloudreactorRoleARN` from the output of the CloudFormation stack.
 5. For `External ID`, use the same External ID you entered when you created the CloudFormation stack.
-6. For `Workflow Starter Lambda ARN`, fill int he value of `WorkflowStarterARN` from the output of the CloudFormation stack.
-7. You may optionally add the subnets and security group created by the ECS getting started wizard
-here, but it's usually not necessary since your ECS tasks will normally declare these.
-8. Under AWS ECS Settings, choose a Default Launch Type of Fargate and check FARGATE under Supported Launch Types.
-9. For `Default Cluster ARN`, fill in either the full ARN of the ECS cluster, or the short name (e.g. "staging")
-10. For `Default Execution Role` and `Default Task Role`, fill in the value of
+6. For `Workflow Starter Lambda ARN`, fill in the value of `WorkflowStarterARN` from the output of the CloudFormation stack.
+7. For `Workflow Starter Access Key`, fill in the value of `WorkflowStarterAccessKey` from the output of the CloudFormation stack.
+8. Add the subnets and security group created by the ECS getting started wizard above
+9. Under AWS ECS Settings, choose a `Default Launch Type` of `Fargate` and check FARGATE under Supported Launch Types.
+10. For `Default Cluster ARN`, fill in the name of the ECS cluster you created in step 8. of "Setup ECS" above (e.g. "staging")
+11. For `Default Execution Role` and `Default Task Role`, fill in the value of
 `TaskExecutionRoleARN` from the output of the CloudFormation stack.
-11. Click on the `Save` button
+12. Click on the `Save` button
 
 Optionally, if you want to be alerted if task executions fail,
 you'll need to set up an alerts profile. An alert method profile contains notification settings. To do this:
@@ -122,6 +121,7 @@ This deployment method is appropriate for when
 The steps for Docker Deployment are:
 
 1) Ensure you have docker running locally
+2) Clone the repo i.e. `$ git clone https://github.com/CloudReactor/cloudreactor-ecs-quickstart.git`
 2) Copy `docker_deploy.env.example` to `docker_deploy.env` and
 and fill in your AWS access key, access key secret, and default
 region. You may also populate this file with script you write yourself,
@@ -129,7 +129,8 @@ for example with something that uses the AWS CLI to assume a role and gets
 temporary credentials.
 3) Copy `deploy/vars/example.yml` to `deploy/vars/{environment}.yml`, where `{environment}` is the name
 of the Run Environment created above (e.g. `staging`, `production`)
-4) To deploy, in a bash shell, run:
+4) Open the .yml file you just created, and enter your CloudReactor API key next to "api_key"
+5) To deploy, in a bash shell, run:
 
     ```./docker_deploy.sh <environment> [task_name]```     
     
@@ -154,7 +155,7 @@ This deployment method is appropriate for when
 It has the advantage that you can use the AWS configuration you 
 already have set up on that machine for the AWS CLI.
  
-This method most likely not work on Windows machines, though it has
+This method most likely will not work on Windows machines, though it has
 not been tested.
 
 The steps for Native Deployment are: 
@@ -181,7 +182,7 @@ the name of the task to be deployed, in this project, one of "main", "fail",
 
 Successfully deploying this example project will create a few ECS tasks that
 run the code in `main.py` -- a toy task that simply prints a statement and the
-numbers 1-30 in a loop. The tasks are listed in `deploy/common.yml` have 
+numbers 1-30 in a loop. The tasks are listed in `deploy/common.yml`, and have 
 the following behavior:
 
 * *main* prints 30 numbers and exits successfully. It is scheduled to run four times per day.
@@ -209,7 +210,7 @@ excluded in .gitignore.
 However, for sharing with a team or to have the secrets in source control for
 backup/history reasons, it's better to check the secret files in, but encrypted.
 One option for doing that is to use [ansible-vault](https://docs.ansible.com/ansible/latest/user_guide/vault.html)
-which is well integrated with ansible (used to deploy this project).
+which is well integrated with ansible.
 
 To use ansible-vault to encrypt secret files, change your directory to /deploy/vars
 and run:
