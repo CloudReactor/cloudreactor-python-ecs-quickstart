@@ -18,20 +18,24 @@
 {% set wrapper=task_config.wrapper | default({}) %}
 {% set task_ecs=task_config.ecs | default({}) %}
 {% set ecs=aws.ecs | default({}) | combine(task_ecs, recursive=True) %}
+{% set project_task_ecs=project_aws.ecs | default({}) | combine(task_ecs, recursive=True) %}
 {% set cpu_units=ecs.cpu_units | default(256) %}
 {% set memory_mb=ecs.memory_mb | default(512) %}
-{% set aws_subnets = aws.subnets | default('null') %}
-{% set subnets=ecs.task.network.subnets | default(aws_subnets) %}
-{% set aws_security_groups = aws.security_groups | default('null') %}
-{% set security_groups = ecs.task.network.security_groups | default(aws_security_groups) %}
+{% set project_aws_subnets=project_aws.subnets | default('null') %}
+{% set subnets=project_task_ecs.task.network.subnets | default(project_aws_subnets) %}
+{% set project_aws_security_groups=project_aws.security_groups | default('null') %}
+{% set security_groups = project_task_ecs.task.network.security_groups | default(project_aws_security_groups) %}
 
-# This should be the awslogs-group in ecs_task_definition.json
+{# This should be the awslogs-group in ecs_task_definition.json #}
 {% set log_query="/aws/fargate/" + project_name + "-" + env + "-" + task_name %}
 
 # For debugging
 # task_config: {{ task_config | to_json }}
 # ECS: {{ ecs | to_json }}
+# Project Task ECS: {{ project_task_ecs | to_json }}
 # wrapper: {{ wrapper | to_json }}
+# subnets: {{ subnets | to_json }}
+# security groups: {{ security_groups | to_json }}
 # End debug
 
 name: "{{project_name}}_{{task_name}}_{{env}}"
@@ -94,8 +98,8 @@ execution_method_capability:
   supported_launch_types:
     - FARGATE
 
-  {% if ecs.cluster_name is defined %}
-  default_cluster_arn: "{{ ecs.cluster_name }}"
+  {% if project_task_ecs.cluster_name is defined %}
+  default_cluster_arn: "{{ project_task_ecs.cluster_name }}"
   {% endif %}
 
   {% if subnets != 'null' %}
@@ -112,15 +116,15 @@ execution_method_capability:
   {% endfor %}
   {% endif %}
 
-  {% if ecs.task.network.assign_public_ip is defined %}
+  {% if project_task_ecs.task.network.assign_public_ip is defined %}
   default_assign_public_ip: {{ecs.task.network.assign_public_ip }}
   {% endif %}
 
-  {% if ecs.execution_role_arn is defined %}
+  {% if project_task_ecs.execution_role_arn is defined %}
   default_execution_role: "{{ecs.execution_role_arn}}"
   {% endif %}
 
-  {% if ecs.task_role_arn is defined %}
+  {% if project_task_ecs.task_role_arn is defined %}
   default_task_role: "{{ecs.task_role_arn}}"
   {% endif %}
 
@@ -158,16 +162,16 @@ alert_methods: []
   {% endif %}
 {% endif %}
 
-links:
-  - name: Rollbar
-    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
-    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
-  - name: SumoLogic
-    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
-    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
-    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
-    icon_url: "https://www.sumologic.com/favicon.ico"
-    description: "{{log_query}}"
+{# Uncomment to add links #}
+# links:
+#  - name: Rollbar
+#    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
+#    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
+#  - name: SumoLogic
+#    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
+#    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
+#    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
+#    icon_url: "https://www.sumologic.com/favicon.ico"
+#    description: "{{log_query}}"
 
-# This should be the awslogs-group in ecs_task_definition.json
 log_query: "{{log_query}}"
