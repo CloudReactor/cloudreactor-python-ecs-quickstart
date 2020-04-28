@@ -130,7 +130,16 @@ temporary credentials.
 3) Copy `deploy/vars/example.yml` to `deploy/vars/{environment}.yml`, where `{environment}` is the name
 of the Run Environment created above (e.g. `staging`, `production`)
 4) Open the .yml file you just created, and enter your CloudReactor API key next to "api_key"
-5) To deploy, in a bash shell, run:
+5) Build the Docker container that will deploy the project. In a bash shell, run:
+
+
+    ```./docker_build_deployer.sh <environment>```     
+    
+   In a Windows command prompt, run:
+   
+    ```docker_build_deployer.bat <environment>```
+
+6) To deploy, in a bash shell, run:
 
     ```./docker_deploy.sh <environment> [task_name]```     
     
