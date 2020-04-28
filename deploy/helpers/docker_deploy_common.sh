@@ -3,7 +3,7 @@ export CLOUDREACTOR_PROCESS_VERSION_SIGNATURE=`git rev-parse HEAD`
 
 if [ -z "$1" ]
   then
-    echo "Usage: docker_deploy.sh <deployment>"
+    echo "Usage: $0 <deployment>"
     exit 1
   else
     export DEPLOYMENT_ENVIRONMENT=$1
