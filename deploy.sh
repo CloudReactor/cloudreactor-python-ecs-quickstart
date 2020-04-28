@@ -26,6 +26,14 @@ fi
 
 pushd deploy
 
+RUNTIME_ENV_FILE="files/.env.$DEPLOYMENT_ENVIRONMENT"
+
+if [ ! -f "$RUNTIME_ENV_FILE" ]
+  then
+    echo "Runtime .env file $RUNTIME_ENV_FILE does not exist, creating an empty one."
+    touch -a $RUNTIME_ENV_FILE
+fi
+
 # So that merged configuration hashes in YAML don't cause warnings
 export ANSIBLE_DUPLICATE_YAML_DICT_KEY=ignore
 
