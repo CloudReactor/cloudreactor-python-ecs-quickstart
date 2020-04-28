@@ -38,8 +38,8 @@ cloudreactor:
 
 # Add task settings that apply to all tasks running in this deployment.
 # They will override the settings in common.yml.
-# In this example, no settings are overridden so the value is the empty hash ({}).
-# Remove the {} if you do override any settings.
+# In this example, no settings are overridden so the value is the empty dict ({}).
+# Remove the {} if you override any settings.
 default_env_task_config: &default_env_task_config {}
   #alert_methods:
   #  - Some Alert Method
@@ -47,7 +47,7 @@ default_env_task_config: &default_env_task_config {}
 # Per task overrides that apply to this deployment.
 task_name_to_env_config:
   main:
-      <<: *default_env_task_config
+    <<: *default_env_task_config
     ecs:
       cpu_units: 512
       memory_mb: 1024
