@@ -63,6 +63,7 @@ You can see these in VPC .. Subnets.
 4) A security group named `ECS staging - ECS Security Group` in the VPC.
 You can find it in `VPC .. Security Groups`. 
 **Record the Security Group ID, we'll add it to the Run Environment in CloudReactor.**
+5) Once you've recorded the Subnet IDs and Security Group IDs, under "ECS resource creation", you'll see `Cluster [the name of the cluster you created]`. Clicking this link will take you to the cluster's details page; **record the `Cluster ARN`** you see here.
 
 At this point, you have a working ECS environment. 
 
@@ -93,7 +94,7 @@ fill in the value of `CloudreactorRoleARN` from the output of the CloudFormation
 7. For `Workflow Starter Access Key`, fill in the value of `WorkflowStarterAccessKey` from the output of the CloudFormation stack.
 8. Add the subnets and security group created by the ECS getting started wizard above
 9. Under AWS ECS Settings, choose a `Default Launch Type` of `Fargate` and check FARGATE under Supported Launch Types.
-10. For `Default Cluster ARN`, fill in the name of the ECS cluster you created in step 8. of "Setup ECS" above (e.g. "staging")
+10. For `Default Cluster ARN`, fill in the `Cluster ARN` of the ECS cluster you created above
 11. For `Default Execution Role` and `Default Task Role`, fill in the value of
 `TaskExecutionRoleARN` from the output of the CloudFormation stack.
 12. Click on the `Save` button
@@ -122,8 +123,7 @@ The steps for Docker Deployment are:
 
 1) Ensure you have docker running locally
 2) Clone the repo i.e. `$ git clone https://github.com/CloudReactor/cloudreactor-ecs-quickstart.git`
-2) Copy `docker_deploy.env.example` to `docker_deploy.env` and
-and fill in your AWS access key, access key secret, and default
+2) Copy `docker_deploy.env.example` to `docker_deploy.env` and fill in your AWS access key, access key secret, and default
 region. You may also populate this file with script you write yourself,
 for example with something that uses the AWS CLI to assume a role and gets
 temporary credentials.
@@ -202,7 +202,7 @@ the following behavior:
 it updates the successful count and the last status message that is shown in
 CloudReactor, using the status updater library. It is scheduled to run daily.
 * *service* loops continuously and never exits
-* *file_io* uses [non-persistant file storage](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-storage.html) to write and read numbers
+* *file_io* uses [non-persistent file storage](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-storage.html) to write and read numbers
 * *web_server* uses a python library dependency (Flask) to implement a web server and shows how to link an 
 AWS Application Load Balancer (ALB) to a service. It requires that an ALB and target group
 be setup already, so it is not enabled by default. 
