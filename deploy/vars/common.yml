@@ -55,7 +55,10 @@ default_task_config: &default_task_config
     memory_mb: 512
     task:
       network:
-        assign_public_ip: False
+        # Set this to True if you are running on a public subnet.
+        # If False, your subnet must have a NAT gateway configured so that it
+        # can pull Docker images from ECR.
+        assign_public_ip: True
     additional_container_definitions: []
   wrapper: &default_task_wrapper
     max_retries: 1
