@@ -44,26 +44,12 @@ default_env_task_config: &default_env_task_config {}
   #alert_methods:
   #  - Some Alert Method
 
-# Per task overrides that apply to this deployment.
+# For any tasks that require overrides vs. common.yml, enter those overrides here
+# For example, the schedule for task_1 in this deployment differs from the schedule in common.yml
 task_name_to_env_config:
-  main:
+  task_1:
     <<: *default_env_task_config
-    ecs:
-      cpu_units: 512
-      memory_mb: 1024
-  fail:
-    <<: *default_env_task_config
-  timeout:
-    <<: *default_env_task_config
-  ondemand:
-    <<: *default_env_task_config
-  with_updates:
-    <<: *default_env_task_config
-    schedule: cron(9 15 * * ? *)
-  service:
-    <<: *default_env_task_config
-  file_io:
-    <<: *default_env_task_config
+    schedule: cron(9 0 * * ? *)
 # Uncomment to enable web server -- requires an IP target group and
 # load balancer setup in AWS
 #  web_server:
