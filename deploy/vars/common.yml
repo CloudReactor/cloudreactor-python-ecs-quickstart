@@ -8,7 +8,6 @@ project_url: "https://github.com/CloudReactor/example-ecs-tasks"
 # These settings will apply by default to all tasks and in all deployments.
 # To let CloudReactor manage these settings, leave these settings blank.
 default_task_config: &default_task_config
-  command: "python main.py"
   #enabled: true
   #max_manual_start_delay_seconds: 60
   #heartbeat_interval_seconds: 300
@@ -63,72 +62,31 @@ default_task_config: &default_task_config
   wrapper: &default_task_wrapper
     max_retries: 1
     heartbeat_interval_seconds: 30
+    # This data is sent back from the wrapper to CloudReactor when it starts.
+    # It may be used to identify properties about instance of the task that is
+    # running.
+    # other_instance_metadata:
+    #   a: 'b'
+    #   embedded:
+    #     c: 'd'
+    #     f: 1
   env: &default_task_env
     DEPLOYMENT: "{{env}}"
 
 # These are per-task settings that will inherit and override the settings in
 # default_task_config, in all environments.
+# To add a task, add an additional property to task_name_to_config (e.g. task_1, file_io)
+# Each task must at a minimum define which command to run i.e. `command: [python file_name.py]`
 task_name_to_config:
-  main:
-    <<: *default_task_config
-    description: "Working Process"
-    schedule: cron(5 14 * * ? *)
-    # This task always fails
-  fail:
-    <<: *default_task_config
-    description: "Failing Process"
-    env:
-      <<: *default_task_env
-      ROW_TO_FAIL_AT: 3
-    wrapper:
-      <<: *default_task_wrapper
-      max_retries: 2
-  # This task always times out
-  timeout:
-    <<: *default_task_config
-    description: "Long Process"
-    env:
-      <<: *default_task_env
-      NUM_ROWS: 300
-    max_age_seconds: 70
-    wrapper:
-      <<: *default_task_wrapper
-      process_timeout_seconds: 10
-      max_retries: 0
-  ondemand:
-    <<: *default_task_config
-    description: "On-demand Process"
-    command: "sleep 10"
-    wrapper:
-      # This data is sent back from the wrapper to CloudReactor when it starts.
-      # It may be used to identify properties about instance of the task that is
-      # running.
-      other_instance_metadata:
-        a: 'b'
-        embedded:
-          c: 'd'
-          f: 1
   # This task sends status back to CloudReactor as it is running
-  with_updates:
+  task_1:
     <<: *default_task_config
-    description: "On-demand Process"
-    command: "python sleep_with_update.py"
+    description: "This description shows up in CloudReactor dashboard"
+    command: "python task_1.py"
     schedule: cron(9 15 * * ? *)
     wrapper:
       <<: *default_task_wrapper
       enable_status_updates: true
-  # This is a service (i.e. perpetually running task)
-  service:
-    <<: *default_task_config
-    description: "Service"
-    is_service: True
-    # Uncomment the following to control the instance count in code
-    # rather than using whatever was last set in the dashboard.
-    #service_instance_count: 1
-    #min_service_instance_count: 1
-    wrapper:
-      <<: *default_task_wrapper
-      max_retries: 0
   # This task shows how to use the temporary file system provided by ECS
   file_io:
     <<: *default_task_config
