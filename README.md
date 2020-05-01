@@ -290,13 +290,11 @@ the CloudReactor API key, and per task configuration in `deploy/<environment>.ym
 See `deploy/example.yml` for instructions.
 * You can add additional properties to the main container running each task, 
 such as `mountPoints` and `portMappings`  by setting   
-`extra_task_definition_properties` in common.yml or `deploy/<environment>.yml`.
+`extra_main_container_properties` in common.yml or `deploy/<environment>.yml`.
 See the `file_io` task for an example of this.
 * You can add AWS ECS task properties, such as `volumes` and `secrets`, 
-by setting `extra_main_container_properties` in the `ecs` property of each task
+by setting `extra_task_definition_properties` in the `ecs` property of each task
 configuration. See the `file_io` task for an example of this.
-`extra_task_definition_properties` in common.yml or `deploy/<environment>.yml`.
-See the `file_io` task for an example of this.
 * You can add additional containers to the task by setting `extra_container_definitions`
 in `deploy/common.yml` or `deploy/<environment>.yml`.
 * To deploy non-python projects, change `Dockerfile-deploy` to have the dependencies
