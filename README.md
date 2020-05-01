@@ -10,9 +10,8 @@ compatibility issues, downtime. This leads to increased reliability and more tim
 developers.
 3) Running Docker images leads to more predictable, isolated execution. Here's [a good summary
 of the advantages of Docker](https://www.linode.com/docs/applications/containers/when-and-why-to-use-docker/).
-4) Only pay for the CPU/memory you reserve while the tasks are running
+4) Only pay for the CPU/memory you reserve while your tasks are running
 5) Reliable scheduling by AWS without a separate scheduling server
-6) Logs available for searching in Cloudwatch Logs
 
 ## Why should I use CloudReactor?
 
@@ -58,7 +57,8 @@ After these steps, AWS should create:
 1) A cluster named as you chose on step 8 above.
 2) A VPC named `ECS [cluster name] - VPC`
 3) 2 subnets in the VPC named `ECS [cluster name] - Public Subnet 1` and `ECS [cluster name] - Public Subnet 2`.
-You can see these in VPC .. Subnets. 
+You can see these in VPC .. Subnets. Note that these subnets are public; if you 
+want to use private subnets, you'll have to create your own. 
 **Record the Subnet IDs -- we'll add them to the Run Environment in CloudReactor.**
 4) A security group named `ECS staging - ECS Security Group` in the VPC.
 You can find it in `VPC .. Security Groups`. 
@@ -67,11 +67,11 @@ You can find it in `VPC .. Security Groups`.
 
 At this point, you have a working ECS environment. 
 
-## Enabling CloudReactor
+### Give CloudReactor permissions
 
 To have CloudReactor manage your tasks in your AWS environment, first you need
 to give CloudReactor permissions in AWS to run tasks, schedule tasks,
-create services, and trigger workflows by deploying the
+create services, and trigger Workflows by deploying the
 [CloudReactor AWS CloudFormation template](https://github.com/CloudReactor/aws-role-template).
 Follow the instructions in the [README.md](https://github.com/CloudReactor/aws-role-template/blob/master/README.md), 
 being sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExecutionRoleARN```,
@@ -81,10 +81,13 @@ being sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExe
 
 Contact us at support@cloudreactor.io and we'll create an account for you
 and give you an API key.
-Then login to [processes.cloudreactor.io](https://processes.cloudreactor.io/). We'll create a Run Environment -- these settings tell CloudReactor how to run tasks in AWS.
+Then login to [processes.cloudreactor.io](https://processes.cloudreactor.io/). 
+Now you'll create a Run Environment -- these settings tell CloudReactor how to run tasks in AWS.
 
 1. Click on "Run Environments", then "Add Environment"
-2. Name your environment (e.g. "staging", "production").
+2. Name your environment (e.g. "staging", "production"). You may want to keep the
+name in all lowercase letters without spaces or symbols besides "-" and "_", so
+that filenames and command-lines you'll use later will be sane. 
 **Note the exact name of your Run Environment**, as you'll need this later.
 3. Fill in your AWS account ID and default region. Your AWS account ID is a 12-digit number that you can find by clicking "Support" then "Support Center". For default region, select the region that you want CloudReactor to run tasks / workflows in (e.g.`us-west-2`).
 4. For `Assumable Role ARN`
@@ -102,10 +105,19 @@ fill in the value of `CloudreactorRoleARN` from the output of the CloudFormation
 Optionally, if you want to be alerted if task executions fail,
 you'll need to set up an alerts profile. An alert method profile contains notification settings. To do this:
 1. Click on "alert settings", then "create new alert profile".
-2. Name the alert profile (e.g. "default"), and fill in your PagerDuty API key --> **note the exact name of your alert profile**, as you'll need this later
+2. Name the alert profile (e.g. "default"), and fill in your PagerDuty API key
 3. Click on the `Save` button
 
-### Deploying the tasks to AWS and CloudReactor
+### Get this project's source code
+
+You'll need to get this project's source code onto a filesystem where you can make changes.
+You can either clone this project directly, or fork it first, then clone it.
+
+If cloning directly,
+
+    git clone https://github.com/CloudReactor/cloudreactor-ecs-quickstart.git
+
+### Deploy the tasks to AWS and CloudReactor
 
 These steps show how you can deploy the example project in this repo to ECS Fargate
 and have its tasks managed by CloudReactor. There are two methods of doing so,
@@ -121,10 +133,12 @@ This deployment method is appropriate for when
 
 The steps for Docker Deployment are:
 
-1) Ensure you have docker running locally
-2) Clone the repo i.e. `$ git clone https://github.com/CloudReactor/cloudreactor-ecs-quickstart.git`
-2) Copy `docker_deploy.env.example` to `docker_deploy.env` and fill in your AWS access key, access key secret, and default
-region. You may also populate this file with script you write yourself,
+1) Ensure you have Docker running locally, and have installed
+[Docker Compose](https://docs.docker.com/compose/install/).
+   
+2) Copy `docker_deploy.env.example` to `docker_deploy.env` and
+and fill in your AWS access key, access key secret, and default
+region. You may also populate this file with a script you write yourself,
 for example with something that uses the AWS CLI to assume a role and gets
 temporary credentials.
 3) Copy `deploy/vars/example.yml` to `deploy/vars/{environment}.yml`, where `{environment}` is the name
@@ -138,6 +152,11 @@ of the Run Environment created above (e.g. `staging`, `production`)
    In a Windows command prompt, run:
    
     ```docker_build_deployer.bat <environment>```
+    
+`<environment>` is a required argument, which is the name of the Run Environment.     
+    
+This step is only necessary once, unless you add additional configuration
+to ```Dockerfile-deploy```.
 
 6) To deploy, in a bash shell, run:
 
@@ -145,12 +164,12 @@ of the Run Environment created above (e.g. `staging`, `production`)
     
    In a Windows command prompt, run:
    
-    ```docker_deploy.bat <environment>  [task_name]```
+    ```docker_deploy.bat <environment>  [task_names]```
     
 In both of these commands, `<environment>` is a required argument, which is the
-name of the Run Environment. `[task_name]` is an optional argument, which is
-the name of the task to be deployed, in this project, one of "main", "fail",
-"ondemand", etc. If `[task_name]` is omitted, all tasks will be deployed.
+name of the Run Environment. `[task_names]` is an optional argument, which is a
+comma-separated list of tasks to be deployed. In this project, this can be one or more of "main", "fail",
+"ondemand", etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
   
 
 #### Native Deployment
@@ -169,7 +188,7 @@ not been tested.
 
 The steps for Native Deployment are: 
 
-1) Ensure you have docker running locally
+1) Ensure you have Docker running locally
 2) If desired, create and use a virtual environment for deployment dependencies.
 3) Run
 
@@ -179,13 +198,13 @@ of the Run Environment created above (e.g. `staging`, `production`)
 5) Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
 6) To deploy,
 
-   ```./deploy.sh <environment> [task_name]```
+   ```./deploy.sh <environment> [task_names]```
 
 
 where <environment> is a required argument, which is the
-name of the Run Environment. [task_name] is an optional argument, which is
-the name of the task to be deployed, in this project, one of "main", "fail",
-"ondemand", etc. If [task_name] is omitted, all tasks will be deployed.
+name of the Run Environment. `[task_names]` is an optional argument, which is a
+comma-separated list of tasks to be deployed. In this project, this can be one or more of 
+"main", "file_io", etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
 
 #### Deployed tasks
 
@@ -239,13 +258,13 @@ are in `deploy.sh`.
 Finally, uncomment the lines in `.gitignore` that ignore secret files, since
 you'll be checking them in encrypted.
 
-#### git crypt
+#### git-crypt
 
-[git-crypt](https://github.com/AGWA/git-crypt) can also be used to encrypt secrets
-when they are committed to Git. However, this leaves unencrypted 
-secrets when the repository is checked out.
+Another option for encryption is [git-crypt](https://github.com/AGWA/git-crypt), 
+which encrypt secrets when they are committed to Git. However, this leaves 
+secrets unencrypted in the filesystem where the repository is checked out.
 
-Once you have git-crypt set up, uncomment the lines in `.gitignore` that ignore 
+If you set up git-crypt, uncomment the lines in `.gitignore` that ignore 
 secret files, since they will be encrypted in the repository.
 
 #### Runtime secrets
@@ -284,7 +303,10 @@ configuration. See the `file_io` task for an example of this.
 See the `file_io` task for an example of this.
 * You can add additional containers to the task by setting `extra_container_definitions`
 in `deploy/common.yml` or `deploy/<environment>.yml`.
-
+* To deploy non-python projects, change `Dockerfile-deploy` to have the dependencies
+needed to build your project (JDK, C++ compiler, etc.). Then, if necessary, 
+add a build step to `deploy/deploy.yml` (search for "maven") to see an example.
+   
 
 ## Contact us
 
