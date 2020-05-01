@@ -5,7 +5,7 @@ import signal
 import random
 import time
 
-from src.status_updater import StatusUpdater
+from status_updater import StatusUpdater
 
 def signal_handler(signum, frame):
     # This will cause the exit handler to be executed, if it is registered.
