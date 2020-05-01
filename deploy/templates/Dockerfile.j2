@@ -13,7 +13,7 @@ COPY ./requirements.txt .
 # install dependencies
 RUN pip install -r requirements.txt
 
-COPY deploy/files/proc_wrapper_1.2.1.py proc_wrapper.py
+COPY deploy/files/proc_wrapper_1.2.2.py proc_wrapper.py
 
 # copy secrets
 COPY build/{{ env }}/.env .env
