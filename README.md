@@ -213,14 +213,9 @@ run the code in `main.py` -- a toy task that simply prints a statement and the
 numbers 1-30 in a loop. The tasks are listed in `deploy/common.yml`, and have 
 the following behavior:
 
-* *main* prints 30 numbers and exits successfully. It is scheduled to run four times per day.
-* *fail* fails after 3 loop iterations and exits with an error code. It is scheduled to run twice a day.
-* *timeout* prints 300 numbers and would timeout if managed by CloudReactor. It is scheduled to run twice a day.
-* *ondemand* also prints 30 numbers and exits successfully. It is not scheduled.
-* *with_updates* also prints 30 numbers and exits successfully. While it does so,
+* *task_1* also prints 30 numbers and exits successfully. While it does so,
 it updates the successful count and the last status message that is shown in
 CloudReactor, using the status updater library. It is scheduled to run daily.
-* *service* loops continuously and never exits
 * *file_io* uses [non-persistent file storage](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-storage.html) to write and read numbers
 * *web_server* uses a python library dependency (Flask) to implement a web server and shows how to link an 
 AWS Application Load Balancer (ALB) to a service. It requires that an ALB and target group
