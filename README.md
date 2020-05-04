@@ -37,9 +37,20 @@ or other conditions
 
 ### Setup ECS
 
-If you haven't yet setup ECS in your AWS account, follow the steps below.
+If you haven't yet setup ECS Fargate in your AWS account, follow the steps below.
 
-Note that setting up ECS (as below) is entirely separate from setting up CloudReactor.
+Note that setting up ECS Fargate (as below) is entirely separate from setting up CloudReactor.
+
+The [CreateCluster](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_CreateCluster.html) AWS permission 
+is required to create the ECS cluster, so be sure your account has this 
+permission before following the steps below. 
+
+#### Use the ECS Getting Started wizard
+
+The AWS console provides a wizard that creates an ECS cluster in just a few 
+steps. This is appropriate if you want to get started quickly.
+The wizard can optionally create a new VPC and new public subnets
+on that VPN, but cannot create private subnets.
 
 1) Go to https://aws.amazon.com/ecs/getting-started/
 2) Click the `ECS console walkthrough` button
@@ -67,15 +78,54 @@ You can find it in `VPC .. Security Groups`.
 
 At this point, you have a working ECS environment. 
 
+#### Creating private subnets (optional)
+
+The ECS Getting Started wizard only creates public subnets which can be reached
+from outside your VPC. However, the best practice for security's sake is to 
+run your tasks on private subnets whenever possible. If you want to use private subnets,
+create them if you don't already have existing ones, and ensure that each subnet
+has a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html)
+attached to it, so that it can pull Docker images from ECR and communicate with
+CloudReactor.  For a good overview of networking in Fargate, see
+[Fargate Networking 101)(https://cloudonaut.io/fargate-networking-101/).
+
 ### Give CloudReactor permissions
 
 To have CloudReactor manage your tasks in your AWS environment, first you need
 to give CloudReactor permissions in AWS to run tasks, schedule tasks,
 create services, and trigger Workflows by deploying the
-[CloudReactor AWS CloudFormation template](https://github.com/CloudReactor/aws-role-template).
+[CloudReactor AWS CloudFormation template](https://github.com/CloudReactor/aws-role-template),
+ named `cloudreactor-aws-role-template.json`.
 Follow the instructions in the [README.md](https://github.com/CloudReactor/aws-role-template/blob/master/README.md), 
-being sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExecutionRoleARN```,
+in the section "Allowing CloudReactor to manage your tasks".
+Be sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExecutionRoleARN```,
 ```WorkflowStarterARN```, and ```WorkflowStarterAccessKey``` values.
+
+### Select or create user and/or role for deployment
+
+You'll need an AWS user or role capable of deploying Docker images to ECR and creating tasks in ECS.
+You can either:
+
+1) Use an admin user or a power user with broad permissions; or, 
+2) Create a user and role with specific permissions for deployment using another 
+the [CloudReactor AWS deployer CloudFormation template]((https://github.com/CloudReactor/aws-role-template),
+named `cloudreactor-aws-deploy-role-template.json`. 
+Follow the instructions in the [README.md](https://github.com/CloudReactor/aws-role-template/blob/master/README.md),
+in the section "Deployer policy, role, and user".
+
+If you plan to use an existing user or role, the exact permissions needed are:
+
+* ecr:BatchCheckLayerAvailability
+* ecr:CompleteLayerUpload
+* ecr:CreateRepository
+* ecr:DescribeRepositories
+* ecr:GetAuthorizationToken
+* ecr:InitiateLayerUpload
+* ecr:PutImage
+* ecr:UploadLayerPart
+* ecs:RegisterTaskDefinition
+* iam:GetRole (to any role with name containing "taskExecutionRole")
+* iam:PassRole (to any role with name containing "taskExecutionRole")
 
 ### Set up a CloudReactor account
 
@@ -131,6 +181,11 @@ This deployment method is appropriate for when
 * you don't want add another set of dependencies to your libraries; or 
 * you need to deploy from a Windows machine.
 
+You can also use this method on an EC2 instance that has an instance profile containing
+a role that has permissions to create ECS tasks; when deploying the AWS CLI in the 
+container will use the temporary access key associated with the role 
+assigned to the EC2 instance.
+
 The steps for Docker Deployment are:
 
 1) Ensure you have Docker running locally, and have installed
@@ -138,9 +193,12 @@ The steps for Docker Deployment are:
    
 2) Copy `docker_deploy.env.example` to `docker_deploy.env` and
 and fill in your AWS access key, access key secret, and default
-region. You may also populate this file with a script you write yourself,
+region. The access key and secret would be for the AWS user you plan on using to deploy with,
+possibly created in the section "Select or create user and/or role for deployment".
+You may also populate this file with a script you write yourself,
 for example with something that uses the AWS CLI to assume a role and gets
-temporary credentials.
+temporary credentials. If you are running this on an EC2 instance with an instance profile
+that has deployment permissions, you can leave this file blank.
 3) Copy `deploy/vars/example.yml` to `deploy/vars/{environment}.yml`, where `{environment}` is the name
 of the Run Environment created above (e.g. `staging`, `production`)
 4) Open the .yml file you just created, and enter your CloudReactor API key next to "api_key"
@@ -194,10 +252,13 @@ The virtual environment should use python 3.7.x.
 3) Run
 
    ```pip install -r deploy_requirements.txt```
-4) Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where `<environment>` is the name
+4) Configure the AWS CLI using `aws configure`. 
+The access key and secret would be for the AWS user you plan on using to deploy with,
+possibly created in the section "Select or create user and/or role for deployment".  
+5) Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where `<environment>` is the name
 of the Run Environment created above (e.g. `staging`, `production`)
-5) Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
-6) To deploy,
+6) Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
+7) To deploy,
 
    ```./deploy.sh <environment> [task_names]```
 
@@ -247,7 +308,7 @@ ansible-vault will prompt for a password, then encrypt the file. To edit it:
 
 You should do the same for `deploy/files/.env.[environment]`
 
-Next, change the deployment script deploy.sh to get the encryption password,
+Next, change the deployment script `deploy.sh` to get the encryption password,
 either from user input, or an external file or script. Detailed instructions
 are in `deploy.sh`.
 
