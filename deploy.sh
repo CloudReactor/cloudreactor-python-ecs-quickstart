@@ -26,7 +26,7 @@ fi
 
 pushd deploy
 
-RUNTIME_ENV_FILE="files/.env.$DEPLOYMENT_ENVIRONMENT"
+RUNTIME_ENV_FILE="files/.env.$ENVIRONMENT"
 
 if [ ! -f "$RUNTIME_ENV_FILE" ]
   then
