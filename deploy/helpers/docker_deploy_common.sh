@@ -19,14 +19,14 @@ if [[ ! -f $VAR_FILENAME ]]
     exit 1
 fi
 
-PER_ENV_FILE="docker_deploy.$DEPLOYMENT_ENVIRONMENT.env"
+PER_ENV_FILE="deploy/docker_deploy.$DEPLOYMENT_ENVIRONMENT.env"
 
-if [[ ! -f docker_deploy.env ]] && [[ ! -f $PER_ENV_FILE ]]
+if [[ ! -f deploy/docker_deploy.env ]] && [[ ! -f $PER_ENV_FILE ]]
 then
   echo "WARNING: neither docker_deploy.env nor $PER_ENV_FILE we found, creating empty ones."
 fi
 
-touch -a docker_deploy.env
+touch -a deploy/docker_deploy.env
 touch -a $PER_ENV_FILE
 
 echo "DEPLOYMENT_ENVIRONMENT = $DEPLOYMENT_ENVIRONMENT"

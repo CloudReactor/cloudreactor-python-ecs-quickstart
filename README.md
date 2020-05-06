@@ -191,7 +191,7 @@ The steps for Docker Deployment are:
 1) Ensure you have Docker running locally, and have installed
 [Docker Compose](https://docs.docker.com/compose/install/).
    
-2) Copy `docker_deploy.env.example` to `docker_deploy.env` and
+2) Copy `deploy/docker_deploy.env.example` to `deploy/docker_deploy.env` and
 and fill in your AWS access key, access key secret, and default
 region. The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".
@@ -214,7 +214,7 @@ of the Run Environment created above (e.g. `staging`, `production`)
 `<environment>` is a required argument, which is the name of the Run Environment.     
     
 This step is only necessary once, unless you add additional configuration
-to ```Dockerfile-deploy```.
+to ```deploy/Dockerfile```.
 
 6) To deploy, in a bash shell, run:
 
@@ -251,7 +251,7 @@ The steps for Native Deployment are:
 The virtual environment should use python 3.7.x. 
 3) Run
 
-   ```pip install -r deploy_requirements.txt```
+   ```pip install -r deploy/requirements.txt```
 4) Configure the AWS CLI using `aws configure`. 
 The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".  

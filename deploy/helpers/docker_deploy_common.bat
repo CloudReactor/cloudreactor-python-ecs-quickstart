@@ -22,5 +22,5 @@ del commit_hash.txt
 
 echo CLOUDREACTOR_PROCESS_VERSION_SIGNATURE = %CLOUDREACTOR_PROCESS_VERSION_SIGNATURE%
 
-type nul >> docker_deploy.env
-type nul >> "docker_deploy.%DEPLOYMENT_ENVIRONMENT%.env"
+type nul >> deploy\docker_deploy.env
+type nul >> "deploy\docker_deploy.%DEPLOYMENT_ENVIRONMENT%.env"

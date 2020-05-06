@@ -3,15 +3,15 @@ version: "3"
 services:
   deployer:
     build:
-      context: .
-      dockerfile: Dockerfile-deploy
-
+      context: ../
+      dockerfile: deploy/Dockerfile
+    image: cloudreactor_deployer:latest
     container_name: cloudreactor_deployer
     working_dir: /work
     volumes:
       # Use host's docker as the docker service in the container
       - /var/run/docker.sock:/var/run/docker.sock
-      - ./:/work
+      - ../:/work
       - /work/.git/
     command: ./deploy.sh $DEPLOYMENT_ENVIRONMENT
     env_file:

@@ -57,7 +57,7 @@
         account_id: "{{ run_environment.aws_account_id }}"
         region: "{{ run_environment.aws_default_region }}"
         ecs:
-          cluster_name: "{{ run_environment_exec_method.default_cluster_arn }}"
+          cluster_name: "{{ run_environment_exec_method.default_cluster_arn }}"        
           execution_role_arn: "{{ run_environment_exec_method.default_execution_role }}"
           task:
             network:
