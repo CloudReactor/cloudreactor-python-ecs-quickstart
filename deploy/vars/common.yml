@@ -1,9 +1,9 @@
-project_name: "example-ecs-tasks"
+project_name: "cloudreactor-ecs-quickstart"
 project_version_text: 1.0.0
-# Optionally, provide a steadily increasing number to indicate which build
-# is more updated than another.
+# Optionally, provide a steadily increasing whole number to indicate which
+# build is more updated than another.
 # project_version_number: 1
-project_url: "https://github.com/CloudReactor/example-ecs-tasks"
+project_url: "https://github.com/CloudReactor/cloudreactor-ecs-quickstart"
 
 # These settings will apply by default to all tasks and in all deployments.
 # To let CloudReactor manage these settings, leave these settings blank.
