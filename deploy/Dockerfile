@@ -13,5 +13,5 @@ RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debia
 RUN apt-get update
 RUN apt-get -y install docker-ce
 
-ADD ./deploy_requirements.txt /tmp/requirements.txt
+ADD ./deploy/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt

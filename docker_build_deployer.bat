@@ -3,5 +3,5 @@
 CALL deploy\helpers\docker_deploy_common.bat %1
 
 IF %ERRORLEVEL% == 0 (
-  docker-compose build deployer
+  docker-compose -f deploy\docker-compose.yml build deployer
 )

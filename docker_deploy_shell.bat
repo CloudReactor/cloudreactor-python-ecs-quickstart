@@ -11,5 +11,5 @@ IF %ERRORLEVEL% == 0 (
     ECHO   ./deploy.sh
     ECHO in the working directory.
 
-    docker-compose run --rm deployer bash 
+    docker-compose -f deploy\docker-compose.yml run --rm deployer bash 
 )
