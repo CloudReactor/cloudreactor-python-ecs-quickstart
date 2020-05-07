@@ -7,20 +7,21 @@ def run():
     logging.basicConfig(level=logging.DEBUG,
                         format=f"%(asctime)s %(levelname)s: %(message)s")
 
-    logging.info("Done file_io.py")
+    logging.info("Starting file_io.py ...")
 
     num_rows = int(os.environ.get('NUM_ROWS', '10'))
-    temp_file_dir = os.environ.get('TEMP_FILE_DIR', '/tmp')
+    temp_file_dir = os.environ.get('TEMP_FILE_DIR', '/tmp').rstrip('/')
+    filename = f"{temp_file_dir}/test.txt"
 
     sum = 0
     i = 1
-    with open("test.txt", 'w') as f:
+    with open(filename, 'w') as f:
         for i in range(1, num_rows):
             sum = sum + i
             logging.info(f"Writing sum {sum} ...")
             f.write(str(sum) + '\n')
 
-    with open("test.txt", 'r') as f:
+    with open(filename, 'r') as f:
         for i in range(1, num_rows):
             s = f.readline()
             logging.info(f"Read sum {s.rstrip()}")
