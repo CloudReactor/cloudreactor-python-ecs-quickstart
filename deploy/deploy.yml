@@ -103,25 +103,9 @@
       dest=../build/{{env}}/.env
     tags:
       - build
-      - generate_dev_dockerfile
-
-  - name: Create development Dockerfile
-    template: src=templates/Dockerfile.j2
-              dest=../Dockerfile
-              lstrip_blocks=yes
-    tags: 
-      - never
-      - generate_dev_dockerfile
-
-  - name: Create Dockerfile for deployment
-    template: src=templates/Dockerfile.j2
-              dest=../build/{{env}}/Dockerfile
-              lstrip_blocks=yes
-    tags:
-      - build
-
+      
   - name: Build Docker image
-    command: docker --debug build -t {{docker_image_name}} -f build/{{env}}/Dockerfile .
+    command: "docker --debug build --build-arg DEPLOYMENT_ENVIRONMENT={{env}} -t {{docker_image_name}} ."
     args:
       chdir: ../
     tags:
