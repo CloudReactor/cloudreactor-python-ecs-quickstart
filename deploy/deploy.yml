@@ -1,5 +1,5 @@
 ---
-# Task to deploy example-ecs-tasks
+# Ansible tasks to deploy cloudreactor-ecs-quickstart
 
 - name: "{{project_name}}"
   hosts: 127.0.0.1
@@ -85,6 +85,7 @@
       state: directory
     tags:
       - build
+      - generate_dev_dockerfile
 
   # If your code needs to be compiled, you can add steps here to compile it,
   # for example:
@@ -102,8 +103,17 @@
       dest=../build/{{env}}/.env
     tags:
       - build
+      - generate_dev_dockerfile
 
-  - name: Create Dockerfile
+  - name: Create development Dockerfile
+    template: src=templates/Dockerfile.j2
+              dest=../Dockerfile
+              lstrip_blocks=yes
+    tags: 
+      - never
+      - generate_dev_dockerfile
+
+  - name: Create Dockerfile for deployment
     template: src=templates/Dockerfile.j2
               dest=../build/{{env}}/Dockerfile
               lstrip_blocks=yes
