@@ -4,7 +4,7 @@
 
 Using AWS ECS with the Fargate execution method to run tasks has several benefits:
 
-1) Near infinite scalability -- run as many task instances as you want at any time
+1) Unlimited scalability -- run as many task instances as you want at any time
 2) No need to manage EC2 instances -- security patches, library upgrades, library
 compatibility issues, downtime. This leads to increased reliability and more time for 
 developers.
@@ -50,7 +50,7 @@ permission before following the steps below.
 The AWS console provides a wizard that creates an ECS cluster in just a few 
 steps. This is appropriate if you want to get started quickly.
 The wizard can optionally create a new VPC and new public subnets
-on that VPN, but cannot create private subnets.
+on that VPN, but cannot create [private subnets](docs/networking.md). 
 
 1) Go to https://aws.amazon.com/ecs/getting-started/
 2) Click the `ECS console walkthrough` button
@@ -77,17 +77,6 @@ You can find it in `VPC .. Security Groups`.
 5) Once you've recorded the Subnet IDs and Security Group IDs, under "ECS resource creation", you'll see `Cluster [the name of the cluster you created]`. Clicking this link will take you to the cluster's details page; **record the `Cluster ARN`** you see here.
 
 At this point, you have a working ECS environment. 
-
-#### Creating private subnets (optional)
-
-The ECS Getting Started wizard only creates public subnets which can be reached
-from outside your VPC. However, the best practice for security's sake is to 
-run your tasks on private subnets whenever possible. If you want to use private subnets,
-create them if you don't already have existing ones, and ensure that each subnet
-has a [NAT gateway](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html)
-attached to it, so that it can pull Docker images from ECR and communicate with
-CloudReactor.  For a good overview of networking in Fargate, see
-[Fargate Networking 101)(https://cloudonaut.io/fargate-networking-101/).
 
 ### Give CloudReactor permissions
 
