@@ -4,12 +4,15 @@ import os
 import signal
 import random
 import time
+from dotenv import load_dotenv
 
 from status_updater import StatusUpdater
 
 def signal_handler(signum, frame):
     # This will cause the exit handler to be executed, if it is registered.
     raise RuntimeError('Caught SIGTERM, exiting.')
+
+load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG, format=f"%(asctime)s %(levelname)s: %(message)s")
 
@@ -24,7 +27,7 @@ try:
     success_count = 0
     for i in range(5):
         if i == row_to_fail_at:
-            updater.send_update(failed_count=1)
+            updater.send_update(error_count=1)
             logging.error(f"Failed on row {i}, exiting!")
             exit(1)
         else:
