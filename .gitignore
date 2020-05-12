@@ -11,6 +11,11 @@ deploy/docker_deploy.env
 deploy/docker_deploy.*.env
 deploy/files/.env.*
 !deploy/files/.env.example
+
+# Note: for development, we assume this file is unencrypted so 
+# that changes will be picked up immediately without decryption.
+!deploy/files/.env.dev
+
 deploy/vars/*.yml
 !deploy/vars/common.yml
 !deploy/vars/example.yml

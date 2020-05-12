@@ -5,7 +5,7 @@ x-service-base: &service-base
   build:
     context: ./
   volumes:
-    - ./src/:/home/appuser/    
+    - ./deploy/files/.env.dev:/home/appuser/.env
 
 services:
   task_1:
