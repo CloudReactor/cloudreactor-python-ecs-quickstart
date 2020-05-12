@@ -82,7 +82,7 @@ task_name_to_config:
   task_1:
     <<: *default_task_config
     description: "This description shows up in CloudReactor dashboard"
-    command: "python task_1.py"
+    command: "python src/task_1.py"
     schedule: cron(9 15 * * ? *)
     wrapper:
       <<: *default_task_wrapper
@@ -91,7 +91,7 @@ task_name_to_config:
   file_io:
     <<: *default_task_config
     description: "File I/O"
-    command: "python file_io.py"
+    command: "python src/file_io.py"
     ecs:
       <<: *default_task_ecs
       extra_main_container_properties:
@@ -128,7 +128,7 @@ task_name_to_config:
 #            protocol: tcp
 #    env:
 #      <<: *default_task_env
-#      FLASK_APP: web_server.py
+#      FLASK_APP: src/web_server.py
 #    wrapper:
 #      <<: *default_task_wrapper
 #      max_retries: 0

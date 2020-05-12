@@ -103,9 +103,9 @@
       dest=../build/{{env}}/.env
     tags:
       - build
-      
+
   - name: Build Docker image
-    command: "docker --debug build --build-arg DEPLOYMENT_ENVIRONMENT={{env}} -t {{docker_image_name}} ."
+    command: "docker --debug build --build-arg ENV_FILE_PATH=build/{{env}}/.env -t {{docker_image_name}} ."
     args:
       chdir: ../
     tags:

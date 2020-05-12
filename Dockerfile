@@ -10,22 +10,30 @@ WORKDIR /usr/src/app
 
 RUN pip install --upgrade pip==20.1
 
-COPY ./requirements.txt .
+COPY src/requirements.txt .
 
 # install dependencies
 RUN pip install -r requirements.txt
 
 # Run as non-root user for better security
-RUN useradd --create-home appuser
+RUN groupadd appuser && useradd -g appuser --create-home appuser
+USER appuser
 WORKDIR /home/appuser
+
+# Output directly to the terminal to prevent longs from being lost
+# https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file
+ENV PYTHONUNBUFFERED 1
+
+# Don't write *.pyc files
+ENV PYTHONDONTWRITEBYTECODE 1
 
 COPY deploy/files/proc_wrapper_1.2.2.py proc_wrapper.py
 
-COPY src/*.py ./
+COPY src ./src
 
-ARG DEPLOYMENT_ENVIRONMENT=dev
+ARG ENV_FILE_PATH=deploy/files/.env.dev
 
 # copy deployment environment settings
-COPY build/${DEPLOYMENT_ENVIRONMENT}/.env .env
+COPY ${ENV_FILE_PATH} .env
 
 CMD python proc_wrapper.py $TASK_COMMAND
