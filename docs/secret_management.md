@@ -42,17 +42,19 @@ ansible-vault will prompt for a password, then encrypt the file. To edit it:
 
     ansible-vault edit [environment].yml
 
-
 Next, change the deployment script `deploy.sh` to get the encryption password,
 either from user input, or an external file or script. Detailed instructions
-are in `deploy.sh`.
+are in `deploy.sh`. You can also modify `deploy/ansible.cfg` to specify an
+external file tha contains the encryption password. See this 
+[tutorial](https://www.digitalocean.com/community/tutorials/how-to-use-vault-to-protect-sensitive-ansible-data-on-ubuntu-16-04) for more
+details.
 
 You can also use Ansible Vault to encrypt runtime secrets, by following the
 steps above for `deploy/files/[environment].yml`. However, this has the 
 drawback that the secrets will be in plaintext in your container image.
-For most applications, that is secure enough because AWS ECR stores images
-encrypted and it is assumed the server you deploy from (which builds and
-caches Docker images) is secure.
+For most applications, that is secure enough because [AWS ECR stores images
+encrypted](https://aws.amazon.com/ecr/faqs/) and it is assumed the server
+you deploy from (which builds and caches Docker images) is secure.
 
 Once you figure out which files to encrypte, uncomment the lines in 
 `.gitignore` that ignore secret files, since you'll be checking them in encrypted.
@@ -61,8 +63,10 @@ Once you figure out which files to encrypte, uncomment the lines in
 
 Another option for encryption is 
 [git crypt](https://github.com/AGWA/git-crypt), 
-which encrypt secrets when they are committed to Git. However, this leaves 
-secrets unencrypted in the filesystem where the repository is checked out.
+which encrypt secrets when they are committed to Git. 
+However, this leaves secrets unencrypted in the filesystem where the 
+repository is checked out. That can be advantage as it is easier
+to edit and search secret files.
 
 If you set up git-crypt, uncomment the lines in `.gitignore` that ignore 
 secret files, since they will be encrypted in the repository.

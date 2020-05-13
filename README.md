@@ -3,8 +3,10 @@
 This project serves as blueprint to get your python code
 running in AWS ECS Fargate, monitored and managed by
 CloudReactor. See [Benefits](docs/benefits.md) for a summary of the benefits of these
-technogies. This project designed with best practices and smart defaults in 
+technogies. This project is designed with best practices and smart defaults in 
 mind, but also to be customizable.
+
+OK, let's get started!
 
 ## Setup ECS
 
@@ -61,33 +63,18 @@ in the section "Allowing CloudReactor to manage your tasks".
 Be sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExecutionRoleARN```,
 ```WorkflowStarterARN```, and ```WorkflowStarterAccessKey``` values.
 
-### Select or create user and/or role for deployment
+## Select or create user and/or role for deployment
 
 You'll need an AWS user or role capable of deploying Docker images to ECR and creating tasks in ECS.
 You can either:
 
 1) Use an admin user or a power user with broad permissions; or, 
 2) Create a user and role with specific permissions for deployment using another 
-the [CloudReactor AWS deployer CloudFormation template]((https://github.com/CloudReactor/aws-role-template),
-named `cloudreactor-aws-deploy-role-template.json`. 
-Follow the instructions in the [README.md](https://github.com/CloudReactor/aws-role-template/blob/master/README.md),
-in the section "Deployer policy, role, and user".
+the [CloudReactor AWS deployer CloudFormation template](https://github.com/CloudReactor/aws-role-template).
 
-If you plan to use an existing user or role, the exact permissions needed are:
+For more details, see [AWS permissions required to deploy](doc/deployer_aws_permimissions.md).
 
-* ecr:BatchCheckLayerAvailability
-* ecr:CompleteLayerUpload
-* ecr:CreateRepository
-* ecr:DescribeRepositories
-* ecr:GetAuthorizationToken
-* ecr:InitiateLayerUpload
-* ecr:PutImage
-* ecr:UploadLayerPart
-* ecs:RegisterTaskDefinition
-* iam:GetRole (to any role with name containing "taskExecutionRole")
-* iam:PassRole (to any role with name containing "taskExecutionRole")
-
-### Set up a CloudReactor account
+## Set up a CloudReactor account
 
 Contact us at support@cloudreactor.io and we'll create an account for you
 and give you an API key.
@@ -129,23 +116,26 @@ Docker Deployment and Native Deployment.
 
 ### Docker Deployment
 
-This deployment method is appropriate for when 
+This deployment method builds a Docker container that is used to build and deploy your tasks.
+(This is not to be confused with the Docker container that actually runs your tasks.)
+The Docker container has all the dependencies (python, ansible, aws-cli etc.) built-in, so you
+don't need to install anything directly on your machine. The Docker deployment method is
+appropriate for when 
 
-* You don't have python installed directly on your machine; or
+* you don't have python installed directly on your machine; or
 * you don't want add another set of dependencies to your libraries; or 
 * you need to deploy from a Windows machine.
 
 You can also use this method on an EC2 instance that has an instance profile containing
-a role that has permissions to create ECS tasks; when deploying the AWS CLI in the 
-container will use the temporary access key associated with the role 
+a role that has permissions to create ECS tasks. When deploying, the AWS CLI in
+the container will use the temporary access key associated with the role 
 assigned to the EC2 instance.
 
 The steps for Docker Deployment are:
 
-1) Ensure you have Docker running locally, and have installed
-[Docker Compose](https://docs.docker.com/compose/install/).
-   
-2) Copy `deploy/docker_deploy.env.example` to `deploy/docker_deploy.env` and
+1. Ensure you have Docker running locally, and have installed
+[Docker Compose](https://docs.docker.com/compose/install/).   
+2. Copy `deploy/docker_deploy.env.example` to `deploy/docker_deploy.env` and
 and fill in your AWS access key, access key secret, and default
 region. The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".
@@ -153,10 +143,11 @@ You may also populate this file with a script you write yourself,
 for example with something that uses the AWS CLI to assume a role and gets
 temporary credentials. If you are running this on an EC2 instance with an instance profile
 that has deployment permissions, you can leave this file blank.
-3) Copy `deploy/vars/example.yml` to `deploy/vars/{environment}.yml`, where `{environment}` is the name
-of the Run Environment created above (e.g. `staging`, `production`)
-4) Open the .yml file you just created, and enter your CloudReactor API key next to "api_key"
-5) Build the Docker container that will deploy the project. In a bash shell, run:
+3. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where 
+`<environment>` is the name of the Run Environment created above (e.g. 
+`staging`, `production`)
+4. Open the .yml file you just created, and enter your CloudReactor API key next to "api_key"
+5. Build the Docker container that will deploy the project. In a bash shell, run:
 
 
     ```./docker_build_deployer.sh <environment>```     
@@ -180,17 +171,32 @@ to ```deploy/Dockerfile```.
     
 In both of these commands, `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
-comma-separated list of tasks to be deployed. In this project, this can be one or more of "main", "fail",
-"ondemand", etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
+comma-separated list of tasks to be deployed. In this project, this can be one 
+or more of "task_1", "file_io", etc, separated by commas. 
+If `[task_names]` is omitted, all tasks will be deployed.
   
+To troubleshoot deployment issues, in a bash shell, run 
 
+    ```./docker_deploy_shell.sh <environment>```     
+    
+   In a Windows command prompt, run:
+   
+    ```docker_deploy_shell.bat <environment>```
+
+These commands will take you to a bash shell inside the deployer Docker 
+container where you can re-run the deployment script with `./deploy.sh`
+and inspect the files it produces in the `build/` directory.
+  
 ### Native Deployment
 
-This deployment method is appropriate for when
+This deployment method installs dependencies on your machine that are needed to deploy
+the project. It may either be installed in the system python environment or in 
+a [virtual environment](https://docs.python.org/3/tutorial/venv.html). 
+Native deployment is appropriate for when
  
-* You want to deploy from a Linux or Mac OS X machine (virtual machines included); and, 
+* you want to deploy from a Linux or Mac OS X machine (virtual machines included); and, 
 * you have python installed on the machine (possibly in a virtual environment); and,
-* you want to use python running directly on the machine to deploy the project
+* you want to use python running directly on the machine to deploy the project.
 
 It has the advantage that you can use the AWS configuration you 
 already have set up on that machine for the AWS CLI.
@@ -200,42 +206,94 @@ not been tested.
 
 The steps for Native Deployment are: 
 
-1) Ensure you have Docker running locally
-2) If desired, create and use a virtual environment for deployment dependencies.
-The virtual environment should use python 3.7.x. 
-3) Run
+1. Ensure you have Docker running locally
+2. If desired, create and use a virtual environment for deployment dependencies.
+The virtual environment should use python 3.8.x. 
+3. Run
 
    ```pip install -r deploy/requirements.txt```
-4) Configure the AWS CLI using `aws configure`. 
+4. Configure the AWS CLI using `aws configure`. 
 The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".  
-5) Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where `<environment>` is the name
-of the Run Environment created above (e.g. `staging`, `production`)
-6) Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
-7) To deploy,
+You can skip this step if you are deploying from an EC2 instance that you assign
+an instance role that has the required permissions.
+5. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where 
+`<environment>` is the name of the Run Environment created above (e.g. 
+`staging`, `production`)
+6. Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
+7. To deploy,
 
    ```./deploy.sh <environment> [task_names]```
-
 
 where <environment> is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
 comma-separated list of tasks to be deployed. In this project, this can be one or more of 
 "main", "file_io", etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
 
-#### Deployed tasks
+## The example tasks
 
-Successfully deploying this example project will create a few ECS tasks that
-run the code in `main.py` -- a toy task that simply prints a statement and the
-numbers 1-30 in a loop. The tasks are listed in `deploy/common.yml`, and have 
-the following behavior:
+Successfully deploying this example project will a create two ECS tasks which are listed in 
+`deploy/common.yml`. They have the following behavior:
 
 * *task_1* also prints 30 numbers and exits successfully. While it does so,
 it updates the successful count and the last status message that is shown in
 CloudReactor, using the status updater library. It is scheduled to run daily.
 * *file_io* uses [non-persistent file storage](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/fargate-task-storage.html) to write and read numbers
-* *web_server* uses a python library dependency (Flask) to implement a web server and shows how to link an 
-AWS Application Load Balancer (ALB) to a service. It requires that an ALB and target group
-be setup already, so it is not enabled by default. 
+* *web_server* uses a python library dependency (Flask) to implement a web 
+server and shows how to link an AWS Application Load Balancer (ALB) to a service. 
+It requires that an ALB and target group be setup already, so it is not enabled by default. 
+
+## Development workflow
+
+### Running the tasks locally
+
+The tasks are setup to be run with Docker Compose in `docker-compose.yml`. For example,
+you can build the Docker image that runs the tasks by typing:
+
+    docker-compose build
+
+(You only need to run this again when you change the dependencies required by 
+the project.)
+
+Then to run, say `task_1`, type:
+
+    docker-compose run --rm task_1
+
+Docker Compose is setup so that changes in the environment file `build/files/.env.dev`
+and the files in `src` will be available without rebuilding the image.
+
+The web server can be started with:
+
+    docker-compose up -d web_server
+
+and stopped with
+
+    docker-compose stop web_server
+
+### Enter a shell in the image
+
+For debugging or adding dependencies, it is useful to enter a bash shell in 
+the Docker image:
+
+    docker-compose run --rm shell
+
+### Adding a python library
+
+To add another python library to the requirements, 
+
+1. Enter the shell as above
+2. Install the library:
+
+    pip install <library_name>
+
+3. Update the requirements: 
+
+    pip freeze > src/requirements.txt
+
+4. Exit the bash shell with `exit`
+5. Rebuild the docker image:
+
+    docker-compose build
 
 ## Deploying your own tasks
 
@@ -248,9 +306,10 @@ in `task_name_to_config`.
 ## Next steps
 
 * [Additional configuration](docs/configuration.md) options can be set or overridden 
-* If you want to be alerted when task executions fail, 
-setup an [Alert Method](docs/alerts.md)
-* To avoid leaking secrets (passwords, API keys), see the guide on [secret management](docs/secret_management.md)
+* If you want to be alerted when task executions fail, setup an 
+[Alert Method](docs/alerts.md)
+* To avoid leaking secrets (passwords, API keys, etc.), see the guide on 
+[secret management](docs/secret_management.md)
 * For more secure networking, run your tasks on a [private subnet](docs/networking.md)
 * If you're having problems, see the [troubleshooting guide](docs/troubleshooting.md)
 
