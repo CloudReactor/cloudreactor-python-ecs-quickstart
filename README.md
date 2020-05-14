@@ -172,7 +172,7 @@ to `deploy/Dockerfile`.
 In both of these commands, `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
 comma-separated list of tasks to be deployed. In this project, this can be one 
-or more of "task_1", "file_io", etc, separated by commas. 
+or more of `task_1`, `file_io`, etc, separated by commas. 
 If `[task_names]` is omitted, all tasks will be deployed.
   
 To troubleshoot deployment issues, in a bash shell, run 
@@ -211,7 +211,8 @@ The steps for Native Deployment are:
 The virtual environment should use python 3.8.x. 
 3. Run
 
-    pip install -r deploy/requirements.txt
+    `pip install -r deploy/requirements.txt`
+
 4. Configure the AWS CLI using `aws configure`. 
 The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".  
@@ -228,7 +229,7 @@ an instance role that has the required permissions.
 where `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
 comma-separated list of tasks to be deployed. In this project, this can be one or more of 
-"main", "file_io", etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
+`task_1`, `file_io`, etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
 
 ## The example tasks
 
