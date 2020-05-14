@@ -2,9 +2,9 @@
 
 This project serves as blueprint to get your python code
 running in AWS ECS Fargate, monitored and managed by
-CloudReactor. See [Benefits](docs/benefits.md) for a summary of the benefits of these
-technogies. This project is designed with best practices and smart defaults in 
-mind, but also to be customizable.
+CloudReactor. See [Benefits](docs/benefits.md) for a summary of the benefits of
+these technologies. This project is designed with best practices and smart
+defaults in mind, but also to be customizable.
 
 OK, let's get started!
 
@@ -150,11 +150,11 @@ that has deployment permissions, you can leave this file blank.
 5. Build the Docker container that will deploy the project. In a bash shell, run:
 
 
-    ./docker_build_deployer.sh <environment>  
+    ./docker_build_deployer.sh `<environment>`  
     
    In a Windows command prompt, run:
    
-    docker_build_deployer <environment>
+    docker_build_deployer `<environment>`
     
 `<environment>` is a required argument, which is the name of the Run Environment.     
     
@@ -163,11 +163,11 @@ to ```deploy/Dockerfile```.
 
 6) To deploy, in a bash shell, run:
 
-    ./docker_deploy.sh <environment> [task_name] 
+    ./docker_deploy.sh `<environment>` [task_name] 
     
    In a Windows command prompt, run:
    
-    docker_deploy <environment>  [task_names]
+    docker_deploy `<environment>`  [task_names]
     
 In both of these commands, `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -177,11 +177,11 @@ If `[task_names]` is omitted, all tasks will be deployed.
   
 To troubleshoot deployment issues, in a bash shell, run 
 
-    ./docker_deploy_shell.sh <environment> 
+    ./docker_deploy_shell.sh `<environment>` 
     
    In a Windows command prompt, run:
    
-    docker_deploy_shell.bat <environment>
+    docker_deploy_shell.bat `<environment>`
 
 These commands will take you to a bash shell inside the deployer Docker 
 container where you can re-run the deployment script with `./deploy.sh`
@@ -223,17 +223,17 @@ an instance role that has the required permissions.
 6. Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
 7. To deploy,
 
-    ./deploy.sh <environment> [task_names]
+    ./deploy.sh `<environment>` [task_names]
 
-where <environment> is a required argument, which is the
+where `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
 comma-separated list of tasks to be deployed. In this project, this can be one or more of 
 "main", "file_io", etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
 
 ## The example tasks
 
-Successfully deploying this example project will a create two ECS tasks which are listed in 
-`deploy/common.yml`. They have the following behavior:
+Successfully deploying this example project will create two ECS tasks which are
+listed in `deploy/common.yml`. They have the following behavior:
 
 * *task_1* also prints 30 numbers and exits successfully. While it does so,
 it updates the successful count and the last status message that is shown in
@@ -284,7 +284,7 @@ To add another python library to the requirements,
 1. Enter the shell as above
 2. Install the library:
 
-    pip install <library_name>
+    pip install `<library_name>`
 
 3. Update the requirements: 
 
@@ -315,6 +315,6 @@ in `task_name_to_config`.
 
 ## Contact us
 
-Hopefully, this example project has helped you get up and running with ECS and CloudReactor.
-Feel free to reach out to us at support@cloudreactor.io to setup an account, or  
-if you have any questions or issues!
+Hopefully, this example project has helped you get up and running with ECS and
+CloudReactor. Feel free to reach out to us at support@cloudreactor.io to setup 
+an account, or if you have any questions or issues!
