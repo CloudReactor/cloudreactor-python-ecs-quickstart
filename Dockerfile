@@ -20,6 +20,10 @@ RUN groupadd appuser && useradd -g appuser --create-home appuser
 USER appuser
 WORKDIR /home/appuser
 
+# Pre-create this directory so that it has the correct permission
+# when ECS mounts a volume, otherwise it will be owned by root.
+RUN mkdir scratch
+
 # Output directly to the terminal to prevent longs from being lost
 # https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file
 ENV PYTHONUNBUFFERED 1

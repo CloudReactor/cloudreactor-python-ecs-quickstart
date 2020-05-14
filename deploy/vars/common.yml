@@ -7,8 +7,7 @@ project_url: "https://github.com/CloudReactor/cloudreactor-ecs-quickstart"
 
 # These settings will apply by default to all tasks and in all deployments.
 # To let CloudReactor manage these settings, leave these settings blank.
-# If you add any settings, remove the {} on the next line
-default_task_config: {} &default_task_config
+default_task_config: &default_task_config
   #enabled: true
   #max_manual_start_delay_seconds: 60
   #heartbeat_interval_seconds: 300
@@ -99,14 +98,14 @@ task_name_to_config:
       extra_main_container_properties:
         mountPoints:
           - sourceVolume: "database_scratch"
-            containerPath: "/var/scratch"
+            containerPath: "/home/appuser/scratch"
       extra_task_definition_properties:
         volumes:
           - name: "database_scratch"
             host: {}
     env:
       <<: *default_task_env
-      TEMP_FILE_DIR: "/var/scratch"
+      TEMP_FILE_DIR: "/home/appuser/scratch"
 # Uncomment to enable web server -- requires an IP target group and
 # load balancer setup in AWS
 #  web_server:
