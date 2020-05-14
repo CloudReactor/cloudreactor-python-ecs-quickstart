@@ -13,12 +13,17 @@ RUN pip install --upgrade pip==20.1
 COPY src/requirements.txt .
 
 # install dependencies
-RUN pip install -r requirements.txt
+# https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Run as non-root user for better security
 RUN groupadd appuser && useradd -g appuser --create-home appuser
 USER appuser
 WORKDIR /home/appuser
+
+# Pre-create this directory so that it has the correct permission
+# when ECS mounts a volume, otherwise it will be owned by root.
+RUN mkdir scratch
 
 # Output directly to the terminal to prevent longs from being lost
 # https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file

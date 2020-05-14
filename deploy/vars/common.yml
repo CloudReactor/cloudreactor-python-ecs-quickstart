@@ -45,7 +45,8 @@ default_task_config: &default_task_config
     #   secrets:
     #     - name: environment_variable_name
     #       valueFrom: "arn:aws:ssm:region:aws_account_id:parameter/parameter_name"
-
+  # alert_methods:
+  #   - Alert Method 1        
 
   ecs: &default_task_ecs
     # See https://aws.amazon.com/fargate/pricing/
@@ -97,14 +98,14 @@ task_name_to_config:
       extra_main_container_properties:
         mountPoints:
           - sourceVolume: "database_scratch"
-            containerPath: "/var/scratch"
+            containerPath: "/home/appuser/scratch"
       extra_task_definition_properties:
         volumes:
           - name: "database_scratch"
             host: {}
     env:
       <<: *default_task_env
-      TEMP_FILE_DIR: "/var/scratch"
+      TEMP_FILE_DIR: "/home/appuser/scratch"
 # Uncomment to enable web server -- requires an IP target group and
 # load balancer setup in AWS
 #  web_server:
