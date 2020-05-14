@@ -1,4 +1,4 @@
-# CloudReactor Quickstart
+# CloudReactor ECS Quickstart
 
 This project serves as blueprint to get your python code
 running in AWS ECS Fargate, monitored and managed by
@@ -72,7 +72,7 @@ You can either:
 2) Create a user and role with specific permissions for deployment using another 
 the [CloudReactor AWS deployer CloudFormation template](https://github.com/CloudReactor/aws-role-template).
 
-For more details, see [AWS permissions required to deploy](doc/deployer_aws_permimissions.md).
+For more details, see [AWS permissions required to deploy](doc/deployer_aws_permissions.md).
 
 ## Set up a CloudReactor account
 
@@ -150,11 +150,11 @@ that has deployment permissions, you can leave this file blank.
 5. Build the Docker container that will deploy the project. In a bash shell, run:
 
 
-    ```./docker_build_deployer.sh <environment>```     
+    ./docker_build_deployer.sh <environment>  
     
    In a Windows command prompt, run:
    
-    ```docker_build_deployer.bat <environment>```
+    docker_build_deployer <environment>
     
 `<environment>` is a required argument, which is the name of the Run Environment.     
     
@@ -163,11 +163,11 @@ to ```deploy/Dockerfile```.
 
 6) To deploy, in a bash shell, run:
 
-    ```./docker_deploy.sh <environment> [task_name]```     
+    ./docker_deploy.sh <environment> [task_name] 
     
    In a Windows command prompt, run:
    
-    ```docker_deploy.bat <environment>  [task_names]```
+    docker_deploy <environment>  [task_names]
     
 In both of these commands, `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -177,11 +177,11 @@ If `[task_names]` is omitted, all tasks will be deployed.
   
 To troubleshoot deployment issues, in a bash shell, run 
 
-    ```./docker_deploy_shell.sh <environment>```     
+    ./docker_deploy_shell.sh <environment> 
     
    In a Windows command prompt, run:
    
-    ```docker_deploy_shell.bat <environment>```
+    docker_deploy_shell.bat <environment>
 
 These commands will take you to a bash shell inside the deployer Docker 
 container where you can re-run the deployment script with `./deploy.sh`
@@ -211,7 +211,7 @@ The steps for Native Deployment are:
 The virtual environment should use python 3.8.x. 
 3. Run
 
-   ```pip install -r deploy/requirements.txt```
+    pip install -r deploy/requirements.txt
 4. Configure the AWS CLI using `aws configure`. 
 The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".  
@@ -223,7 +223,7 @@ an instance role that has the required permissions.
 6. Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
 7. To deploy,
 
-   ```./deploy.sh <environment> [task_names]```
+    ./deploy.sh <environment> [task_names]
 
 where <environment> is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
