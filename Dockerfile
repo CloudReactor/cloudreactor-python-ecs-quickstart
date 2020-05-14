@@ -13,7 +13,8 @@ RUN pip install --upgrade pip==20.1
 COPY src/requirements.txt .
 
 # install dependencies
-RUN pip install -r requirements.txt
+# https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Run as non-root user for better security
 RUN groupadd appuser && useradd -g appuser --create-home appuser
