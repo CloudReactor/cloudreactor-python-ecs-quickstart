@@ -146,28 +146,28 @@ that has deployment permissions, you can leave this file blank.
 3. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where 
 `<environment>` is the name of the Run Environment created above (e.g. 
 `staging`, `production`)
-4. Open the .yml file you just created, and enter your CloudReactor API key next to "api_key"
+4. Open the .yml file you just created, and enter your CloudReactor API key next 
+to "api_key"
 5. Build the Docker container that will deploy the project. In a bash shell, run:
 
-
-    ./docker_build_deployer.sh `<environment>`  
+    `./docker_build_deployer.sh <environment>`
     
    In a Windows command prompt, run:
    
-    docker_build_deployer `<environment>`
+    `docker_build_deployer <environment>`
     
 `<environment>` is a required argument, which is the name of the Run Environment.     
     
 This step is only necessary once, unless you add additional configuration
-to ```deploy/Dockerfile```.
+to `deploy/Dockerfile`.
 
 6) To deploy, in a bash shell, run:
 
-    ./docker_deploy.sh `<environment>` [task_name] 
+    `./docker_deploy.sh <environment> [task_name]` 
     
    In a Windows command prompt, run:
    
-    docker_deploy `<environment>`  [task_names]
+    `docker_deploy <environment>  [task_names]`
     
 In both of these commands, `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -177,11 +177,11 @@ If `[task_names]` is omitted, all tasks will be deployed.
   
 To troubleshoot deployment issues, in a bash shell, run 
 
-    ./docker_deploy_shell.sh `<environment>` 
+    ./docker_deploy_shell.sh <environment> 
     
    In a Windows command prompt, run:
    
-    docker_deploy_shell.bat `<environment>`
+    docker_deploy_shell.bat <environment>
 
 These commands will take you to a bash shell inside the deployer Docker 
 container where you can re-run the deployment script with `./deploy.sh`
@@ -223,7 +223,7 @@ an instance role that has the required permissions.
 6. Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
 7. To deploy,
 
-    ./deploy.sh `<environment>` [task_names]
+    `./deploy.sh <environment> [task_names]`
 
 where `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -284,16 +284,16 @@ To add another python library to the requirements,
 1. Enter the shell as above
 2. Install the library:
 
-    pip install `<library_name>`
+    `pip install <library_name>`
 
 3. Update the requirements: 
 
-    pip freeze > src/requirements.txt
+    `pip freeze > src/requirements.txt`
 
 4. Exit the bash shell with `exit`
 5. Rebuild the docker image:
 
-    docker-compose build
+    `docker-compose build`
 
 ## Deploying your own tasks
 
