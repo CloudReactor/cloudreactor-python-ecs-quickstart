@@ -1,8 +1,20 @@
 .idea/
 build/
 
-*.pyc
+__pycache__/
+__pycache__
+*.py[cod]
 
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Flask stuff:
+instance/
+.webassets-cache
+
+# Ansible stuff
 deploy/deploy.retry
 
 # Remove these lines if you are committing encrypted secret files to source control,
@@ -21,5 +33,7 @@ deploy/vars/*.yml
 !deploy/vars/example.yml
 # End lines to remove if committing encrypted secrets
 
-
 .DS_Store
+
+# Editor files
+.vscode/
