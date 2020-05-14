@@ -14,27 +14,29 @@ If you haven't yet setup ECS Fargate in your AWS account, follow the steps below
 
 Note that setting up ECS Fargate (as below) is entirely separate from setting up CloudReactor.
 
-The [CreateCluster](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_CreateCluster.html) AWS permission 
-is required to create the ECS cluster, so be sure your account has this 
-permission before following the steps below. 
-
-### Use the ECS Getting Started wizard
+### Use the ECS First Run wizard
 
 The AWS console provides a wizard that creates an ECS cluster in just a few 
 steps. This is appropriate if you want to get started quickly.
 The wizard can optionally create a new VPC and new public subnets
 on that VPN, but cannot create [private subnets](docs/networking.md). 
 
-1) Go to https://aws.amazon.com/ecs/getting-started/
-2) Click the `ECS console walkthrough` button
-3) Log in to AWS if necessary
-4) Change the region to your default AWS region
-5) Click the `Get started` button
-6) Choose the `nginx` container image and click the `Next` button
-7) On the next page, the defaults are sufficient, so hit `Next` again
-8) On the next page, name your cluster the desired name of your deployment environment -- for example `staging`. If you have an existing VPC and subnets you want to use to run your tasks, you can select them here. Otherwise, the console will create a new VPC and subnets for you.
+To run the wizard, your account needs to have the permissions listed under
+"Amazon ECS First Run Wizard Permissions" on this 
+[page](https://docs.aws.amazon.com/AmazonECS/latest/userguide/security_iam_id-based-policy-examples.html).
+
+The steps to run the wizard are:
+
+1. Go to https://aws.amazon.com/ecs/getting-started/
+2. Click the `ECS console walkthrough` button
+3. Log in to AWS if necessary
+4. Change the region to your default AWS region
+5. Click the `Get started` button
+6. Choose the `nginx` container image and click the `Next` button
+7. On the next page, the defaults are sufficient, so hit `Next` again
+8. On the next page, name your cluster the desired name of your deployment environment -- for example `staging`. If you have an existing VPC and subnets you want to use to run your tasks, you can select them here. Otherwise, the console will create a new VPC and subnets for you.
 After entering your desired cluster name, hit `Next` again.
-9) On the next and final page, review your settings and hit the `Create` button. You'll see the status of the created resources on the next page. **If you didn't choose existing subnets, record the subnet IDs -- we'll use them for the deployment of this project.**
+9. On the next and final page, review your settings and hit the `Create` button. You'll see the status of the created resources on the next page. **If you didn't choose existing subnets, record the subnet IDs -- we'll use them for the deployment of this project.**
 
 After these steps, AWS should create:
 
@@ -53,7 +55,7 @@ At this point, you have a working ECS environment.
 
 ## Give CloudReactor permissions
 
-To have CloudReactor manage your tasks in your AWS environment, first you need
+To have CloudReactor manage your tasks in your AWS environment, you'll need
 to give CloudReactor permissions in AWS to run tasks, schedule tasks,
 create services, and trigger Workflows by deploying the
 [CloudReactor AWS CloudFormation template](https://github.com/CloudReactor/aws-role-template),
@@ -116,20 +118,21 @@ Docker Deployment and Native Deployment.
 
 ### Docker Deployment
 
-This deployment method builds a Docker container that is used to build and deploy your tasks.
+This deployment method builds a Docker container that is used to build and 
+deploy your tasks.
 (This is not to be confused with the Docker container that actually runs your tasks.)
-The Docker container has all the dependencies (python, ansible, aws-cli etc.) built-in, so you
-don't need to install anything directly on your machine. The Docker deployment method is
-appropriate for when 
+The Docker container has all the dependencies (python, ansible, aws-cli etc.)
+built-in, so you don't need to install anything directly on your machine. 
+The Docker deployment method is appropriate for when 
 
 * you don't have python installed directly on your machine; or
 * you don't want add another set of dependencies to your libraries; or 
 * you need to deploy from a Windows machine.
 
-You can also use this method on an EC2 instance that has an instance profile containing
-a role that has permissions to create ECS tasks. When deploying, the AWS CLI in
-the container will use the temporary access key associated with the role 
-assigned to the EC2 instance.
+You can also use this method on an EC2 instance that has an instance profile 
+containing a role that has permissions to create ECS tasks. When deploying, the
+AWS CLI in the container will use the temporary access key associated with the
+role assigned to the EC2 instance.
 
 The steps for Docker Deployment are:
 
