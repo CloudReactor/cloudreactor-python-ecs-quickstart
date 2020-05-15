@@ -102,3 +102,8 @@ This project uses [pylint](https://www.pylint.org/) to check syntax. To check:
 
     docker-compose run --rm pylint
 
+## Developement shell
+
+To get a bash shell in the container that has development dependencies installed:
+
+    docker-compose run --rm dev-shell
