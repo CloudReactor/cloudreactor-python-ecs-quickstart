@@ -47,13 +47,11 @@ To adding a python library to your runtime dependencies, follow these steps:
 
 1. Add the library name to `requirements.in`
 2. Run:
-
     `docker-compose --rm pip-compile`
-
 This will update the file `requirements.txt`.
 3. Rebuild your task code:
 
-    `docker-compose build task_1`
+    docker-compose build task_1
 
 Now you can start using the dependency in your code.
 
@@ -76,7 +74,7 @@ This will update the file `dev-requirements.txt`.
 3. If necessary, add another service to `docker-compose.yml` that runs
 the development task. Also build your development task image:
 
-    `docker-compose build <task name>`
+    docker-compose build <task name>
 
 where `<task_name>` is the name of the service you added in step 3.
 
@@ -89,4 +87,4 @@ framework to run tests. The test code is located in `/tests`. For
 now there is only a trivial test which you can delete once you've
 added your own. To run tests:
 
-    `docker-compose run --rm pytest`
+    docker-compose run --rm pytest
