@@ -1,13 +1,24 @@
 version: "3.7"
 
 x-service-base: &service-base
-  image: cloudreactor-ecs-quickstart-dev
+  image: cloudreactor-ecs-quickstart
   build:
     context: ./  
   volumes:
     - ./src/:/home/appuser/src/
     - ./deploy/files/proc_wrapper_1.2.2.py:/home/appuser/proc_wrapper.py
     - ./deploy/files/.env.dev:/home/appuser/.env
+
+x-dev-base: &dev-base  
+  <<: *service-base
+  image:  cloudreactor-ecs-quickstart-dev  
+  build:
+    context: ./ 
+    dockerfile: Dockerfile-dev
+  volumes:
+    - ./src/:/home/appuser/src/
+    - ./tests/:/home/appuser/tests/
+    - ./deploy/files/.env.dev:/home/appuser/.env    
 
 services:
   task_1:
@@ -30,4 +41,30 @@ services:
   shell:
     <<: *service-base
     command: bash
-      
+     
+  pytest:
+    <<: *dev-base
+
+  pytest-cov:
+    <<: *dev-base
+    command: pytest --cov=src
+
+  pylint:  
+    <<: *dev-base
+    command: pylint src
+
+  mypy:  
+    <<: *dev-base
+    command: mypy src
+
+  dev-shell:
+    <<: *dev-base
+    command: bash
+
+  pip-compile:
+    image: cloudreactor-pip-tools
+    build:
+      context: ./  
+      dockerfile: tools/pip-tools/Dockerfile
+    volumes:
+      - ./:/work
