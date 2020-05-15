@@ -53,6 +53,10 @@ services:
     <<: *dev-base
     command: pylint src
 
+  mypy:  
+    <<: *dev-base
+    command: mypy src
+
   dev-shell:
     <<: *dev-base
     command: bash

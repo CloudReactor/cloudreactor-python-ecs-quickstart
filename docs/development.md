@@ -96,6 +96,12 @@ framework to report test coverage. To get a report:
 
     docker-compose run --rm pytest-cov
 
+## Type checking
+
+This project uses [mypy](http://mypy-lang.org/) to do type checking. To check:
+
+    docker-compose run --rm mypy
+
 ## Check syntax
 
 This project uses [pylint](https://www.pylint.org/) to check syntax. To check:

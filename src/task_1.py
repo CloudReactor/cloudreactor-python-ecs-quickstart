@@ -12,7 +12,7 @@ def signal_handler(signum, frame):
     # This will cause the exit handler to be executed, if it is registered.
     raise RuntimeError('Caught SIGTERM, exiting.')
 
-def make_start_message(prefix):
+def make_start_message(prefix: str) -> str:
     return prefix + ' sleeping!'
 
 def main():
