@@ -266,38 +266,10 @@ Then to run, say `task_1`, type:
 Docker Compose is setup so that changes in the environment file `build/files/.env.dev`
 and the files in `src` will be available without rebuilding the image.
 
-The web server can be started with:
+### More development options
 
-    docker-compose up -d web_server
-
-and stopped with
-
-    docker-compose stop web_server
-
-### Enter a shell in the image
-
-For debugging or adding dependencies, it is useful to enter a bash shell in 
-the Docker image:
-
-    docker-compose run --rm shell
-
-### Adding a python library
-
-To add another python library to the requirements, 
-
-1. Enter the shell as above
-2. Install the library:
-
-    `pip install <library_name>`
-
-3. Update the requirements: 
-
-    `pip freeze > src/requirements.txt`
-
-4. Exit the bash shell with `exit`
-5. Rebuild the docker image:
-
-    `docker-compose build`
+See the [development guide](docs/development.md) for instructions on how to debug, 
+add dependencies, and run tests and checks.
 
 ## Deploying your own tasks
 
