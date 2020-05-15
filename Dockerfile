@@ -4,15 +4,15 @@ FROM python:3.8.2-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
 
-# For the web task example only.
-# If you are not deploying the web task you can comment this out.
+# For the web-server task example only.
+# If you are not deploying the web-server task you can delete this line.
 EXPOSE 7070
 
 WORKDIR /usr/src/app
 
 RUN pip install --upgrade pip==20.1
 
-COPY src/requirements.txt .
+COPY requirements.txt .
 
 # install dependencies
 # https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
@@ -33,6 +33,8 @@ ENV PYTHONUNBUFFERED 1
 
 # Don't write *.pyc files
 ENV PYTHONDONTWRITEBYTECODE 1
+
+ENV PYTHONPATH /home/appuser/src
 
 COPY deploy/files/proc_wrapper_1.2.2.py proc_wrapper.py
 

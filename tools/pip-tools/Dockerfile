@@ -8,7 +8,7 @@ LABEL maintainer="jeff@cloudreactor.io"
 RUN pip install --upgrade pip==20.1
 RUN pip install pip-tools==5.1.2
 
-WORKDIR /src
+WORKDIR /work
 
 ENTRYPOINT [ "pip-compile", "--generate-hashes" ]
 CMD ["requirements.in",  "--output-file", "requirements.txt"]
