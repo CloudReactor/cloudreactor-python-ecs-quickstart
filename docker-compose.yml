@@ -31,3 +31,11 @@ services:
     <<: *service-base
     command: bash
       
+
+  pip-compile:
+    image: cloudreactor-pip-tools
+    build:
+      context: ./  
+      dockerfile: tools/pip-tools/Dockerfile
+    volumes:
+      - ./src:/src
