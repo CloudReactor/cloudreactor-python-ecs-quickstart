@@ -91,7 +91,14 @@ added your own. To run tests:
 
 ## View test coverage
 
-This project uses the [pytest-cov]https://github.com/pytest-dev/pytest-cov)
+This project uses the [pytest-cov](https://github.com/pytest-dev/pytest-cov)
 framework to report test coverage. To get a report:
 
     docker-compose run --rm pytest-cov
+
+## Check syntax
+
+This project uses [pylint](https://www.pylint.org/) to check syntax. To check:
+
+    docker-compose run --rm pylint
+

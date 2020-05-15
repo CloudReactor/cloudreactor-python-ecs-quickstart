@@ -49,6 +49,14 @@ services:
     <<: *dev-base
     command: pytest --cov=src
 
+  pylint:  
+    <<: *dev-base
+    command: pylint src
+
+  dev-shell:
+    <<: *dev-base
+    command: bash
+
   pip-compile:
     image: cloudreactor-pip-tools
     build:
