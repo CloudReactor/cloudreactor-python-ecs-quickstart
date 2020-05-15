@@ -1,9 +1,14 @@
 FROM cloudreactor-ecs-quickstart
 
 USER root
-RUN pip install -r /home/appuser/dev-requirements.txt
+WORKDIR /usr/src/app
+
+COPY ./dev-requirements.txt .
+
+RUN pip install -r dev-requirements.txt
 
 USER appuser
+WORKDIR /home/appuser
 
 CMD ["pytest"]
 

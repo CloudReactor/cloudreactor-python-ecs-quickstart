@@ -45,6 +45,10 @@ services:
   pytest:
     <<: *dev-base
 
+  pytest-cov:
+    <<: *dev-base
+    command: pytest --cov=src
+
   pip-compile:
     image: cloudreactor-pip-tools
     build:
