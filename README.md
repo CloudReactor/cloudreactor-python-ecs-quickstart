@@ -5,14 +5,15 @@
 This project serves as blueprint to get your python code
 running in [AWS ECS Fargate](https://aws.amazon.com/fargate/), 
 monitored and managed by
-[CloudReactor](https://www.cloudreactor.io/). See [Benefits](docs/benefits.md)\
+[CloudReactor](https://www.cloudreactor.io/). See [Benefits](docs/benefits.md)
 for a summary of the benefits of these technologies. This project is designed with best practices and smart defaults in mind, but also to be customizable.
 
 It has these features built-in:
 * Runs, tests, and deploys everything with Docker, no local python installation required
 * Deploys to AWS ECS Fargate, tasks can be scheduled or used as services
 * Sets up tasks to be monitored and managed by CloudReactor
-* Uses pip-tools to manage only top-level python library dependencies
+* Uses [pip-tools](https://github.com/jazzband/pip-tools) to manage only 
+top-level python library dependencies
 * Uses [pytest](https://docs.pytest.org/en/latest/) (testing), 
 [pylint](https://www.pylint.org/) (static code analysis), and 
 [mypy](http://mypy-lang.org/) (static type checking) for quality control
