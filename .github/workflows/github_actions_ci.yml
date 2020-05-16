@@ -1,4 +1,4 @@
-name: cloudreactor-ecs-quickstart
+name: Tests
 on:
   push:
     branches: [ "master", "github-actions-ci" ]
@@ -28,6 +28,6 @@ jobs:
         PYTHONPATH: src
     - name: Type check with mypy
       run: |
-        mypy
+        mypy src
       env:
         PYTHONPATH: src
