@@ -3,10 +3,6 @@
 import logging
 import os
 
-
-2346709q832#*^%
-
-
 def run():
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s %(levelname)s: %(message)s")
