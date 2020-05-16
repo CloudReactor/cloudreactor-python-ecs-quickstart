@@ -1,9 +1,12 @@
 name: Tests
 on:
   push:
-    branches: [ "master", "github-actions-ci" ]
+    branches: [ "**" ]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'    
   pull_request:
-    branches: [ "master" ]
+    branches: [ "**" ]
 
 jobs:
   build:
@@ -31,3 +34,6 @@ jobs:
         mypy src
       env:
         PYTHONPATH: src
+    - name: Print final message
+      run: |
+        'echo "Complete!"'    
