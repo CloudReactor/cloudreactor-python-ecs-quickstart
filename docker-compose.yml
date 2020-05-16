@@ -56,6 +56,10 @@ services:
   mypy:  
     <<: *dev-base
     command: mypy src
+  
+  safety:  
+    <<: *dev-base
+    command: safety check
 
   dev-shell:
     <<: *dev-base

@@ -15,8 +15,10 @@ It has these features built-in:
 * Uses [pip-tools](https://github.com/jazzband/pip-tools) to manage only 
 top-level python library dependencies
 * Uses [pytest](https://docs.pytest.org/en/latest/) (testing), 
-[pylint](https://www.pylint.org/) (static code analysis), and 
-[mypy](http://mypy-lang.org/) (static type checking) for quality control
+[pylint](https://www.pylint.org/) (static code analysis),  
+[mypy](http://mypy-lang.org/) (static type checking), 
+[safety](https://github.com/pyupio/safety) (security vulnerability checking)
+for quality control
 * Uses [GitHub Actions](https://github.com/features/actions) for Continuous Integration (CI)
 
 Sound good? OK, let's get started!

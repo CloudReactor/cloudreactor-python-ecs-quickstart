@@ -108,6 +108,13 @@ This project uses [mypy](http://mypy-lang.org/) to do type checking. To check:
 
     docker-compose run --rm mypy
 
+## Check for security vulnerabilities
+
+This project uses [safety](https://github.com/pyupio/safety) to 
+check libraries for security vulnerabilities, To check:
+
+    docker-compose run --rm safety
+
 ## Development shell
 
 To get a bash shell in the container that has development dependencies installed:
