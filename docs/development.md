@@ -96,17 +96,17 @@ framework to report test coverage. To get a report:
 
     docker-compose run --rm pytest-cov
 
-## Type checking
-
-This project uses [mypy](http://mypy-lang.org/) to do type checking. To check:
-
-    docker-compose run --rm mypy
-
 ## Check syntax
 
 This project uses [pylint](https://www.pylint.org/) to check syntax. To check:
 
     docker-compose run --rm pylint
+
+## Type checking
+
+This project uses [mypy](http://mypy-lang.org/) to do type checking. To check:
+
+    docker-compose run --rm mypy
 
 ## Development shell
 
@@ -115,3 +115,9 @@ To get a bash shell in the container that has development dependencies installed
     docker-compose run --rm dev-shell
 
 You can use this shell to run pytest, pylint, etc. with different options.
+
+## Continuous Integration using GitHub Actions
+
+The project uses [GitHub Actions](https://github.com/features/actions) to 
+perform Continuous Integration (CI). It runs pytest, pylint, and mypy.
+See `.github/workflows/push.yml` to customize.
