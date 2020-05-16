@@ -26,7 +26,7 @@ jobs:
       env:
         PYTHONPATH: src
     - name: Syntax check with pylint
-      run: "pylint src || pylint-exit $?"
+      run: "pylint src || pylint-exit --error-fail $?"
       env:
         PYTHONPATH: src
     - name: Type check with mypy
