@@ -5,14 +5,10 @@ on:
     paths-ignore:
       - '*.md'
       - 'docs/**'    
-  pull_request:
-    branches: [ "**" ]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python 3.8
@@ -24,8 +20,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install -r dev-requirements.txt
+        pip install pylint-exit
     - name: Test with pytest
       run: "pytest"
+      env:
+        PYTHONPATH: src
+    - name: Syntax check with pylint
+      run: "pylint src || pylint-exit $?"
       env:
         PYTHONPATH: src
     - name: Type check with mypy
