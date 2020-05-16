@@ -3,19 +3,20 @@
 ![Tests](https://github.com/CloudReactor/cloudreactor-ecs-quickstart/workflows/Tests/badge.svg?branch=master)
 
 This project serves as blueprint to get your python code
-running in AWS ECS Fargate, monitored and managed by
-CloudReactor. See [Benefits](docs/benefits.md) for a summary of the benefits of
-these technologies. This project is designed with best practices and smart
-defaults in mind, but also to be customizable.
+running in [AWS ECS Fargate](https://aws.amazon.com/fargate/), 
+monitored and managed by
+[CloudReactor](https://www.cloudreactor.io/). See [Benefits](docs/benefits.md)\
+for a summary of the benefits of these technologies. This project is designed with best practices and smart defaults in mind, but also to be customizable.
 
 It has these features built-in:
 * Runs, tests, and deploys everything with Docker, no local python installation required
-* Deploys to AWS ECS Fargate, tasks are scheduled and used as services
+* Deploys to AWS ECS Fargate, tasks can be scheduled or used as services
 * Sets up tasks to be monitored and managed by CloudReactor
 * Uses pip-tools to manage only top-level python library dependencies
-* Uses pytest (testing), pylint (static code analysis), and mypy (static type checking) 
-for quality control
-* Uses GitHub Actions for Continuous Integration (CI)
+* Uses [pytest](https://docs.pytest.org/en/latest/) (testing), 
+[pylint](https://www.pylint.org/) (static code analysis), and 
+[mypy](http://mypy-lang.org/) (static type checking) for quality control
+* Uses [GitHub Actions](https://github.com/features/actions) for Continuous Integration (CI)
 
 Sound good? OK, let's get started!
 
