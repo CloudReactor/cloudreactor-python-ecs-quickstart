@@ -10,7 +10,7 @@ EXPOSE 7070
 
 WORKDIR /usr/src/app
 
-RUN pip install --upgrade pip==20.1
+RUN pip install --no-cache-dir --upgrade pip==20.1
 
 COPY requirements.txt .
 
@@ -33,6 +33,10 @@ ENV PYTHONUNBUFFERED 1
 
 # Don't write *.pyc files
 ENV PYTHONDONTWRITEBYTECODE 1
+
+# Enable the fault handler for segfaults
+# https://docs.python.org/3/library/faulthandler.html
+ENV PYTHONFAULTHANDLER 1
 
 ENV PYTHONPATH /home/appuser/src
 
