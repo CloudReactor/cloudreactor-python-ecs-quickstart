@@ -16,7 +16,7 @@ It has these features built-in:
 top-level python library dependencies
 * Uses [pytest](https://docs.pytest.org/en/latest/) (testing), 
 [pylint](https://www.pylint.org/) (static code analysis),  
-[mypy](http://mypy-lang.org/) (static type checking), 
+[mypy](http://mypy-lang.org/) (static type checking), and
 [safety](https://github.com/pyupio/safety) (security vulnerability checking)
 for quality control
 * Uses [GitHub Actions](https://github.com/features/actions) for Continuous Integration (CI)
