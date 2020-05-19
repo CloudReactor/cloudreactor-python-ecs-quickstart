@@ -20,6 +20,14 @@ x-dev-base: &dev-base
     - ./tests/:/home/appuser/tests/
     - ./deploy/files/.env.dev:/home/appuser/.env    
 
+x-pip-compile-base: &pip-compile-base
+  image: cloudreactor-pip-tools
+  build:
+    context: ./
+    dockerfile: tools/pip-tools/Dockerfile
+  volumes:
+    - ./:/work
+
 services:
   task_1:
     <<: *service-base
@@ -66,9 +74,8 @@ services:
     command: bash
 
   pip-compile:
-    image: cloudreactor-pip-tools
-    build:
-      context: ./  
-      dockerfile: tools/pip-tools/Dockerfile
-    volumes:
-      - ./:/work
+    <<: *pip-compile-base
+
+  pip-compile-dev:
+    <<: *pip-compile-base
+    command: dev-requirements.in --output-file dev-requirements.txt

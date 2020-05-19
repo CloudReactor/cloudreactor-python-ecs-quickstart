@@ -68,7 +68,7 @@ steps:
 1. Add the library name to `dev-requirements.in`
 2. Run:
 
-    docker-compose run --rm pip-compile dev-requirements.in --output-file dev-requirements.txt
+    docker-compose run --rm pip-compile-dev
 
 This will update the file `dev-requirements.txt`.
 3. If necessary, add another service to `docker-compose.yml` that runs
