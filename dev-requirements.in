@@ -1,6 +1,6 @@
+-c requirements.txt
 pytest
 pytest-cov
 pylint
 mypy
 safety
-
