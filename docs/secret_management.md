@@ -69,7 +69,8 @@ repository is checked out. That can be advantage as it is easier
 to edit and search secret files.
 
 If you set up git-crypt, uncomment the lines in `.gitignore` that ignore 
-secret files, since they will be encrypted in the repository.
+secret files, since they will be encrypted in the repository. Also uncomment
+the lines in `.gitattributes` that specify which files to encrypt.
 
 The disadvantage of using git-crypt is that if the machine or disk that
 contains these secret files is compromised, those secrets can be exposed. 

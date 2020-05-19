@@ -1,1 +1,10 @@
 *.sh text eol=lf
+
+# Uncomment if using git-crypt
+#deploy/docker_deploy.* filter=git-crypt diff=git-crypt
+#deploy/docker_deploy.example filter= diff=
+#deploy/files/.env.* filter=git-crypt diff=git-crypt
+#deploy/files/.env.example filter= diff=
+#deploy/vars/*.yml filter=git-crypt diff=git-crypt
+#deploy/vars/example.yml filter= diff=
+#deploy/vars/common.yml filter= diff=
