@@ -2,7 +2,7 @@ FROM python:3.8.3
 
 WORKDIR /work
 
-# Output directly to the terminal to prevent longs from being lost
+# Output directly to the terminal to prevent logs from being lost
 # https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file
 ENV PYTHONUNBUFFERED 1
 
@@ -21,7 +21,7 @@ RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debia
 RUN apt-get update
 RUN apt-get -y install docker-ce
 
-RUN pip install --no-cache-dir --upgrade pip==20.1
+RUN pip install --no-cache-dir --upgrade pip==20.1.1
 
 ADD ./deploy/requirements.txt /tmp/requirements.txt
 

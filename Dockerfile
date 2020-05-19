@@ -10,7 +10,7 @@ EXPOSE 7070
 
 WORKDIR /usr/src/app
 
-RUN pip install --no-cache-dir --upgrade pip==20.1
+RUN pip install --no-cache-dir --upgrade pip==20.1.1
 
 COPY requirements.txt .
 
@@ -27,7 +27,7 @@ WORKDIR /home/appuser
 # when ECS mounts a volume, otherwise it will be owned by root.
 RUN mkdir scratch
 
-# Output directly to the terminal to prevent longs from being lost
+# Output directly to the terminal to prevent logs from being lost
 # https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file
 ENV PYTHONUNBUFFERED 1
 

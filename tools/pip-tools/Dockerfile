@@ -5,8 +5,8 @@ FROM python:3.8.3-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
 
-RUN pip install --upgrade pip==20.1
-RUN pip install pip-tools==5.1.2
+RUN pip install --no-cache-dir --upgrade pip==20.1.1
+RUN pip install --no-cache-dir pip-tools==5.1.2
 
 WORKDIR /work
 
