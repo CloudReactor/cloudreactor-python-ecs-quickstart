@@ -2,41 +2,54 @@
   file:
     path: ../build/{{env}}/{{item}}
     state: directory
+  tags:
+  - always
+
 
 - name: Create ECS task definition file {{item}}
   template: src=templates/ecs_task_definition.json.j2
             dest=../build/{{env}}/{{item}}/ecs_task_definition.json
             lstrip_blocks=yes
+  tags:
+  - always
 
 - name: Register ECS task definition {{item}}
   command: "aws ecs register-task-definition --cli-input-json file://ecs_task_definition.json"
   args:
     chdir: ../build/{{env}}/{{item}}
   register: register_task_result
+  tags:
+  - always
 
 - name: Output Task Definition ARN
   debug:
     msg: "Task Definition ARN={{task_definition_arn}}"
 
-- name: Create Process Type Definition {{item}}
-  template: src=templates/create_process_type.yml.j2
-            dest=../build/{{env}}/{{item}}/create_process_type.yml
+- name: Create CloudReactor Task definition {{item}}
+  template: src=templates/cloudreactor_task.yml.j2
+            dest=../build/{{env}}/{{item}}/cloudreactor_task.yml
             lstrip_blocks=yes
+  tags:
+  - always
 
 - name: Read yaml
   include_vars:
-    file: ../build/{{env}}/{{item}}/create_process_type.yml
-    name: process_type
+    file: ../build/{{env}}/{{item}}/cloudreactor_task.yml
+    name: cloudreactor_task
+  tags:
+  - always
 
-- name: Create/update process type in CloudReactor
+- name: Create/update task in CloudReactor
   uri:
     url: "{{ cloudreactor.base_url }}/api/v1/process_types/"
     method: POST
     headers:
       Authorization: "Token {{cloudreactor.api_key}}"
     return_content: yes
-    body: "{{ process_type | to_json }}"
+    body: "{{ cloudreactor_task | to_json }}"
     body_format: json
     status_code:
       - 200
       - 201
+  tags:
+  - always
