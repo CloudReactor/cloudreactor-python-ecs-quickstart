@@ -38,7 +38,7 @@ fi
 export ANSIBLE_DUPLICATE_YAML_DICT_KEY=ignore
 
 # Use this line if you are not encrypting secrets. If encrypting secrets, comment out this line.
-ansible-playbook --extra-vars "env=${ENVIRONMENT} task_names=${TASK_NAMES}" "$@" deploy.yml;
+ansible-playbook  deploy.yml --extra-vars "env=${ENVIRONMENT} task_names=${TASK_NAMES}" "$@";
 
 # The following 2 options allow your project to store encrypted secrets using ansible vault.
 # When ansible-playbook runs, it will detect files encrypted with ansible vault and
