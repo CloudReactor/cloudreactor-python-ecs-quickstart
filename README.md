@@ -278,7 +278,7 @@ Then to run, say `task_1`, type:
 
     docker-compose run --rm task_1
 
-Docker Compose is setup so that changes in the environment file `build/files/.env.dev`
+Docker Compose is setup so that changes in the environment file `deploy/files/.env.dev`
 and the files in `src` will be available without rebuilding the image.
 
 ### More development options
