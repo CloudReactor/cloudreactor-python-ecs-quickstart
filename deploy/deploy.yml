@@ -8,7 +8,9 @@
     - vars/common.yml
     - vars/{{env}}.yml
   vars:
-    resolved_task_names: "{{ (task_name_to_config.keys() | list) if (task_names | upper) == 'ALL' else task_names.split(',') }}"
+    env_task_name_to_config: "{{ task_name_to_env_config | default({}) }}"
+    resolved_task_name_to_config: "{{ task_name_to_config | combine(env_task_name_to_config, recursive=True) }}"
+    resolved_task_names: "{{ (resolved_task_name_to_config.keys() | list) if (task_names | upper) == 'ALL' else task_names.split(',') }}"
     process_version_signature: "{{ lookup('env','CLOUDREACTOR_PROCESS_VERSION_SIGNATURE') | default(git_hash_cmd_result.stdout, true) }}"
     docker_image_name: "{{project_name}}:{{env}}_{{process_version_signature}}"
     run_environment_name: "{{ cloudreactor.run_environment | default(env) }}"
