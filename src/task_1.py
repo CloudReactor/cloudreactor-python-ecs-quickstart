@@ -18,7 +18,7 @@ def make_start_message(prefix: str) -> str:
 def main():
     load_dotenv()
 
-    logging.basicConfig(level=logging.DEBUG, format=f"%(asctime)s %(levelname)s: %(message)s")
+    logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s: %(message)s")
 
     signal.signal(signal.SIGTERM, signal_handler)
 
