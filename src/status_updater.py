@@ -41,20 +41,22 @@ class StatusUpdater:
 
         self.socket = None
         self.port = None
-        self.enabled = os.environ.get('PROC_WRAPPER_ENABLE_STATUS_UPDATE_LISTENER', 'FALSE').upper() == 'TRUE'
+        self.enabled = os.environ.get('PROC_WRAPPER_ENABLE_STATUS_UPDATE_LISTENER',
+                                      'FALSE').upper() == 'TRUE'
 
         if self.enabled:
             self._logger.info('StatusUpdater is enabled')
         else:
             self._logger.info('StatusUpdater is disabled')
             return
-            
-        self.port = int(os.environ.get('PROC_WRAPPER_STATUS_UPDATE_SOCKET_PORT') or StatusUpdater.DEFAULT_STATUS_UPDATE_PORT)
+
+        self.port = int(os.environ.get('PROC_WRAPPER_STATUS_UPDATE_SOCKET_PORT') or
+                        StatusUpdater.DEFAULT_STATUS_UPDATE_PORT)
 
         atexit.register(_exit_handler, self)
 
     def send_update(self, success_count=None, error_count=None, skipped_count=None,
-        expected_count=None, last_status_message=None, extra_props=None):
+                    expected_count=None, last_status_message=None, extra_props=None):
         if not self.enabled:
             return
 

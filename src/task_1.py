@@ -28,7 +28,8 @@ def main():
 
     try:
         start_message = make_start_message('I am')
-        updater.send_update(last_status_message=start_message, expected_count=random.randrange(5, 15))
+        updater.send_update(last_status_message=start_message,
+                            expected_count=random.randrange(5, 15))
         success_count = 0
         for i in range(5):
             if i == row_to_fail_at:
