@@ -95,7 +95,7 @@ For more details, see [AWS permissions required to deploy](doc/deployer_aws_perm
 
 Contact us at support@cloudreactor.io and we'll create an account for you
 and give you an API key.
-Then login to [processes.cloudreactor.io](https://processes.cloudreactor.io/). 
+Then login to the [CloudReactor dashboard](https://dash.cloudreactor.io/). 
 Now you'll create a Run Environment -- these settings tell CloudReactor how to run tasks in AWS.
 
 1. Click on "Run Environments", then "Add Environment"
