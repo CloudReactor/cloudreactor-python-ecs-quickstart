@@ -59,7 +59,7 @@ services:
 
   pylint:  
     <<: *dev-base
-    command: pylint src
+    command: pylint --rcfile=src/.pylintrc src
 
   mypy:  
     <<: *dev-base
