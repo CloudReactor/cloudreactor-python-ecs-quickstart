@@ -16,7 +16,7 @@
     run_environment_name: "{{ cloudreactor.run_environment | default(env) }}"
     run_environment: "{{ run_environment_result.json.results[0] }}"
     run_environment_exec_method: "{{ run_environment.execution_method_capabilities | selectattr('type', 'equalto', 'AWS ECS') | first }}"
-    aws: "{{ run_environment_aws | combine(project_aws | default({}), recursive=True) }}"
+    aws: "{{ run_environment_aws | default({}) | combine(project_aws | default({}), recursive=True) }}"
     aws_region: "{{ aws.region | default(lookup('env','AWS_DEFAULT_REGION')) }}"
     ecr_hostname: "{{ aws.account_id }}.dkr.ecr.{{ aws_region }}.amazonaws.com"
     task_definition_arn: "{{ (register_task_result.stdout | from_json).taskDefinition.taskDefinitionArn }}"
@@ -82,14 +82,14 @@
 
   #- debug: msg="Default AWS is {{ aws }}"
 
-  - name: Compute ECR login command
-    command: "aws ecr get-login --no-include-email"
-    register: ecr_login_cmd_result
+  - name: Compute ECR login password
+    command: "aws ecr get-login-password --region {{aws.region}}"
+    register: ecr_login_password_cmd_result
     tags:
       - upload
 
   - name: Login to ECR
-    command: "{{ecr_login_cmd_result.stdout}}"
+    command: "docker login --username AWS --password {{ecr_login_password_cmd_result.stdout}} {{ecr_hostname}}"
     tags:
       - upload
 
