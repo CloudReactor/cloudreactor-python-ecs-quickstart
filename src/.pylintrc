@@ -250,7 +250,9 @@ good-names=i,
            k,
            ex,
            Run,
-           _
+           _,
+           f,
+           s
 
 # Good variable names regexes, separated by a comma. If names match any regex,
 # they will always be accepted
@@ -494,7 +496,7 @@ signature-mutators=
 [DESIGN]
 
 # Maximum number of arguments for function / method.
-max-args=5
+max-args=7
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7
