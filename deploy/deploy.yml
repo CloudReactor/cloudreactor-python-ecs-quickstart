@@ -51,7 +51,9 @@
       - upload
       - create_tasks
 
-  #- debug: msg="Runtime Environment is {{ run_environment }}, UUID = {{ run_environment.uuid }}"
+  - debug:
+      msg: "Runtime Environment is {{ run_environment }}, UUID = {{ run_environment.uuid }}"
+      verbosity: 1
 
   - name: Ensure Runtime Environment is found
     assert:
@@ -80,7 +82,9 @@
       - upload       
       - create_tasks
 
-  #- debug: msg="Default AWS is {{ aws }}"
+  - debug:
+      msg: "Default AWS is {{ aws }}"
+      verbosity: 1
 
   - name: Compute ECR login password
     command: "aws ecr get-login-password --region {{aws.region}}"

@@ -39,6 +39,13 @@
   tags:
   - always
 
+- name: Output CloudReactor Task definition JSON
+  debug:
+    msg: "{{ cloudreactor_task | to_json }}"
+    verbosity: 2
+  tags:
+  - always
+
 - name: Create/update task in CloudReactor
   uri:
     url: "{{ cloudreactor.base_url }}/api/v1/process_types/"
