@@ -17,21 +17,25 @@
 {% set max_concurrency=task_config.max_concurrency | default(1) %}
 {% set wrapper=task_config.wrapper | default({}) %}
 {% set task_ecs=task_config.ecs | default({}) %}
-{% set ecs=aws.ecs | default({}) | combine(task_ecs, recursive=True) %}
-{% set project_task_ecs=project_aws.ecs | default({}) | combine(task_ecs, recursive=True) %}
-{% set cpu_units=ecs.cpu_units | default(256) %}
-{% set memory_mb=ecs.memory_mb | default(512) %}
-{% set project_aws_subnets=project_aws.subnets | default('null') %}
+{% set project_ecs=project_aws.ecs | default({}) %}
+{% set project_task_ecs=project_ecs | combine(task_ecs, recursive=True) %}
+{% set cpu_units=project_task_ecs.cpu_units | default(256) %}
+{% set memory_mb=project_task_ecs.memory_mb | default(512) %}
+
+{% set project_aws_subnets=project_aws.subnets | default('inherit') %}
 {% set subnets=project_task_ecs.task.network.subnets | default(project_aws_subnets) %}
-{% set project_aws_security_groups=project_aws.security_groups | default('null') %}
-{% set security_groups = project_task_ecs.task.network.security_groups | default(project_aws_security_groups) %}
+
+{% set project_aws_security_groups=project_aws.security_groups | default('inherit') %}
+{% set security_groups=project_task_ecs.task.network.security_groups | default(project_aws_security_groups) %}
+
+{% set alert_methods=task_config.alert_methods | default('inherit') %}
 
 {# This should be the awslogs-group in ecs_task_definition.json #}
 {% set log_query="/aws/fargate/" + project_name + "-" + env + "-" + task_name %}
 
 # For debugging
 # task_config: {{ task_config | to_json }}
-# ECS: {{ ecs | to_json }}
+# Project ECS: {{ project_ecs | to_json }}
 # Task ECS: {{ task_ecs | to_json }}
 # Project Task ECS: {{ project_task_ecs | to_json }}
 # wrapper: {{ wrapper | to_json }}
@@ -42,7 +46,7 @@
 name: "{{project_name}}_{{task_name}}_{{env}}"
 
 {% if task_config.description is defined %}
-description: "{{task_config.description}}"
+description: {{task_config.description}}
 {% endif %}
 
 {% if task_config.enabled is defined %}
@@ -72,7 +76,7 @@ max_concurrency: {% if max_concurrency is number %}{{ max_concurrency }}{% else 
 is_service: {{is_service}}
 
 {% if task_config.schedule is defined %}
-schedule: "{{ task_config.schedule }}"
+schedule: {{ task_config.schedule }}
 {% endif %}
 
 {% if service_instance_count != 'null' %}
@@ -93,57 +97,65 @@ run_environment:
   name: "{{ task_config.run_environment | default(run_environment_name) }}"
 
 execution_method_capability:
-  type: "AWS ECS"
-  task_definition_arn: "{{ task_definition_arn }}"
-  default_launch_type: "FARGATE"
+  type: AWS ECS
+  task_definition_arn: {{ task_definition_arn }}
+  default_launch_type: FARGATE
   supported_launch_types:
     - FARGATE
 
   {% if project_task_ecs.cluster_name is defined %}
-  default_cluster_arn: "{{ project_task_ecs.cluster_name }}"
+  default_cluster_arn: {{ project_task_ecs.cluster_name }}
   {% endif %}
 
-  {% if subnets != 'null' %}
+  {% if subnets is none %}
+  default_subnets: null
+  {% else %}
+  {% if subnets != 'inherit' %}
   default_subnets:
   {% for subnet in subnets %}
     - "{{ subnet }}"
   {% endfor %}
   {% endif %}
+  {% endif %}
 
-  {% if security_groups != 'null' %}
+  {% if security_groups is none %}
+  default_security_groups: null
+  {% else %}
+  {% if security_groups != 'inherit' %}
   default_security_groups:
   {% for security_group in security_groups %}
     - "{{ security_group }}"
   {% endfor %}
   {% endif %}
+  {% endif %}
 
   {% if project_task_ecs.task.network.assign_public_ip is defined %}
-  default_assign_public_ip: {{ecs.task.network.assign_public_ip }}
+  default_assign_public_ip: {{project_task_ecs.task.network.assign_public_ip}}
   {% endif %}
 
   {% if project_task_ecs.execution_role_arn is defined %}
-  default_execution_role: "{{ecs.execution_role_arn}}"
+  default_execution_role: {{project_task_ecs.execution_role_arn}}
   {% endif %}
 
   {% if project_task_ecs.task_role_arn is defined %}
-  default_task_role: "{{ecs.task_role_arn}}"
+  default_task_role: {{project_task_ecs.task_role_arn}}
   {% endif %}
 
   allocated_cpu_units: {{cpu_units}}
   allocated_memory_mb: {{memory_mb}}
   main_container_name: "{{project_name}}_{{task_name}}_{{env}}"
 
-  {% if ecs.service is defined %}
+  {% if project_task_ecs.service is defined %}
   service_options:
-    {% if ecs.service.load_balancers is defined %}
-    {% if ecs.service.load_balancers[0] is defined %}
+    {% if project_task_ecs.service.load_balancers is defined %}
+    {% if project_task_ecs.service.load_balancers[0] is defined %}
     load_balancers:
-      {% for load_balancer in ecs.service.load_balancers %}
+      {% for load_balancer in project_task_ecs.service.load_balancers %}
       - target_group_arn: "{{load_balancer.target_group_arn}}"
         container_name:  "{{project_name}}_{{task_name}}_{{env}}"
         container_port: {{load_balancer.container_port}}
       {% endfor %}
-    {% if ecs.service.load_balancer_health_check_grace_period_seconds is defined %}
+    {% if project_task_ecs.service.load_balancer_health_check_grace_period_seconds is defined %}
     load_balancer_health_check_grace_period_seconds: 300
     {% endif %}
     {% else %}
@@ -152,10 +164,12 @@ execution_method_capability:
     {% endif %}
   {% endif %}
 
-{% if task_config.alert_methods is defined %}
-  {% if task_config.alert_methods[0] is defined %}
+{% if alert_methods != 'inherit' %}
+  {% if alert_methods is none %}
+alert_methods: null
+  {% elif alert_methods[0] is defined %}
 alert_methods:
-    {% for alert_method in task_config.alert_methods %}
+    {% for alert_method in alert_methods %}
   - name: "{{alert_method}}"
     {% endfor %}
   {% else %}

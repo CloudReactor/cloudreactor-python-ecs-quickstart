@@ -22,8 +22,9 @@
 #        subnets:
 #          - subnet-private-1
 #          - subnet-private-2
-#        # Set this to true if your subnets don't have access to a NAT gateway, for example public subnets
-#        assign_public_ip: false
+#        # Set this to true if your subnets don't have access to a NAT gateway,
+#        # for example public subnets.
+#        assign_public_ip: False
 #      role_arn: arn:aws:iam::12345678901:role/ecsTaskExecutionRole
 
 cloudreactor:
