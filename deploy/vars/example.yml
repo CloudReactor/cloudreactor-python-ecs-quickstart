@@ -2,7 +2,7 @@
 ## your deployment environment (i.e. staging, production).
 # Then adjust the values according to your AWS settings.
 # Unless this file is encrypted with ansible-vault,
-# ensure this file is in .gitignore to avoid checking in secrets!
+# ensure the copied file is in .gitignore to avoid checking in secrets!
 
 # You can override your Run Environment's AWS settings here, but it shouldn't
 # be necessary unless you haven't specified security groups or subnets in

@@ -59,7 +59,7 @@ After these steps, AWS should create:
 2) A VPC named `ECS [cluster name] - VPC`
 3) 2 subnets in the VPC named `ECS [cluster name] - Public Subnet 1` and `ECS [cluster name] - Public Subnet 2`.
 You can see these in VPC .. Subnets. Note that these subnets are public; if you 
-want to use private subnets, you'll have to create your own. 
+want to use [private subnets](docs/networking.md), you'll have to create your own. 
 **Record the Subnet IDs -- we'll add them to the Run Environment in CloudReactor.**
 4) A security group named `ECS staging - ECS Security Group` in the VPC.
 You can find it in `VPC .. Security Groups`. 
@@ -301,7 +301,8 @@ in `task_name_to_config`.
 [Alert Method](docs/alerts.md)
 * To avoid leaking secrets (passwords, API keys, etc.), see the guide on 
 [secret management](docs/secret_management.md)
-* For more secure networking, run your tasks on a [private subnet](docs/networking.md)
+* For more secure [networking]((docs/networking.md), run your tasks on private subnets
+and/or tighten your security groups.
 * If you're having problems, see the [troubleshooting guide](docs/troubleshooting.md)
 
 ## Contact us
