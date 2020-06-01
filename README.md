@@ -23,98 +23,6 @@ for quality control
 
 Sound good? OK, let's get started!
 
-## Setup ECS
-
-If you haven't yet setup ECS Fargate in your AWS account, follow the steps below.
-
-Note that setting up ECS Fargate (as below) is entirely separate from setting up CloudReactor.
-
-### Use the ECS First Run wizard
-
-The AWS console provides a wizard that creates an ECS cluster in just a few 
-steps. This is appropriate if you want to get started quickly.
-The wizard can optionally create a new VPC and new public subnets
-on that VPN, but cannot create [private subnets](docs/networking.md). 
-
-To run the wizard, your account needs to have the permissions listed under
-"Amazon ECS First Run Wizard Permissions" on this 
-[page](https://docs.aws.amazon.com/AmazonECS/latest/userguide/security_iam_id-based-policy-examples.html).
-
-The steps to run the wizard are:
-
-1. Go to https://aws.amazon.com/ecs/getting-started/
-2. Click the `ECS console walkthrough` button
-3. Log in to AWS if necessary
-4. Change the region to your default AWS region
-5. Click the `Get started` button
-6. Choose the `nginx` container image and click the `Next` button
-7. On the next page, the defaults are sufficient, so hit `Next` again
-8. On the next page, name your cluster the desired name of your deployment environment -- for example `staging`. If you have an existing VPC and subnets you want to use to run your tasks, you can select them here. Otherwise, the console will create a new VPC and subnets for you.
-After entering your desired cluster name, hit `Next` again.
-9. On the next and final page, review your settings and hit the `Create` button. You'll see the status of the created resources on the next page. **If you didn't choose existing subnets, record the subnet IDs -- we'll use them for the deployment of this project.**
-
-After these steps, AWS should create:
-
-1) A cluster named as you chose on step 8 above.
-2) A VPC named `ECS [cluster name] - VPC`
-3) 2 subnets in the VPC named `ECS [cluster name] - Public Subnet 1` and `ECS [cluster name] - Public Subnet 2`.
-You can see these in VPC .. Subnets. Note that these subnets are public; if you 
-want to use [private subnets](docs/networking.md), you'll have to create your own. 
-**Record the Subnet IDs -- we'll add them to the Run Environment in CloudReactor.**
-4) A security group named `ECS staging - ECS Security Group` in the VPC.
-You can find it in `VPC .. Security Groups`. 
-**Record the Security Group ID, we'll add it to the Run Environment in CloudReactor.**
-5) Once you've recorded the Subnet IDs and Security Group IDs, under "ECS resource creation", you'll see `Cluster [the name of the cluster you created]`. Clicking this link will take you to the cluster's details page; **record the `Cluster ARN`** you see here.
-
-At this point, you have a working ECS environment. 
-
-## Give CloudReactor permissions
-
-To have CloudReactor manage your tasks in your AWS environment, you'll need
-to give CloudReactor permissions in AWS to run tasks, schedule tasks,
-create services, and trigger Workflows by deploying the
-[CloudReactor AWS CloudFormation template](https://github.com/CloudReactor/aws-role-template),
- named `cloudreactor-aws-role-template.json`.
-Follow the instructions in the [README.md](https://github.com/CloudReactor/aws-role-template/blob/master/README.md), 
-in the section "Allowing CloudReactor to manage your tasks".
-Be sure to record the ```ExternalID```, ```CloudreactorRoleARN```, ```TaskExecutionRoleARN```,
-```WorkflowStarterARN```, and ```WorkflowStarterAccessKey``` values.
-
-## Select or create user and/or role for deployment
-
-You'll need an AWS user or role capable of deploying Docker images to ECR and creating tasks in ECS.
-You can either:
-
-1) Use an admin user or a power user with broad permissions; or, 
-2) Create a user and role with specific permissions for deployment using another 
-the [CloudReactor AWS deployer CloudFormation template](https://github.com/CloudReactor/aws-role-template).
-
-For more details, see [AWS permissions required to deploy](doc/deployer_aws_permissions.md).
-
-## Set up a CloudReactor account
-
-Contact us at support@cloudreactor.io and we'll create an account for you
-and give you an API key.
-Then login to the [CloudReactor dashboard](https://dash.cloudreactor.io/). 
-Now you'll create a Run Environment -- these settings tell CloudReactor how to run tasks in AWS.
-
-1. Click on "Run Environments", then "Add Environment"
-2. Name your environment (e.g. "staging", "production"). You may want to keep the
-name in all lowercase letters without spaces or symbols besides "-" and "_", so
-that filenames and command-lines you'll use later will be sane. 
-**Note the exact name of your Run Environment**, as you'll need this later.
-3. Fill in your AWS account ID and default region. Your AWS account ID is a 12-digit number that you can find by clicking "Support" then "Support Center". For default region, select the region that you want CloudReactor to run tasks / workflows in (e.g.`us-west-2`).
-4. For `Assumable Role ARN`
-fill in the value of `CloudreactorRoleARN` from the output of the CloudFormation stack.
-5. For `External ID`, use the same External ID you entered when you created the CloudFormation stack.
-6. For `Workflow Starter Lambda ARN`, fill in the value of `WorkflowStarterARN` from the output of the CloudFormation stack.
-7. For `Workflow Starter Access Key`, fill in the value of `WorkflowStarterAccessKey` from the output of the CloudFormation stack.
-8. Add the subnets and security group created by the ECS getting started wizard above
-9. Under AWS ECS Settings, choose a `Default Launch Type` of `Fargate` and check FARGATE under Supported Launch Types.
-10. For `Default Cluster ARN`, fill in the `Cluster ARN` of the ECS cluster you created above
-11. For `Default Execution Role` and `Default Task Role`, fill in the value of
-`TaskExecutionRoleARN` from the output of the CloudFormation stack.
-12. Click on the `Save` button
 
 ## Get this project's source code
 
@@ -296,14 +204,14 @@ in `task_name_to_config`.
 
 ## Next steps
 
-* [Additional configuration](docs/configuration.md) options can be set or overridden 
+* [Additional configuration](docs.cloudreactor.io/configuration.html) options can be set or overridden 
 * If you want to be alerted when task executions fail, setup an 
-[Alert Method](docs/alerts.md)
+[Alert Method](docs.cloudreactor.io/alerts.html)
 * To avoid leaking secrets (passwords, API keys, etc.), see the guide on 
 [secret management](docs/secret_management.md)
-* For more secure [networking]((docs/networking.md), run your tasks on private subnets
+* For more secure [networking](docs.cloudreactor.io/networking.html), run your tasks on private subnets
 and/or tighten your security groups.
-* If you're having problems, see the [troubleshooting guide](docs/troubleshooting.md)
+* If you're having problems, see the [troubleshooting guide](docs.cloudreactor.io/troubleshooting.html)
 
 ## Contact us
 
