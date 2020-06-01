@@ -5,12 +5,14 @@
 This project serves as blueprint to get your python code
 running in [AWS ECS Fargate](https://aws.amazon.com/fargate/), 
 monitored and managed by
-[CloudReactor](https://www.cloudreactor.io/). See [Benefits](docs/benefits.md)
-for a summary of the benefits of these technologies. This project is designed with best practices and smart defaults in mind, but also to be customizable.
+[CloudReactor](https://www.cloudreactor.io/). See a 
+[summary of the benefits](https://docs.cloudreactor.io/cloudreactor.html)
+of these technologies. 
+This project is designed with best practices and smart defaults in mind, but also to be customizable.
 
 It has these features built-in:
 * Runs, tests, and deploys everything with Docker, no local python installation required
-* Deploys to AWS ECS Fargate, tasks can be scheduled or used as services
+* Deploys to AWS ECS Fargate. Tasks can be scheduled, used as services, or executed only on demand.
 * Sets up tasks to be monitored and managed by CloudReactor
 * Uses [pip-tools](https://github.com/jazzband/pip-tools) to manage only 
 top-level python library dependencies
@@ -23,6 +25,20 @@ for quality control
 
 Sound good? OK, let's get started!
 
+## Prerequisites
+
+First, create a (serverless) ECS cluster if you don't have one already. You can use our
+[guide](https://docs.cloudreactor.io/#set-up-a-cluster-in-aws-ecs) to use the AWS console
+to do that, or you may use other methods like 
+[CloudFormation templates](https://github.com/aws-samples/ecs-refarch-cloudformation) 
+or [Terraform templates](https://github.com/turnerlabs/terraform-ecs-fargate).
+
+Next, [give access to CloudReactor](https://github.com/turnerlabs/terraform-ecs-fargate) 
+so it can manage your tasks.
+
+Finally, if desired, [create a user and role that can be used to deploy
+tasks to Fargate](https://docs.cloudreactor.io/#prerequisites-aws-user-with-deployment-permissions). 
+Otherwise you may use an administrator user or power user to deploy.
 
 ## Get this project's source code
 
@@ -204,14 +220,14 @@ in `task_name_to_config`.
 
 ## Next steps
 
-* [Additional configuration](https://docs.cloudreactor.io/configuration.html) options can be set or overridden 
+* [Additional configuration](docs/configuration.md) options can be set or overridden 
 * If you want to be alerted when task executions fail, setup an 
 [Alert Method](https://docs.cloudreactor.io/alerts.html)
 * To avoid leaking secrets (passwords, API keys, etc.), see the guide on 
 [secret management](docs/secret_management.md)
 * For more secure [networking](https://docs.cloudreactor.io/networking.html), run your tasks on private subnets
 and/or tighten your security groups.
-* If you're having problems, see the [troubleshooting guide](https://docs.cloudreactor.io/troubleshooting.html)
+* If you're having problems, see the [troubleshooting guide](docs/troubleshooting.html)
 
 ## Contact us
 
