@@ -35,8 +35,8 @@
     "family": {{ (project_name + '_' +  task_name + '_' + env) | to_json }},
     "networkMode": "awsvpc",
     "executionRoleArn": {{ ecs.execution_role_arn | to_json }},
-    {% if ecs.task_role_arn is defined %}
-    "taskRoleArn": {{ ecs.task_role_arn | to_json }},
+    {% if ecs.task.role_arn is defined %}
+    "taskRoleArn": {{ ecs.task.role_arn | to_json }},
     {% endif %}
     "cpu": "{{cpu_units}}",
     "memory": "{{memory_mb}}",
