@@ -37,8 +37,9 @@ Next, [give access to CloudReactor](https://github.com/turnerlabs/terraform-ecs-
 so it can manage your tasks.
 
 Finally, if desired, [create a user and role that can be used to deploy
-tasks to Fargate](https://docs.cloudreactor.io/#prerequisites-aws-user-with-deployment-permissions). 
+tasks to ECS](https://docs.cloudreactor.io/#prerequisites-aws-user-with-deployment-permissions). 
 Otherwise you may use an administrator user or power user to deploy.
+See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of the permissions required.
 
 ## Get this project's source code
 
