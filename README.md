@@ -204,14 +204,14 @@ in `task_name_to_config`.
 
 ## Next steps
 
-* [Additional configuration](docs.cloudreactor.io/configuration.html) options can be set or overridden 
+* [Additional configuration](https://docs.cloudreactor.io/configuration.html) options can be set or overridden 
 * If you want to be alerted when task executions fail, setup an 
-[Alert Method](docs.cloudreactor.io/alerts.html)
+[Alert Method](https://docs.cloudreactor.io/alerts.html)
 * To avoid leaking secrets (passwords, API keys, etc.), see the guide on 
 [secret management](docs/secret_management.md)
-* For more secure [networking](docs.cloudreactor.io/networking.html), run your tasks on private subnets
+* For more secure [networking](https://docs.cloudreactor.io/networking.html), run your tasks on private subnets
 and/or tighten your security groups.
-* If you're having problems, see the [troubleshooting guide](docs.cloudreactor.io/troubleshooting.html)
+* If you're having problems, see the [troubleshooting guide](https://docs.cloudreactor.io/troubleshooting.html)
 
 ## Contact us
 
