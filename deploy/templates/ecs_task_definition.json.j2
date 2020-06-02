@@ -141,7 +141,7 @@
                     "value" : {{ cloudreactor.api_key | to_json }}
                 },
                 {
-                    "name" : "PROC_WRAPPER_API_HEARTBEAT_INTERVAL",
+                    "name" : "PROC_WRAPPER_API_HEARTBEAT_INTERVAL_SECONDS",
                     "value" : "{{ wrapper.heartbeat_interval_seconds | default(300) }}"
                 },
                 {% if wrapper.rollbar_access_token is defined %}
