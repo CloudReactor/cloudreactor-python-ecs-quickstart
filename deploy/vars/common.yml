@@ -65,7 +65,8 @@ default_task_config: &default_task_config
 
   wrapper: &default_task_wrapper
     max_retries: 1
-    heartbeat_interval_seconds: 60
+    heartbeat_interval_seconds: 120
+    status_update_interval_seconds: 60
     # This data is sent back from the wrapper to CloudReactor when it starts.
     # It may be used to identify properties about instance of the task that is
     # running.
