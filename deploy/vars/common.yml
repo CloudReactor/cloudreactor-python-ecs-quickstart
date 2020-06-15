@@ -12,10 +12,10 @@ project_url: "https://github.com/CloudReactor/cloudreactor-ecs-quickstart"
 # set the property value to null.
 default_task_config: &default_task_config
   #enabled: true
+  #max_concurrency: 1 # null for no concurrency limit
+  #max_age_seconds: 7200
   #max_manual_start_delay_seconds: 60
-  #heartbeat_interval_seconds: 300
   #max_heartbeat_lateness_seconds: 120
-  #max_concurrency: 1
   ecs: &default_task_ecs
     # See https://aws.amazon.com/fargate/pricing/
     # for supported combinations.
@@ -66,7 +66,10 @@ default_task_config: &default_task_config
   wrapper: &default_task_wrapper
     max_retries: 1
     heartbeat_interval_seconds: 120
+    enable_status_updates: True
     status_update_interval_seconds: 60
+    # process_max_retries: 1
+    # process_timeout_seconds: 3600
     # This data is sent back from the wrapper to CloudReactor when it starts.
     # It may be used to identify properties about instance of the task that is
     # running.
