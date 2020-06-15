@@ -8,9 +8,11 @@ from dotenv import load_dotenv
 
 from status_updater import StatusUpdater
 
+
 def signal_handler(signum, frame):
     # This will cause the exit handler to be executed, if it is registered.
     raise RuntimeError('Caught SIGTERM, exiting.')
+
 
 def make_start_message(prefix: str) -> str:
     return prefix + ' sleeping!'
@@ -22,6 +24,7 @@ def main():
 
     signal.signal(signal.SIGTERM, signal_handler)
 
+    num_rows = int(os.environ.get('NUM_ROWS', '5'))
     row_to_fail_at = int(os.environ.get('ROW_TO_FAIL_AT', '-1'))
 
     updater = StatusUpdater()
@@ -31,7 +34,7 @@ def main():
         updater.send_update(last_status_message=start_message,
                             expected_count=random.randrange(5, 15))
         success_count = 0
-        for i in range(5):
+        for i in range(num_rows):
             if i == row_to_fail_at:
                 updater.send_update(error_count=1)
                 logging.error(f"Failed on row {i}, exiting!")
@@ -52,8 +55,9 @@ def main():
     finally:
         try:
             updater.shutdown()
-        except:
+        except Exception as ex:
             logging.exception("Can't shutdown updater")
+
 
 if __name__ == '__main__':
     main()
