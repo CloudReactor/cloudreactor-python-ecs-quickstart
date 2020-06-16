@@ -40,7 +40,7 @@ ENV PYTHONFAULTHANDLER 1
 
 ENV PYTHONPATH /home/appuser/src
 
-COPY deploy/files/proc_wrapper_1.2.2.py proc_wrapper.py
+COPY deploy/files/proc_wrapper_1.3.0.py proc_wrapper.py
 
 COPY src ./src
 

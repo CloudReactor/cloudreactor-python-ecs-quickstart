@@ -3,22 +3,22 @@ version: "3.7"
 x-service-base: &service-base
   image: cloudreactor-ecs-quickstart
   build:
-    context: ./  
+    context: ./
   volumes:
     - ./src/:/home/appuser/src/
-    - ./deploy/files/proc_wrapper_1.2.2.py:/home/appuser/proc_wrapper.py
+    - ./deploy/files/proc_wrapper_1.3.0.py:/home/appuser/proc_wrapper.py
     - ./deploy/files/.env.dev:/home/appuser/.env
 
-x-dev-base: &dev-base  
+x-dev-base: &dev-base
   <<: *service-base
-  image:  cloudreactor-ecs-quickstart-dev  
+  image:  cloudreactor-ecs-quickstart-dev
   build:
-    context: ./ 
+    context: ./
     dockerfile: Dockerfile-dev
   volumes:
     - ./src/:/home/appuser/src/
     - ./tests/:/home/appuser/tests/
-    - ./deploy/files/.env.dev:/home/appuser/.env    
+    - ./deploy/files/.env.dev:/home/appuser/.env
 
 x-pip-compile-base: &pip-compile-base
   image: cloudreactor-pip-tools
@@ -36,7 +36,7 @@ services:
   file_io:
     <<: *service-base
     command: python src/file_io.py
-    
+
   web_server:
     <<: *service-base
     command: flask run -p 7070 --host=0.0.0.0
@@ -44,12 +44,12 @@ services:
       FLASK_APP: "src/web_server.py"
     ports:
       - "7070:7070"
-      
+
   # Not a deployed task, here for debugging your Docker build.
   shell:
     <<: *service-base
     command: bash
-     
+
   pytest:
     <<: *dev-base
 
@@ -57,15 +57,15 @@ services:
     <<: *dev-base
     command: pytest --cov=src
 
-  pylint:  
+  pylint:
     <<: *dev-base
     command: pylint --rcfile=src/.pylintrc src
 
-  mypy:  
+  mypy:
     <<: *dev-base
     command: mypy src
-  
-  safety:  
+
+  safety:
     <<: *dev-base
     command: safety check
 
