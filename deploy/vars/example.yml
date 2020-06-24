@@ -28,7 +28,7 @@
 #      role_arn: arn:aws:iam::12345678901:role/myrole
 
 cloudreactor:
-  base_url: https:/api.cloudreactor.io
+  base_url: https://api.cloudreactor.io
   api_key: xxx
   # The name of the Run Environment in CloudReactor. The Run Environment stores
   # AWS settings that apply to all tasks in the deployment environment.
