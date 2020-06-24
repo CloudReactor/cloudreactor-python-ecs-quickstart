@@ -26,19 +26,18 @@ for quality control
 Sound good? OK, let's get started!
 
 ## Prerequisites
+Run the [CloudReactor AWS Setup Wizard](https://github.com/CloudReactor/cloudreactor-aws-setup-wizard).
 
-First, create a (serverless) ECS cluster if you don't have one already. You can use our
-[guide](https://docs.cloudreactor.io/#set-up-a-cluster-in-aws-ecs) to use the AWS console
-to do that, or you may use other methods like 
-[CloudFormation templates](https://github.com/aws-samples/ecs-refarch-cloudformation) 
-or [Terraform templates](https://github.com/turnerlabs/terraform-ecs-fargate).
+This wizard:
+* creates an ECS cluster
+* creates associated VPC, subnets and security groups (or allows you to select existing VPCs, subnets and security groups to use)
+* enables CloudReactor to manage deployed tasks
 
-Next, [give access to CloudReactor](https://github.com/turnerlabs/terraform-ecs-fargate) 
-so it can manage your tasks.
+The wizard enables you to have a working ECS environment in minutes; without it, you would need to set up each of these pieces individually which would be tedious and error-prone.
 
-Finally, if desired, [create a user and role that can be used to deploy
+Finally, if you want to use CloudReactor to manage tasks, [create a user and role that can be used to deploy
 tasks to ECS](https://docs.cloudreactor.io/#prerequisites-aws-user-with-deployment-permissions). 
-Otherwise you may use an administrator user or power user to deploy.
+You can also use an administrator user or power user to deploy.
 See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of the permissions required.
 
 ## Get this project's source code
