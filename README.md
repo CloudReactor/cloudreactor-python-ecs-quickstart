@@ -106,7 +106,7 @@ to `deploy/Dockerfile`.
 
 6) To deploy, in a bash shell, run:
 
-    `./docker_deploy.sh <environment> [task_name]` 
+    `./docker_deploy.sh <environment> [task_names]` 
     
    In a Windows command prompt, run:
    
