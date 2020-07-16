@@ -10,11 +10,15 @@ EXPOSE 7070
 
 WORKDIR /usr/src/app
 
+# Install any OS libraries required to build python libraries
+# For example, libpq-dev is required to build psycopg2
+#RUN apt-get update && apt-get install -y libpq-dev
+
 RUN pip install --no-cache-dir --upgrade pip==20.1.1
 
 COPY requirements.txt .
 
-# install dependencies
+# Install dependencies
 # https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
 RUN pip install --no-cache-dir -r requirements.txt
 
