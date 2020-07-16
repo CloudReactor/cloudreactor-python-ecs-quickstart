@@ -63,6 +63,10 @@ max_manual_start_delay_seconds: {{ task_config.max_manual_start_delay_seconds }}
 
 {% if wrapper.heartbeat_interval_seconds is defined %}
 heartbeat_interval_seconds: {{ wrapper.heartbeat_interval_seconds }}
+{% elif (max_concurrency is not none) and (max_concurrency >= 1) %}
+heartbeat_interval_seconds: 30
+{% else %}
+heartbeat_interval_seconds: 600
 {% endif %}
 
 {% if task_config.max_heartbeat_lateness is defined %}
