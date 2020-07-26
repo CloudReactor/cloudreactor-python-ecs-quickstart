@@ -5,10 +5,9 @@ WORKDIR /usr/src/app
 
 COPY ./dev-requirements.txt .
 
-RUN pip install --no-cache-dir -r dev-requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt -r dev-requirements.txt
 
 USER appuser
 WORKDIR /home/appuser
 
 CMD ["pytest"]
-
