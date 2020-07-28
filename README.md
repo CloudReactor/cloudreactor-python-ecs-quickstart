@@ -36,7 +36,7 @@ This wizard:
 The wizard enables you to have a working ECS environment in minutes; without it, you would need to set up each of these pieces individually which would be tedious and error-prone.
 
 Finally, if you want to use CloudReactor to manage tasks, [create a user and role that can be used to deploy
-tasks to ECS](https://docs.cloudreactor.io/#prerequisites-aws-user-with-deployment-permissions). 
+tasks to ECS](https://docs.cloudreactor.io/#optional-setting-up-a-new-aws-user-with-deployment-permissions). 
 You can also use an administrator user or power user to deploy.
 See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of the permissions required.
 
