@@ -1,6 +1,7 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
-FROM python:3.8.3-slim-buster
+# The one below is based on Debian 10.
+FROM python:3.8.5-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
 
@@ -14,7 +15,7 @@ WORKDIR /usr/src/app
 # For example, libpq-dev is required to build psycopg2
 #RUN apt-get update && apt-get install -y libpq-dev
 
-RUN pip install --no-cache-dir --upgrade pip==20.1.1
+RUN pip install --no-cache-dir --upgrade pip==20.2
 
 COPY requirements.txt .
 
