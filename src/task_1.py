@@ -1,8 +1,15 @@
 #!/usr/local/bin/python
+
+"""
+An example task that shows how to send status updates back to CloudReactor
+using the status_updater module.
+"""
+
 import logging
 import os
-import signal
 import random
+import signal
+import sys
 import time
 from dotenv import load_dotenv
 
@@ -10,14 +17,19 @@ from status_updater import StatusUpdater
 
 
 def signal_handler(signum, frame):
-    # This will cause the exit handler to be executed, if it is registered.
+    """This will cause the exit handler to be executed, if it is registered."""
     raise RuntimeError('Caught SIGTERM, exiting.')
 
 
 def make_start_message(prefix: str) -> str:
+    """A testable function."""
     return prefix + ' sleeping!'
 
 def main():
+    """
+    Iterate over a range of integers, sending status updates periodically.
+    """
+
     load_dotenv()
 
     logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s: %(message)s")
@@ -37,25 +49,25 @@ def main():
         for i in range(num_rows):
             if i == row_to_fail_at:
                 updater.send_update(error_count=1)
-                logging.error(f"Failed on row {i}, exiting!")
-                exit(1)
+                logging.error("Failed on row %i, exiting!", i)
+                sys.exit(1)
             else:
-                print(f"sleeping {i} ...")
+                logging.info("sleeping %i ...", i)
                 time.sleep(2)
                 success_count += random.randrange(1, 10)
 
                 try:
                     updater.send_update(success_count=success_count)
-                except:
+                except Exception:
                     logging.info('Failed to send update')
 
-                print("done sleeping")
+                logging.info("done sleeping")
 
         updater.send_update(last_status_message='woken up')
     finally:
         try:
             updater.shutdown()
-        except Exception as ex:
+        except Exception:
             logging.exception("Can't shutdown updater")
 
 
