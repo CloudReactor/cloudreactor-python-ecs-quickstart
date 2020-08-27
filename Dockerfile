@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 
 # Install any OS libraries required to build python libraries
 # For example, libpq-dev is required to build psycopg2
-#RUN apt-get update && apt-get install -y libpq-dev
+# RUN apt-get update && apt-get install -y libpq-dev build-essential
 
 RUN pip install --no-cache-dir --upgrade pip==20.2
 
