@@ -53,6 +53,11 @@ default_env_task_config: &default_env_task_config {}
 #           - subnet-private-1
 #           - subnet-private-2
 #         assign_public_ip: true
+#       # ARN of ECS Task Role that can give the task access to your AWS resources,
+#       # for example, so that your task can access secrets in Secrets Manager,
+#       # or read or write to files in S3.
+#       # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html
+#       # for instructions on how to create a ECS Task Role.
 #       role_arn: arn:aws:iam::12345678901:role/myrole
 #   alert_methods:
 #     - Some Alert Method

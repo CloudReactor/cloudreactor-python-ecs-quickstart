@@ -56,7 +56,7 @@ For most applications, that is secure enough because [AWS ECR stores images
 encrypted](https://aws.amazon.com/ecr/faqs/) and it is assumed the server
 you deploy from (which builds and caches Docker images) is secure.
 
-Once you figure out which files to encrypte, uncomment the lines in 
+Once you figure out which files to encrypt, uncomment the lines in 
 `.gitignore` that ignore secret files, since you'll be checking them in encrypted.
 
 ### git-crypt
@@ -80,7 +80,7 @@ contains these secret files is compromised, those secrets can be exposed.
 As a best practice, runtime secrets should not be present in the
 Docker images. Instead you can use AWS Secrets Manager to set environment
 variables that the tasks can read during runtime. To do that, add a 
-`secrets` section to the `extra_task_definition_properties`, like this:
+`secrets` section to the `extra_main_container_properties`, like this:
 
     task_name_to_config:
         some_task:
@@ -88,7 +88,7 @@ variables that the tasks can read during runtime. To do that, add a
             # ... other properties here
             ecs:
                # ... other properties here
-               extra_task_definition_properties:
+               extra_main_container_properties:
                  secrets:
                    -name: SOME_SECRET_NAME
                     valueFrom: "arn:aws:ssm:<region>:<aws_account_id>:parameter/parameter_name"

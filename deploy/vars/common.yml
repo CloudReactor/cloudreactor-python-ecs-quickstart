@@ -31,14 +31,17 @@ default_task_config: &default_task_config
     #       - sg_2
     #     assign_public_ip: True
 
-    # Uncomment to additional properties to the top-level ECS task definition:
+    # Uncomment to add properties to the main container:
+    # extra_main_container_properties
+    #   secrets:
+    #     - name: environment_variable_name
+    #       valueFrom: "arn:aws:ssm:region:aws_account_id:parameter/parameter_name"
+
+    # Uncomment to add properties to the top-level ECS task definition:
     # extra_task_definition_properties:
     #   volumes:
     #     - name: "database_scratch"
     #       host: {}
-    #   secrets:
-    #     - name: environment_variable_name
-    #       valueFrom: "arn:aws:ssm:region:aws_account_id:parameter/parameter_name"
 
     # To add extra containers to the task:
     # Extra CPU/memory allocated to the extra containers,
