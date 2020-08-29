@@ -141,8 +141,8 @@ execution_method_capability:
   default_execution_role: {{project_task_ecs.execution_role_arn}}
   {% endif %}
 
-  {% if project_task_ecs.task_role_arn is defined %}
-  default_task_role: {{project_task_ecs.task_role_arn}}
+  {% if project_task_ecs.task.role_arn is defined %}
+  default_task_role: {{project_task.ecs.task.role_arn}}
   {% endif %}
 
   allocated_cpu_units: {{cpu_units}}
