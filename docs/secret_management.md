@@ -91,7 +91,13 @@ variables that the tasks can read during runtime. To do that, add a
                extra_main_container_properties:
                  secrets:
                    -name: SOME_SECRET_NAME
-                    valueFrom: "arn:aws:ssm:<region>:<aws_account_id>:parameter/parameter_name"
+                    valueFrom: "arn:aws:secretsmanager:region:aws_account_id:secret:secret-name:jsonKey"
 
-See `deploy/common.yml` for an example on how to do that.
+This will read the JSON value at `arn:aws:secretsmanager:region:aws_account_id:secret:secret-name`,
+extract value of the top-level key `jsonKey` and put in the environment 
+variable SOME_SECRET_NAME.
 
+[Full details](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/specifying-sensitive-data-secrets.html)
+are available in the AWS documentation. 
+
+See `deploy/example.yml` for an example on how to do that.
