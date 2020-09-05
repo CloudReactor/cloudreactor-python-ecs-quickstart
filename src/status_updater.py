@@ -79,6 +79,14 @@ class StatusUpdater:
 
         atexit.register(_exit_handler, self)
 
+    def __enter__(self):
+        """Implement entrypoint for python with statement."""
+        return self
+
+    def __exit__(self, _type, _value, _traceback):
+        """Implement exit point for python with statement."""
+        self.shutdown()
+
     def send_update(self, success_count=None, error_count=None, skipped_count=None,
                     expected_count=None, last_status_message=None, extra_props=None):
         """

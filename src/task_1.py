@@ -39,9 +39,7 @@ def main():
     num_rows = int(os.environ.get('NUM_ROWS', '5'))
     row_to_fail_at = int(os.environ.get('ROW_TO_FAIL_AT', '-1'))
 
-    updater = StatusUpdater()
-
-    try:
+    with StatusUpdater() as updater:
         start_message = make_start_message('I am')
         updater.send_update(last_status_message=start_message,
                             expected_count=random.randrange(5, 15))
@@ -64,11 +62,6 @@ def main():
                 logging.info("done sleeping")
 
         updater.send_update(last_status_message='woken up')
-    finally:
-        try:
-            updater.shutdown()
-        except Exception:
-            logging.exception("Can't shutdown updater")
 
 
 if __name__ == '__main__':
