@@ -80,3 +80,12 @@ services:
   pip-compile-dev:
     <<: *pip-compile-base
     command: dev-requirements.in --output-file dev-requirements.txt
+
+  # Check your Dockerfile against best-practices:
+  # See https://github.com/hadolint/hadolint
+  hadolint:
+    image: hadolint/hadolint
+    volumes:
+      - ./Dockerfile:/mnt/Dockerfile
+      - ./.hadolint.yaml:/mnt/.hadolint.yaml
+    command: /bin/hadolint --config /mnt/.hadolint.yaml /mnt/Dockerfile
