@@ -19,6 +19,7 @@ x-dev-base: &dev-base
     - ./src/:/home/appuser/src/
     - ./tests/:/home/appuser/tests/
     - ./deploy/files/.env.dev:/home/appuser/.env
+    - ./mypy.ini:/home/appuser/mypy.ini
 
 x-pip-compile-base: &pip-compile-base
   image: cloudreactor-pip-tools

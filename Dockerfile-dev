@@ -10,4 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt -r dev-requirements.txt
 USER appuser
 WORKDIR /home/appuser
 
+COPY ./mypy.ini .
+
 CMD ["pytest"]
