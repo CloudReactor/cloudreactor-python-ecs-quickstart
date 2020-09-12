@@ -6,8 +6,8 @@ FROM python:3.8.5-slim-buster
 LABEL maintainer="jeff@cloudreactor.io"
 
 # For the web-server task example only.
-# If you are not deploying the web-server task you can delete this line.
-EXPOSE 7070
+# If you are deploying the web-server, uncomment this line.
+# EXPOSE 7070
 
 WORKDIR /usr/src/app
 
