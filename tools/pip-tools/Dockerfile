@@ -11,10 +11,12 @@ LABEL maintainer="jeff@cloudreactor.io"
 #  && apt-get install -y libpq-dev=11.7-0+deb10u1 build-essential=12.6 --no-install-recommends \
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade pip==20.2.2
-RUN pip install --no-cache-dir pip-tools==5.3.1 MarkupSafe==1.1.1 requests==2.24.0
+RUN pip install --no-input --no-cache-dir --upgrade pip==20.2.3
+RUN pip install --no-input --no-cache-dir pip-tools==5.3.1 MarkupSafe==1.1.1 requests==2.24.0
 
 WORKDIR /work
 
-ENTRYPOINT [ "pip-compile", "--generate-hashes" ]
+# --allow-unsafe is not actually unsafe:
+# https://lil.law.harvard.edu/blog/2019/05/20/improving-pip-compile-generate-hashes/
+ENTRYPOINT [ "pip-compile", "--allow-unsafe", "--generate-hashes" ]
 CMD ["requirements.in",  "--output-file", "requirements.txt"]
