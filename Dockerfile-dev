@@ -12,4 +12,4 @@ WORKDIR /home/appuser
 
 COPY ./mypy.ini .
 
-CMD ["pytest"]
+ENTRYPOINT ["pytest"]

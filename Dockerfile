@@ -56,4 +56,4 @@ ARG ENV_FILE_PATH=deploy/files/.env.dev
 # copy deployment environment settings
 COPY ${ENV_FILE_PATH} .env
 
-CMD python proc_wrapper.py $TASK_COMMAND
+ENTRYPOINT python proc_wrapper.py $TASK_COMMAND
