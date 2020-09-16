@@ -21,14 +21,6 @@ x-dev-base: &dev-base
     - ./deploy/files/.env.dev:/home/appuser/.env
     - ./mypy.ini:/home/appuser/mypy.ini
 
-x-pip-compile-base: &pip-compile-base
-  image: cloudreactor-pip-tools
-  build:
-    context: ./
-    dockerfile: tools/pip-tools/Dockerfile
-  volumes:
-    - ./:/work
-
 services:
   task_1:
     <<: *service-base
