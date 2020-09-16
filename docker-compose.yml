@@ -74,13 +74,6 @@ services:
     <<: *dev-base
     entrypoint: bash
 
-  pip-compile:
-    <<: *pip-compile-base
-
-  pip-compile-dev:
-    <<: *pip-compile-base
-    command: dev-requirements.in --output-file dev-requirements.txt
-
   # Check your Dockerfile against best-practices:
   # See https://github.com/hadolint/hadolint
   hadolint:

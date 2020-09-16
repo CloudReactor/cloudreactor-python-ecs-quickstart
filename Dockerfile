@@ -18,8 +18,12 @@ WORKDIR /usr/src/app
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-input --no-cache-dir --upgrade pip==20.2.3
+RUN pip install --no-input --no-cache-dir pip-tools==5.3.1 MarkupSafe==1.1.1 requests==2.24.0
 
-COPY requirements.txt .
+COPY requirements.in .
+
+RUN pip-compile --allow-unsafe --generate-hashes \
+  requirements.in --output-file requirements.txt
 
 # Install dependencies
 # https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
