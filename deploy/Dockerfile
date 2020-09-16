@@ -21,7 +21,7 @@ RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debia
 RUN apt-get update
 RUN apt-get -y install docker-ce
 
-RUN pip install c--no-cache-dir --upgrade pip==20.2.3
+RUN pip install --no-input --no-cache-dir --upgrade pip==20.2.3
 
 ADD ./deploy/requirements.txt /tmp/requirements.txt
 
