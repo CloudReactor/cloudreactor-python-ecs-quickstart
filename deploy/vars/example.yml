@@ -40,7 +40,8 @@ cloudreactor:
 
 ## Add task settings that apply to all tasks running in this deployment.
 ## They will override the settings in common.yml.
-## In this example, no settings are overridden so the value is the empty dict ({}).
+## In this example, it gets the API key for CloudReactor from
+## AWS Secrets Manager.
 default_env_task_config: &default_env_task_config
 #   service_instance_count: 2
   ecs:
@@ -62,7 +63,7 @@ default_env_task_config: &default_env_task_config
       # numbers in secret ARNs. If you have a secret value that is a JSON
       # object, you need to parse the JSON value and extract the secrets you
       # need in your task code.
-       secrets: &default_env_secrets
+      secrets: &default_env_secrets
         - name: PROC_WRAPPER_API_KEY
           valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx"
 
