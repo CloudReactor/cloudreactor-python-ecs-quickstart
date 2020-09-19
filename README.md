@@ -94,7 +94,6 @@ to "api_key". This allows you to deploy the task from your local machine using C
 ```
 - name: PROC_WRAPPER_API_KEY
   valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx"
-
 ```
 
 Replace the ARN here with the CloudReactor API key ARN you created in Secrets Manager.
