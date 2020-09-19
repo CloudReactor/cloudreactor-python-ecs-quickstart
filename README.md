@@ -23,6 +23,19 @@ top-level python library dependencies
 for quality control
 * Uses [GitHub Actions](https://github.com/features/actions) for Continuous Integration (CI)
 
+## How it works
+
+This project deploys tasks by doing the following:
+
+1) Build the Docker image and send it to AWS ECR
+2) Create an ECS Task Definition and installs it in ECS
+3) Create or update a CloudReactor Task that is linked to the ECS Task Definition,
+so that it can manage it
+
+The project uses Jinja2 templates to define ECS task definitions in JSON
+and to define CloudReactor Tasks in [YAML](https://yaml.org/). 
+Ansible is the glue that integrates everything together. 
+
 Sound good? OK, let's get started!
 
 ## Prerequisites
@@ -209,10 +222,6 @@ Then to run, say `task_1`, type:
 Docker Compose is setup so that changes in the environment file `deploy/files/.env.dev`
 and the files in `src` will be available without rebuilding the image.
 
-### More development options
-
-See the [development guide](docs/development.md) for instructions on how to debug,
-add dependencies, and run tests and checks.
 
 ## Deploying your own tasks
 
@@ -221,6 +230,15 @@ project. You can add or modify tasks in `deploy/common.yml` to call the commands
 with configuration for the schedule, retry parameters, and environment variables.
 Feel free to delete the tasks that you don't need, just by removing the top level keys
 in `task_name_to_config`.
+
+### More development options
+
+See the [development guide](docs/development.md) for instructions on how to debug,
+add dependencies, and run tests and checks.
+
+To deploy non-python projects, change `deploy/Dockerfile` to have the dependencies
+needed to build your project (JDK, C++ compiler, etc.). Then, if necessary, 
+add a build step to `deploy/deploy.yml` (search for "maven" to see an example).
 
 ## Next steps
 

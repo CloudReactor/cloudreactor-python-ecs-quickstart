@@ -10,7 +10,7 @@ project_url: "https://github.com/CloudReactor/cloudreactor-ecs-quickstart"
 # To manage a setting in the CloudReactor UI, omit the property name and value.
 # To clear a property name and value, using the default value in the Run Environment,
 # set the property value to null.
-default_task_config: &default_task_config
+default_task_config:
   #enabled: true
   #max_concurrency: 1 # null for no concurrency limit
   #max_age_seconds: 7200
@@ -93,7 +93,6 @@ default_task_config: &default_task_config
 task_name_to_config:
   # This task sends status back to CloudReactor as it is running
   task_1:
-    <<: *default_task_config
     description: "This description shows up in CloudReactor dashboard"
     command: "python src/task_1.py"
     schedule: cron(9 15 * * ? *)
@@ -102,7 +101,6 @@ task_name_to_config:
       enable_status_updates: true
   # This task shows how to use the temporary file system provided by ECS
   file_io:
-    <<: *default_task_config
     description: "File I/O"
     command: "python src/file_io.py"
     ecs:
@@ -121,7 +119,6 @@ task_name_to_config:
 # Uncomment to enable web server -- requires an IP target group and
 # load balancer setup in AWS
 #  web_server:
-#    <<: *default_task_config
 #    description: "Web Server"
 #    command: "flask run -p 7070 --host=0.0.0.0"
 #    max_concurrency: null

@@ -1,5 +1,11 @@
 # Troubleshooting
 
+* Incorrect configuration:
+It's possible that you overrode a Task setting during a previous deployment, but 
+later decide to use the default value in the Run Environment. 
+To do that, set the property value to null. If things still aren't working,
+try removing the Task in the CloudReactor website, and re-deploying again.
+
 * If you are using Native Deployment on Mac OS X, and see the message:
 
   Abort trap: 6

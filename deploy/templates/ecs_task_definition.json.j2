@@ -1,6 +1,6 @@
 {% set task_name=item %}{# from 'with_items' in the calling task #}
-{% set common_task_config=task_name_to_config[task_name] | default({}) %}
-{% set env_task_config=task_name_to_env_config[task_name] | default({}) %}
+{% set common_task_config=default_task_config | default({}) | combine(task_name_to_config[task_name] | default({}), recursive=True) %}
+{% set env_task_config=default_env_task_config | default({}) | combine(task_name_to_env_config[task_name] | default({}), recursive=True) %}
 {% set task_config=common_task_config | combine(env_task_config, recursive=True) %}
 {% set service_instance_count=task_config.service_instance_count | default('null') %}
 

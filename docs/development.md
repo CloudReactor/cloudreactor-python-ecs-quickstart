@@ -32,6 +32,9 @@ the Docker image:
 
     docker-compose run --rm shell
 
+Running python commands is typically much faster once in the shell, compared to
+running them individually with docker-compose.
+
 ## Dependency management
 
 This project manages its dependencies with

@@ -42,7 +42,7 @@ cloudreactor:
 ## They will override the settings in common.yml.
 ## In this example, it gets the API key for CloudReactor from
 ## AWS Secrets Manager.
-default_env_task_config: &default_env_task_config
+default_env_task_config:
 #   service_instance_count: 2
   ecs:
     extra_main_container_properties:
@@ -100,16 +100,12 @@ default_env_task_config: &default_env_task_config
 # For any tasks that require overrides vs. common.yml, enter those overrides here.
 # For example, the schedule for task_1 in this deployment differs from the
 # schedule in common.yml.
-# Be sure that any tasks you add here inherit the properties in default_env_task_config,
-# so it will apply to each task.
 task_name_to_env_config:
   task_1:
-    <<: *default_env_task_config
     schedule: cron(9 0 * * ? *)
 # Uncomment to enable web server -- requires an IP target group and
 # load balancer setup in AWS
 #  web_server:
-#    <<: *default_env_task_config
 #    service_instance_count: 2
 #    ecs:
 #      task:
