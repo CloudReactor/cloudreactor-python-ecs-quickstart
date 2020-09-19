@@ -89,8 +89,15 @@ that has deployment permissions, you can leave this file blank.
 `<environment>` is the name of the Run Environment created above (e.g.
 `staging`, `production`)
 4. Open the .yml file you just created, and enter your CloudReactor API key next
-to "api_key"
-5. Build the Docker container that will deploy the project. In a bash shell, run:
+to "api_key". This allows you to deploy the task from your local machine using CloudReactor.
+5. When the task runs in AWS ECS, it'll need your CloudReactor API key also. As a best practice, we'll set up a secret in AWS Secrets Manager to store the CloudReactor API key too -- this will be read when the task runs in AWS. To do this, log into the AWS console and navigate to the AWS Secrets Manager dashboard. Select "Store a new secret". For “Secret Type”, select “Other type of secrets” and “plaintext”. Paste in your CloudReactor API key as the entire field (i.e. no need for newline, braces, quotes etc.). On the next page, for “secret name”, type `CloudReactor/<env_name>/common/cloudreactor_api_key`. Replace `<env_name>` with whatever your CloudReactor Run Environment is called, as just referenced above. Finally, in the same .yml file you created immediately above, scroll down and you'll see this block:
+```
+- name: PROC_WRAPPER_API_KEY
+  valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx"
+```
+    Replace the ARN here with the CloudReactor API key ARN you created in Secrets Manager.
+
+6. Build the Docker container that will deploy the project. In a bash shell, run:
 
     `./docker_build_deployer.sh <environment>`
 
@@ -103,7 +110,7 @@ to "api_key"
 This step is only necessary once, unless you add additional configuration
 to `deploy/Dockerfile`.
 
-6) To deploy, in a bash shell, run:
+7. To deploy, in a bash shell, run:
 
     `./docker_deploy.sh <environment> [task_names]`
 
