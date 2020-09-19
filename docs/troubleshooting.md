@@ -1,5 +1,25 @@
 # Troubleshooting
 
+* When deploying, you see 
+
+    AnsibleFilterError: |combine expects dictionaries, got None"}
+    
+This may be caused by defining a property like a task under `task_name_to_config`
+in `deploy/vars/common.yml`:
+
+    task_name_to_config:
+       some_task:
+       another_task:
+         schedule: cron(9 15 * * ? *) 
+
+`some_task` is missing a dictionary value so the corrected version is:
+
+    task_name_to_config:
+       some_task: {}
+       another_task:
+         schedule: cron(9 15 * * ? *) 
+                      
+
 * Incorrect configuration:
 It's possible that you overrode a Task setting during a previous deployment, but 
 later decide to use the default value in the Run Environment. 
