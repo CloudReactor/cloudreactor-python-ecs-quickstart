@@ -1,2 +1,7 @@
+# App specific requirements
 Flask==1.1.2
 python-dotenv==0.13.0
+
+# Requirements for secrets resolution
+boto3==1.16.56
+jsonpath-ng==1.5.2
