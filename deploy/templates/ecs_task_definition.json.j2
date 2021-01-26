@@ -159,7 +159,7 @@
                 {% if wrapper.status_update_interval_seconds is defined %}
                 {
                     "name" : "PROC_WRAPPER_STATUS_UPDATE_INTERVAL_SECONDS",
-                    "value" : "{{ wrapper.status_update_interval_seconds | default(120) }}"
+                    "value" : "{{ wrapper.status_update_interval_seconds }}"
                 },
                 {% endif %}
                 {

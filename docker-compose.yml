@@ -6,8 +6,10 @@ x-service-base: &service-base
     context: ./
   volumes:
     - ./src/:/home/appuser/src/
-    - ./deploy/files/proc_wrapper_1.3.0.py:/home/appuser/proc_wrapper.py
     - ./deploy/files/.env.dev:/home/appuser/.env
+  environment: &service-env-base
+      PROC_WRAPPER_OFFLINE_MODE: "TRUE"
+      PROC_WRAPPER_LOG_LEVEL: DEBUG
 
 x-dev-base: &dev-base
   <<: *service-base
@@ -20,20 +22,27 @@ x-dev-base: &dev-base
     - ./tests/:/home/appuser/tests/
     - ./deploy/files/.env.dev:/home/appuser/.env
     - ./mypy.ini:/home/appuser/mypy.ini
+  entrypoint: python
 
 services:
   task_1:
     <<: *service-base
-    entrypoint: python src/task_1.py
+    environment:
+      <<: *service-env-base
+      TASK_COMMAND: python src/task_1.py
 
   file_io:
     <<: *service-base
-    entrypoint: python src/file_io.py
+    environment:
+      <<: *service-env-base
+      TASK_COMMAND: python src/file_io.py
 
   web_server:
     <<: *service-base
-    entrypoint: flask run -p 7070 --host=0.0.0.0
     environment:
+      <<: *service-env-base
+      PROC_WRAPPER_TASK_IS_SERVICE: "TRUE"
+      TASK_COMMAND: flask run -p 7070 --host=0.0.0.0
       FLASK_APP: "src/web_server.py"
     ports:
       - "7070:7070"
