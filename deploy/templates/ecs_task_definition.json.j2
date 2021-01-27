@@ -15,10 +15,10 @@
 {% endif %}
 
 {% set max_concurrency=task_config.max_concurrency | default(1) %}
-{% set global_process_version_number=project_version_number | default('null') %}
-{% set process_version_number=task_config.process_version_number | default(global_process_version_number) %}
-{% set global_process_version_text=project_version_text | default('null') %}
-{% set process_version_text=task_config.process_version_text | default(global_process_version_text) %}
+{% set global_task_version_number=project_version_number | default('null') %}
+{% set task_version_number=task_config.task_version_number | default(global_task_version_number) %}
+{% set global_task_version_text=project_version_text | default('null') %}
+{% set task_version_text=task_config.task_version_text | default(global_task_version_text) %}
 {% set wrapper=task_config.wrapper | default({}) %}
 {% set aws_ecs=aws.ecs | default({}) %}
 {% set task_ecs=task_config.ecs | default({}) %}
@@ -108,22 +108,22 @@
                     "value" : "{{ wrapper.process_timeout_seconds | default(-1) }}"
                 },
                 {% endif %}
-                {% if process_version_number != 'null' %}
+                {% if task_version_number != 'null' %}
                 {
                     "name" : "PROC_WRAPPER_TASK_VERSION_NUMBER",
-                    "value" : "{{process_version_number}}"
+                    "value" : "{{task_version_number}}"
                 },
                 {% endif %}
-                {% if process_version_text != 'null' %}
+                {% if task_version_text != 'null' %}
                 {
                     "name" : "PROC_WRAPPER_TASK_VERSION_TEXT",
-                    "value" : {{ process_version_text | to_json }}
+                    "value" : {{ task_version_text | to_json }}
                 },
                 {% endif %}
-                {% if process_version_signature is defined %}
+                {% if task_version_signature is defined %}
                 {
                     "name" : "PROC_WRAPPER_TASK_VERSION_SIGNATURE",
-                    "value" : {{ process_version_signature | to_json }}
+                    "value" : {{ task_version_signature | to_json }}
                 },
                 {% endif %}
                 {% if wrapper.other_instance_metadata is defined %}

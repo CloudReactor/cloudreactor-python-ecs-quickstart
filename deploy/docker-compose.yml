@@ -19,7 +19,7 @@ services:
       - docker_deploy.$DEPLOYMENT_ENVIRONMENT.env
     environment:
       - DEPLOYMENT_ENVIRONMENT
-      - CLOUDREACTOR_PROCESS_VERSION_SIGNATURE
+      - CLOUDREACTOR_TASK_VERSION_SIGNATURE
       # Uncomment these to pass them from your host's environment to the deployer container.
       # They will take precedence over the values in .env files.
       # - AWS_ACCESS_KEY_ID
@@ -28,6 +28,6 @@ services:
       # - AWS_CA_BUNDLE
       # - AWS_CONFIG_FILE
       # - AWS_PROFILE
-      # - AWS_SESSION_TOKEN      
+      # - AWS_SESSION_TOKEN
       # - AWS_SHARED_CREDENTIALS_FILE
-      # - AWS_ROLE_SESSION_NAME  
+      # - AWS_ROLE_SESSION_NAME

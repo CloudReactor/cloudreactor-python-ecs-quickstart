@@ -11,8 +11,8 @@
     env_task_name_to_config: "{{ task_name_to_env_config | default({}) }}"
     resolved_task_name_to_config: "{{ task_name_to_config | combine(env_task_name_to_config, recursive=True) }}"
     resolved_task_names: "{{ (resolved_task_name_to_config.keys() | list) if (task_names | upper) == 'ALL' else task_names.split(',') }}"
-    process_version_signature: "{{ lookup('env','CLOUDREACTOR_PROCESS_VERSION_SIGNATURE') | default(git_hash_cmd_result.stdout, true) }}"
-    docker_image_name: "{{project_name}}:{{env}}_{{process_version_signature}}"
+    task_version_signature: "{{ lookup('env','CLOUDREACTOR_TASK_VERSION_SIGNATURE') | default(git_hash_cmd_result.stdout, true) }}"
+    docker_image_name: "{{project_name}}:{{env}}_{{task_version_signature}}"
     run_environment_name: "{{ cloudreactor.run_environment | default(env) }}"
     run_environment: "{{ run_environment_result.json.results[0] }}"
     run_environment_exec_method: "{{ run_environment.execution_method_capabilities | selectattr('type', 'equalto', 'AWS ECS') | first }}"
@@ -25,14 +25,14 @@
   - name: Compute git hash
     command: "git rev-parse HEAD"
     register: git_hash_cmd_result
-    when: lookup('env', 'CLOUDREACTOR_PROCESS_VERSION_SIGNATURE') == ''
+    when: lookup('env', 'CLOUDREACTOR_TASK_VERSION_SIGNATURE') == ''
     tags:
       - version
       - build
       - upload
       - create_tasks
 
-  - debug: msg="Process version signature is {{ process_version_signature }}"
+  - debug: msg="Process version signature is {{ task_version_signature }}"
     tags:
       - version
       - build
