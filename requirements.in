@@ -1,5 +1,6 @@
 # App specific requirements
 Flask==1.1.2
+cloudreactor-procwrapper==2.0.0rc1
 python-dotenv==0.13.0
 
 # Requirements for secrets resolution
