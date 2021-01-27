@@ -83,11 +83,11 @@
                     "value" : "{{ wrapper.log_level | default('DEBUG') | upper }}"
                 },
                 {
-                    "name" : "PROC_WRAPPER_PROCESS_TYPE_NAME",
+                    "name" : "PROC_WRAPPER_TASK_NAME",
                     "value" : {{ (project_name + '_' +  task_name + '_' + env) | to_json }}
                 },
                 {
-                    "name" : "PROC_WRAPPER_PROCESS_IS_SERVICE",
+                    "name" : "PROC_WRAPPER_TASK_IS_SERVICE",
                     "value" : "{{ is_service | string | upper }}"
                 },
                 {
@@ -128,7 +128,7 @@
                 {% endif %}
                 {% if wrapper.other_instance_metadata is defined %}
                 {
-                    "name" : "PROC_WRAPPER_PROCESS_INSTANCE_METADATA",
+                    "name" : "PROC_WRAPPER_TASK_INSTANCE_METADATA",
                     "value" : {{ wrapper.other_instance_metadata | to_json | to_json }}
                 },
                 {% endif %}
