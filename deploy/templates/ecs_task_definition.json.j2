@@ -110,19 +110,19 @@
                 {% endif %}
                 {% if process_version_number != 'null' %}
                 {
-                    "name" : "PROC_WRAPPER_PROCESS_VERSION_NUMBER",
+                    "name" : "PROC_WRAPPER_TASK_VERSION_NUMBER",
                     "value" : "{{process_version_number}}"
                 },
                 {% endif %}
                 {% if process_version_text != 'null' %}
                 {
-                    "name" : "PROC_WRAPPER_PROCESS_VERSION_TEXT",
+                    "name" : "PROC_WRAPPER_TASK_VERSION_TEXT",
                     "value" : {{ process_version_text | to_json }}
                 },
                 {% endif %}
                 {% if process_version_signature is defined %}
                 {
-                    "name" : "PROC_WRAPPER_PROCESS_VERSION_SIGNATURE",
+                    "name" : "PROC_WRAPPER_TASK_VERSION_SIGNATURE",
                     "value" : {{ process_version_signature | to_json }}
                 },
                 {% endif %}
