@@ -1,7 +1,8 @@
 # App specific requirements
-Flask==1.1.2
-cloudreactor-procwrapper==2.0.0rc1
+cloudreactor-procwrapper==2.0.0rc2
 python-dotenv==0.13.0
+# For the web_server task example, remove if not deploying
+Flask==1.1.2
 
 # Requirements for secrets resolution
 boto3==1.16.56
