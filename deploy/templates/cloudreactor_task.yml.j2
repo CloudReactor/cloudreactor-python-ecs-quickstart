@@ -30,6 +30,7 @@
 {% set security_groups=project_task_ecs.task.network.security_groups | default(project_aws_security_groups) %}
 
 {% set alert_methods=task_config.alert_methods | default('inherit') %}
+{% set links=task_config.links | default('inherit') %}
 
 {# This should be the awslogs-group in ecs_task_definition.json #}
 {% set log_query="/aws/fargate/" + project_name + "-" + env + "-" + task_name %}
@@ -62,12 +63,12 @@ project_url: "{{project_url}}"
 max_manual_start_delay_seconds: {{ task_config.max_manual_start_delay_seconds }}
 {% endif %}
 
-{% if wrapper.heartbeat_interval_seconds is defined %}
-heartbeat_interval_seconds: {{ wrapper.heartbeat_interval_seconds }}
+{% if wrapper.api_heartbeat_interval_seconds is defined %}
+api_heartbeat_interval_seconds: {{ wrapper.api_heartbeat_interval_seconds }}
 {% elif (max_concurrency is not none) and (max_concurrency >= 1) %}
-heartbeat_interval_seconds: 30
+api_heartbeat_interval_seconds: 30
 {% else %}
-heartbeat_interval_seconds: 600
+api_heartbeat_interval_seconds: 600
 {% endif %}
 
 {% if task_config.max_heartbeat_lateness is defined %}
@@ -93,10 +94,6 @@ min_service_instance_count: {{ task_config.min_service_instance_count }}
 {% endif %}
 
 max_age_seconds: {% if service_instance_count == 'null' %}{{task_config.max_age_seconds | default('3600') }}{% else %}null{% endif %}
-
-{% if wrapper.max_retries is defined %}
-default_max_retries: {{wrapper.max_retries}}
-{% endif %}
 
 run_environment:
   name: "{{ task_config.run_environment | default(run_environment_name) }}"
@@ -169,6 +166,8 @@ execution_method_capability:
     {% endif %}
   {% endif %}
 
+log_query: "{{log_query}}"
+
 {% if alert_methods != 'inherit' %}
   {% if alert_methods is none %}
 alert_methods: null
@@ -182,16 +181,22 @@ alert_methods: []
   {% endif %}
 {% endif %}
 
-{# Uncomment to add links #}
-# links:
-#  - name: Rollbar
-#    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
-#    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
-#  - name: SumoLogic
-#    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
-#    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
-#    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
-#    icon_url: "https://www.sumologic.com/favicon.ico"
-#    description: "{{log_query}}"
-
-log_query: "{{log_query}}"
+{% if links != 'inherit' %}
+  {% if links is none %}
+links: null
+  {% elif links[0] is defined %}
+links:
+    {% for link in links %}
+  - name: "{{link.name}}"
+    link_url_template: "{{link.link_url_template}}"
+    {% if link.icon_url is defined %}
+    icon_url: "{{link.icon_url}}"
+    {% endif %}
+    {% if link.description is defined %}
+    description: "{{link.description}}"
+    {% endif %}
+    {% endfor %}
+  {% else %}
+links: []
+  {% endif %}
+{% endif %}

@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 #  && apt-get install -y libpq-dev=11.7-0+deb10u1 build-essential=12.6 --no-install-recommends \
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-input --no-cache-dir --upgrade pip==21.0
+RUN pip install --no-input --no-cache-dir --upgrade pip==21.0.1
 RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.24.0
 
 COPY requirements.in .

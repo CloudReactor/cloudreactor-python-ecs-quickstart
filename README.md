@@ -33,8 +33,8 @@ This project deploys tasks by doing the following:
 so that it can manage it
 
 The project uses Jinja2 templates to define ECS task definitions in JSON
-and to define CloudReactor Tasks in [YAML](https://yaml.org/). 
-Ansible is the glue that integrates everything together. 
+and to define CloudReactor Tasks in [YAML](https://yaml.org/).
+Ansible is the glue that integrates everything together.
 
 Sound good? OK, let's get started!
 
@@ -102,7 +102,7 @@ that has deployment permissions, you can leave this file blank.
 `<environment>` is the name of the Run Environment created above (e.g.
 `staging`, `production`)
 4. Open the .yml file you just created, and enter your CloudReactor API key next
-to "api_key". This allows you to deploy the task from your local machine using CloudReactor.
+to "deploy_api_key". This allows you to deploy the task from your local machine using CloudReactor.
 5. When the task runs in AWS ECS, it'll need your CloudReactor API key also. As a best practice, we'll set up a secret in AWS Secrets Manager to store the CloudReactor API key too -- this will be read when the task runs in AWS. To do this, log into the AWS console and navigate to the AWS Secrets Manager dashboard. Select "Store a new secret". For “Secret Type”, select “Other type of secrets” and “plaintext”. Paste in your CloudReactor API key as the entire field (i.e. no need for newline, braces, quotes etc.). On the next page, for “secret name”, type `CloudReactor/<env_name>/common/cloudreactor_api_key`. Replace `<env_name>` with whatever your CloudReactor Run Environment is called, as just referenced above. Finally, in the same .yml file you created immediately above, scroll down and you'll see this block:
 ```
 - name: PROC_WRAPPER_API_KEY
@@ -245,7 +245,7 @@ See the [development guide](docs/development.md) for instructions on how to debu
 add dependencies, and run tests and checks.
 
 To deploy non-python projects, change `deploy/Dockerfile` to have the dependencies
-needed to build your project (JDK, C++ compiler, etc.). Then, if necessary, 
+needed to build your project (JDK, C++ compiler, etc.). Then, if necessary,
 add a build step to `deploy/deploy.yml` (search for "maven" to see an example).
 
 ## Next steps

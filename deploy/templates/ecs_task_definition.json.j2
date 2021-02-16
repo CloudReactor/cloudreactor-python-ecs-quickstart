@@ -1,3 +1,36 @@
+{% macro default_formatter(v) -%}
+  {% if v is boolean -%}
+  "{{ v | string | upper }}"
+  {%- else -%}
+  {{ v | string | to_json }}
+  {%- endif %}
+{%- endmacro %}
+
+{% macro env_def(obj, name, maybe_secret=false, env_name='',
+  formatter=default_formatter) -%}
+  {%- if (obj[name] is defined) and (obj[name] != 'null') -%}
+    {%- set v = obj[name] -%}
+    {%- set is_aws_sm_secret = maybe_secret and (v is string) and v.startswith('arn:aws:secretsmanager:') -%}
+    {%- if env_name == '' -%}
+      {%- if is_aws_sm_secret -%}
+        {%- set resolved_env_name = 'AWS_SM_PROC_WRAPPER_' + name.upper() + '_FOR_PROC_WRAPPER_TO_RESOLVE' %}
+      {%- else -%}
+        {%- set resolved_env_name = 'PROC_WRAPPER_' + name.upper() %}
+      {%- endif -%}
+    {%- else -%}
+      {%- if is_aws_sm_secret -%}
+        {%- set resolved_env_name =  'AWS_SM_' + env_name + '_FOR_PROC_WRAPPER_TO_RESOLVE' %}
+      {%- else -%}
+        {%- set resolved_env_name = env_name %}
+      {%- endif -%}
+    {%- endif -%}
+    {
+      "name": "{{ resolved_env_name }}",
+      "value" : {%+ if formatter == 'caller' %}{{ caller(v) }}{%+ else %}{{ formatter(v) }}{% endif %}
+    },
+  {%- endif -%}
+{%- endmacro %}
+
 {% set task_name=item %}{# from 'with_items' in the calling task #}
 {% set common_task_config=default_task_config | default({}) | combine(task_name_to_config[task_name] | default({}), recursive=True) %}
 {% set env_task_config=default_env_task_config | default({}) | combine(task_name_to_env_config[task_name] | default({}), recursive=True) %}
@@ -62,10 +95,6 @@
                 }
             },
             "environment": [
-                {
-                    "name" : "TASK_COMMAND",
-                    "value" : {{ task_config.command | to_json }}
-                },
                 {% for name, value in environment_variables.items() %}
                   {% if value is defined and value | string | length %}
                 {
@@ -74,13 +103,18 @@
                 },
                   {% endif %}
                 {% endfor %}
+                {{ env_def(cloudreactor, 'api_base_url') }}
+                {# Only puts PROC_WRAPPER_API_KEY in your environment if
+                   cloudreactor.task_api_key is defined. Leave it undefined if you
+                   plan on getting it from AWS Secrets Manager through the
+                   ECS Task Execution role (where AWS injects the environment).
+                   The API key can also be a AWS Secrets Manager ARN which the proc_wrapper
+                   module will fetch at runtime.
+                #}
+                {{ env_def(cloudreactor, 'task_api_key', true, 'PROC_WRAPPER_API_KEY') }}
                 {
                     "name" : "PROC_WRAPPER_DEPLOYMENT",
                     "value" : {{ env | to_json }}
-                },
-                {
-                    "name" : "PROC_WRAPPER_LOG_LEVEL",
-                    "value" : "{{ wrapper.log_level | default('DEBUG') | upper }}"
                 },
                 {
                     "name" : "PROC_WRAPPER_TASK_NAME",
@@ -94,14 +128,12 @@
                     "name" : "PROC_WRAPPER_MAX_CONCURRENCY",
                     "value" : "{% if max_concurrency is number %}{{ max_concurrency }}{% else %}-1{% endif %}"
                 },
-                {
-                    "name" : "PROC_WRAPPER_PROCESS_MAX_RETRIES",
-                    "value" : "{{ wrapper.max_retries | default(0) }}"
-                },
-                {
-                    "name" : "PROC_WRAPPER_PROCESS_RETRY_DELAY_SECONDS",
-                    "value" : "{{ wrapper.retry_delay_seconds | default(60) }}"
-                },
+                {{ env_def(wrapper, 'offline_mode') }}
+                {{ env_def(wrapper, 'prevent_offline_execution') }}
+                {{ env_def(wrapper, 'process_max_retries') }}
+                {{ env_def(wrapper, 'process_retry_delay_seconds') }}
+                {{ env_def(wrapper, 'process_check_interval') }}
+                {{ env_def(wrapper, 'process_termination_grace_period_seconds') }}
                 {% if service_instance_count == 'null' %}
                 {
                     "name" : "PROC_WRAPPER_PROCESS_TIMEOUT_SECONDS",
@@ -132,39 +164,37 @@
                     "value" : {{ wrapper.other_instance_metadata | to_json | to_json }}
                 },
                 {% endif %}
-                {
-                    "name" : "PROC_WRAPPER_API_BASE_URL",
-                    "value" : {{ cloudreactor.base_url | to_json }}
-                },
-                {# Uncomment if you want to store the API key in the task definition
-                   instead of Secrets Manager
-                {
-                    "name" : "PROC_WRAPPER_API_KEY",
-                    "value" : {{ cloudreactor.api_key | to_json }}
-                },
+                {{ env_def(wrapper, 'send_pid') }}
+                {{ env_def(wrapper, 'send_hostname') }}
+                {{ env_def(wrapper, 'send_runtime_metadata') }}
+                {{ env_def(wrapper, 'api_heartbeat_interval_seconds') }}
+                {{ env_def(wrapper, 'api_error_timeout_seconds') }}
+                {{ env_def(wrapper, 'api_retry_delay_seconds') }}
+                {{ env_def(wrapper, 'api_resume_delay_seconds') }}
+                {{ env_def(wrapper, 'api_task_execution_creation_error_timeout_seconds') }}
+                {{ env_def(wrapper, 'api_task_execution_creation_conflict_timeout_seconds') }}
+                {{ env_def(wrapper, 'api_task_execution_creation_conflict_retry_delay_seconds') }}
+                {{ env_def(wrapper, 'api_final_update_timeout_seconds') }}
+                {{ env_def(wrapper, 'api_request_timeout_seconds') }}
+                {{ env_def(wrapper, 'enable_status_update_listener') }}
+                {{ env_def(wrapper, 'status_update_interval_seconds') }}
+                {{ env_def(wrapper, 'status_update_socket_port') }}
+                {{ env_def(wrapper, 'log_level') }}
+                {{ env_def(wrapper, 'log_secrets') }}
+                {# Only puts PROC_WRAPPER_ROLLBAR_ACCESS_TOKEN in your environment if
+                   cloudreactor.rollbar_access_token is defined. The value may be a
+                   AWS Secrets Manager ARN which will be fetched by the
+                   proc_wrapper module at runtime.
                 #}
+                {{ env_def(wrapper, 'rollbar_access_token', true) }}
+                {{ env_def(wrapper, 'rollbar_retries') }}
+                {{ env_def(wrapper, 'rollbar_retry_delay_seconds') }}
+                {{ env_def(wrapper, 'rollbar_timeout_seconds') }}
+                {{ env_def(task_config, 'work_dir') }}
+                {# This is last because it is required so it definitely does not end with a comma #}
                 {
-                    "name" : "PROC_WRAPPER_API_HEARTBEAT_INTERVAL_SECONDS",
-                    "value" : "{{ wrapper.heartbeat_interval_seconds | default(300) }}"
-                },
-                {# Uncomment if you want to store the Rollbar access token in the task definition
-                   instead of Secrets Manager
-                {% if wrapper.rollbar_access_token is defined %}
-                {
-                    "name" : "PROC_WRAPPER_ROLLBAR_ACCESS_TOKEN",
-                    "value" : {{ wrapper.rollbar_access_token | to_json }}
-                },
-                {% endif %}
-                #}
-                {% if wrapper.status_update_interval_seconds is defined %}
-                {
-                    "name" : "PROC_WRAPPER_STATUS_UPDATE_INTERVAL_SECONDS",
-                    "value" : "{{ wrapper.status_update_interval_seconds }}"
-                },
-                {% endif %}
-                {
-                    "name" : "PROC_WRAPPER_ENABLE_STATUS_UPDATE_LISTENER",
-                    "value" : "{{ wrapper.enable_status_updates | default('FALSE') | upper }}"
+                    "name" : "TASK_COMMAND",
+                    "value" : {{ task_config.command | to_json }}
                 }
             ]
 

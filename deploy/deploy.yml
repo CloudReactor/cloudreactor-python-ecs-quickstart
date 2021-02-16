@@ -32,7 +32,7 @@
       - upload
       - create_tasks
 
-  - debug: msg="Process version signature is {{ task_version_signature }}"
+  - debug: msg="Task version signature is {{ task_version_signature }}"
     tags:
       - version
       - build
@@ -41,10 +41,10 @@
 
   - name: Get configuration from CloudReactor Run Environment
     uri:
-      url: "{{ cloudreactor.base_url }}/api/v1/run_environments/?name={{ run_environment_name | urlencode }}"
+      url: "{{ cloudreactor.api_base_url }}/api/v1/run_environments/?name={{ run_environment_name | urlencode }}"
       headers:
         Accept: "application/json"
-        Authorization: "Token {{cloudreactor.api_key}}"
+        Authorization: "Token {{cloudreactor.deploy_api_key}}"
       return_content: yes
     register: run_environment_result
     tags:

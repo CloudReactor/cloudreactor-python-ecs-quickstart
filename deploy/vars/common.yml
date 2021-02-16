@@ -67,24 +67,60 @@ default_task_config:
     #      - protocol: tcp
 
   wrapper: &default_task_wrapper
-    max_retries: 1
-    heartbeat_interval_seconds: 120
-    enable_status_updates: True
-    status_update_interval_seconds: 60
-    # process_max_retries: 1
-    # process_timeout_seconds: 3600
-    # This data is sent back from the wrapper to CloudReactor when it starts.
-    # It may be used to identify properties about instance of the task that is
-    # running.
+    #work_dir: .
+    process_timeout_seconds: 10
+    process_max_retries: 1
+    #process_retry_delay_seconds: 120
+    #process_timeout_seconds: null
+    #process_check_interval: 10
+    #process_termination_grace_period: 30
+    ## process_max_retries: 1
+    ## This data is sent back from the wrapper to CloudReactor when it starts.
+    ## It may be used to identify properties about instance of the task that is
+    ## running.
     # other_instance_metadata:
     #   a: 'b'
     #   embedded:
     #     c: 'd'
     #     f: 1
+    # send_pid: True
+    # send_hostname: True
+    # send_runtime_metadata: True
+    # api_heartbeat_interval_seconds: 120
+    # api_error_timeout_seconds: 300
+    # api_retry_delay_seconds: 120
+    # api_resume_delay_seconds: 300
+    # api_task_execution_creation_error_timeout_seconds: 300
+    # api_task_execution_creation_conflict_timeout_seconds: 300
+    # api_task_execution_creation_conflict_retry_delay_seconds: 300
+    # api_final_update_timeout_seconds: 300
+    # api_request_timeout_seconds: 300
+    enable_status_update_listener: True
+    # status_update_interval_seconds: 60
+    # status_update_socket_port: 2373
+    # log_level: DEBUG
+    # log_secrets: False
+    # Optional Rollbar token used by the wrapper script.
+    # Can point to AWS Secrets Manager, or be the access token itself.
+    # rollbar_access_token: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/rollbar_access_token-xxx"
+    # rollbar_retries: 2
+    # rollbar_retry_delay_seconds: 120
+    # rollbar_timeout_seconds: 30
+
   env: &default_task_env
     DEPLOYMENT: "{{env}}"
   # alert_methods:
   #   - Alert Method 1
+  # links:
+  #  - name: Rollbar
+  #    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
+  #    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
+  #  - name: SumoLogic
+  #    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
+  #    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
+  #    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
+  #    icon_url: "https://www.sumologic.com/favicon.ico"
+  #    description: "{{log_query}}"
 
 # These are per-task settings that will inherit and override the settings in
 # default_task_config, in all environments.
@@ -98,7 +134,7 @@ task_name_to_config:
     schedule: cron(9 15 * * ? *)
     wrapper:
       <<: *default_task_wrapper
-      enable_status_updates: true
+      enable_status_update_listener: true
   # This task shows how to use the temporary file system provided by ECS
   file_io:
     description: "File I/O"
