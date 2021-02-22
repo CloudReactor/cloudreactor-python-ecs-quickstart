@@ -67,7 +67,11 @@ default_task_config:
     #      - protocol: tcp
 
   wrapper: &default_task_wrapper
+    ## Working directory to execute command in
     #work_dir: .
+    ## Enable/disable secret resolution (fetching from Secrets Manager and
+    ## JSON path splitting)
+    resolve_secrets: True
     process_timeout_seconds: 600
     process_max_retries: 1
     #process_retry_delay_seconds: 120
@@ -109,6 +113,7 @@ default_task_config:
 
   env: &default_task_env
     DEPLOYMENT: "{{env}}"
+
   # alert_methods:
   #   - Alert Method 1
   # links:
