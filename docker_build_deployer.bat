@@ -1,7 +1,5 @@
 @ECHO OFF
 
-CALL deploy\helpers\docker_deploy_common.bat %1
+CALL deploy\helpers\docker_deploy_common.bat dev
 
-IF %ERRORLEVEL% == 0 (
-  docker-compose -f deploy\docker-compose.yml build deployer
-)
+docker-compose -f deploy\docker-compose.yml build deployer
