@@ -53,11 +53,11 @@ ENV PYTHONPATH /home/appuser/src
 
 COPY deploy/files/proc_wrapper_1.3.0.py proc_wrapper.py
 
-COPY src ./src
+COPY --chown=appuser:appuser src ./src
 
 ARG ENV_FILE_PATH=deploy/files/.env.dev
 
 # copy deployment environment settings
-COPY ${ENV_FILE_PATH} .env
+COPY --chown=appuser:appuser ${ENV_FILE_PATH} .env
 
 ENTRYPOINT python proc_wrapper.py $TASK_COMMAND
