@@ -1,2 +1,9 @@
-Flask==1.1.2
+# App specific requirements
+cloudreactor-procwrapper==2.0.0
 python-dotenv==0.13.0
+# For the web_server task example, remove if not deploying
+Flask==1.1.2
+
+# Requirements for secrets resolution
+boto3==1.16.56
+jsonpath-ng==1.5.2

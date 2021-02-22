@@ -1,4 +1,4 @@
-FROM python:3.8.5
+FROM python:3.9.2
 
 WORKDIR /work
 
@@ -21,10 +21,14 @@ RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/debia
 RUN apt-get update
 RUN apt-get -y install docker-ce
 
-RUN pip install --no-input --no-cache-dir --upgrade pip==20.2.3
+RUN pip install --no-input --no-cache-dir --upgrade pip==21.0.1 pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.24.0
 
-ADD ./deploy/requirements.txt /tmp/requirements.txt
+COPY ./deploy/requirements.in /tmp/requirements.in
 
+RUN pip-compile --allow-unsafe --generate-hashes \
+  /tmp/requirements.in --output-file /tmp/requirements.txt
+
+# Install dependencies
 # https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
 RUN pip install --no-input --no-cache-dir -r /tmp/requirements.txt
 

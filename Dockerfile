@@ -1,13 +1,9 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
 # The one below is based on Debian 10.
-FROM python:3.8.5-slim-buster
+FROM python:3.9.2-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
-
-# For the web-server task example only.
-# If you are deploying the web-server, uncomment this line.
-# EXPOSE 7070
 
 WORKDIR /usr/src/app
 
@@ -17,8 +13,8 @@ WORKDIR /usr/src/app
 #  && apt-get install -y libpq-dev=11.7-0+deb10u1 build-essential=12.6 --no-install-recommends \
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-input --no-cache-dir --upgrade pip==20.2.3
-RUN pip install --no-input --no-cache-dir pip-tools==5.3.1 MarkupSafe==1.1.1 requests==2.24.0
+RUN pip install --no-input --no-cache-dir --upgrade pip==21.0.1
+RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.24.0
 
 COPY requirements.in .
 
@@ -51,8 +47,6 @@ ENV PYTHONFAULTHANDLER 1
 
 ENV PYTHONPATH /home/appuser/src
 
-COPY deploy/files/proc_wrapper_1.3.0.py proc_wrapper.py
-
 COPY --chown=appuser:appuser src ./src
 
 ARG ENV_FILE_PATH=deploy/files/.env.dev
@@ -60,4 +54,8 @@ ARG ENV_FILE_PATH=deploy/files/.env.dev
 # copy deployment environment settings
 COPY --chown=appuser:appuser ${ENV_FILE_PATH} .env
 
-ENTRYPOINT python proc_wrapper.py $TASK_COMMAND
+# For the web-server task example only.
+# If you are not deploying the web-server, you can comment out this line.
+EXPOSE 7070
+
+ENTRYPOINT python -m proc_wrapper $TASK_COMMAND

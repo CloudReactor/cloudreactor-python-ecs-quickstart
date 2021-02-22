@@ -2,7 +2,7 @@
 
 """
 An example task that shows how to send status updates back to CloudReactor
-using the status_updater module.
+using the StatusUpdater class.
 """
 
 import logging
@@ -13,7 +13,7 @@ import sys
 import time
 from dotenv import load_dotenv
 
-from status_updater import StatusUpdater
+from proc_wrapper import StatusUpdater
 
 
 def signal_handler(signum, frame):
@@ -44,7 +44,7 @@ def main():
     num_rows = int(os.environ.get('NUM_ROWS', '5'))
     row_to_fail_at = int(os.environ.get('ROW_TO_FAIL_AT', '-1'))
 
-    with StatusUpdater(logger=logger) as updater:
+    with StatusUpdater() as updater:
         start_message = make_start_message('I am')
         updater.send_update(last_status_message=start_message,
                             expected_count=random.randrange(5, 15))

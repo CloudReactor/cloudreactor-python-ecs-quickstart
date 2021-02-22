@@ -48,10 +48,10 @@
 
 - name: Create/update task in CloudReactor
   uri:
-    url: "{{ cloudreactor.base_url }}/api/v1/process_types/"
+    url: "{{ cloudreactor.api_base_url }}/api/v1/tasks/"
     method: POST
     headers:
-      Authorization: "Token {{cloudreactor.api_key}}"
+      Authorization: "Token {{cloudreactor.deploy_api_key}}"
     return_content: yes
     body: "{{ cloudreactor_task | to_json }}"
     body_format: json

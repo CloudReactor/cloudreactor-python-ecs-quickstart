@@ -29,8 +29,22 @@
 #      role_arn: arn:aws:iam::12345678901:role/myrole
 
 cloudreactor:
-  base_url: https://api.cloudreactor.io
-  api_key: xxx
+  api_base_url: https://api.cloudreactor.io
+
+  # Required: the API key used to deploy the Tasks.
+  # The key must have Developer access level or above and be scoped to the
+  # Run Environment you are deploying to, or be unscoped.
+  deploy_api_key: xxx
+
+  # You can also specify the API key used by your Task.
+  # The key must of Task access level or above  and be scoped to the
+  # Run Environment you are deploying to, or be unscoped.
+  ## task_api_key: yyy
+
+  # Alternatively, the proc_wrapper module can fetch the API key from
+  # AWS Secrets Manager at runtime (using the Task Role to gain access):
+  ## task_api_key: arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:app/example/cloudreactor_api_key-xxx"
+
   ## The name of the Run Environment in CloudReactor. The Run Environment stores
   ## AWS settings that apply to all tasks in the deployment environment.
   ## It defaults to the name of the deployment environment you pass in via
@@ -58,18 +72,9 @@ default_env_task_config:
       # ran the AWS ECS Setup Wizard from CloudReactor).
       #
       # You can put secrets there to be shared with all Tasks in the Run Environment.
-      #
-      # Also note that ECS Fargate does not yet support JSON keys or version
-      # numbers in secret ARNs. If you have a secret value that is a JSON
-      # object, you need to parse the JSON value and extract the secrets you
-      # need in your task code.
       secrets: &default_env_secrets
         - name: PROC_WRAPPER_API_KEY
           valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx"
-
-        # Optional Rollbar token used by the wrapper script
-        #- name: PROC_WRAPPER_ROLLBAR_ACCESS_TOKEN
-        #  valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/rollbar_access_token-xxx"
 
 #     execution_role_arn:
 #     task:
@@ -121,6 +126,6 @@ task_name_to_env_config:
 #            container_port: 7070
 #      extra_main_container_properties:
 #        portMappings:
-#          - hostPort: 3000
-#            containerPort: 3000
+#          - hostPort: 7070
+#            containerPort: 7070
 #            protocol: tcp

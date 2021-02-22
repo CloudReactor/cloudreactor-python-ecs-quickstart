@@ -17,10 +17,10 @@ if not exist %VAR_FILENAME% (
 )
 
 git rev-parse HEAD > commit_hash.txt
-set /p CLOUDREACTOR_PROCESS_VERSION_SIGNATURE= < commit_hash.txt
+set /p CLOUDREACTOR_TASK_VERSION_SIGNATURE= < commit_hash.txt
 del commit_hash.txt
 
-echo CLOUDREACTOR_PROCESS_VERSION_SIGNATURE = %CLOUDREACTOR_PROCESS_VERSION_SIGNATURE%
+echo CLOUDREACTOR_TASK_VERSION_SIGNATURE = %CLOUDREACTOR_TASK_VERSION_SIGNATURE%
 
 type nul >> deploy\docker_deploy.env
 type nul >> "deploy\docker_deploy.%DEPLOYMENT_ENVIRONMENT%.env"
