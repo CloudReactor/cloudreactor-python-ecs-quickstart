@@ -47,12 +47,12 @@ ENV PYTHONFAULTHANDLER 1
 
 ENV PYTHONPATH /home/appuser/src
 
-COPY src ./src
+COPY --chown=appuser:appuser src ./src
 
 ARG ENV_FILE_PATH=deploy/files/.env.dev
 
 # copy deployment environment settings
-COPY ${ENV_FILE_PATH} .env
+COPY --chown=appuser:appuser ${ENV_FILE_PATH} .env
 
 # For the web-server task example only.
 # If you are deploying the web-server, uncomment this line.
