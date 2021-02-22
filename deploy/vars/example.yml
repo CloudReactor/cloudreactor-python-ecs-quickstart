@@ -119,3 +119,8 @@ task_name_to_env_config:
 #        load_balancers:
 #          - target_group_arn: arn:aws:elasticloadbalancing:us-west-1:xxx:targetgroup/example-web/xxx
 #            container_port: 7070
+#      extra_main_container_properties:
+#        portMappings:
+#          - hostPort: 3000
+#            containerPort: 3000
+#            protocol: tcp
