@@ -140,6 +140,8 @@ disable=print-statement,
         exception-escape,
         comprehension-escape,
         broad-except,
+        # [CloudReactor] non-standard:
+        bad-continuation,
 
 # Enable the message, report, category or checker with the given id(s). You can
 # either give multiple identifier separated by comma (,) or put this option
@@ -202,12 +204,12 @@ attr-naming-style=snake_case
 #attr-rgx=
 
 # Bad variable names which should always be refused, separated by a comma.
-bad-names=foo,
-          bar,
-          baz,
-          toto,
-          tutu,
-          tata
+#bad-names=foo,
+#          bar,
+#          baz,
+#          toto,
+#          tutu,
+#          tata
 
 # Bad variable names regexes, separated by a comma. If names match any regex,
 # they will always be refused
