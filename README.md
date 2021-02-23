@@ -130,7 +130,7 @@ to `deploy/Dockerfile`.
 
    In a Windows command prompt, run:
 
-    `docker_deploy <environment>  [task_names]`
+    `.\docker_deploy.cmd <environment>  [task_names]`
 
 In both of these commands, `<environment>` is a required argument, which is the
 name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -144,7 +144,7 @@ To troubleshoot deployment issues, in a bash shell, run
 
    In a Windows command prompt, run:
 
-    docker_deploy_shell.bat <environment>
+    .\docker_deploy_shell.cmd <environment>
 
 These commands will take you to a bash shell inside the deployer Docker
 container where you can re-run the deployment script with `./deploy.sh`
