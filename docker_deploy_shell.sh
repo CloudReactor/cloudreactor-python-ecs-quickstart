@@ -6,6 +6,8 @@
 # and you can re-run ansible by typing "./deploy.sh <deployment>" in the
 # working directory, where <deployment> is the deployment target.
 
+set -e
+
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 source "$SCRIPT_DIR/deploy/helpers/docker_deploy_common.sh"

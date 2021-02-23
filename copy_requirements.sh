@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 echo "Copying requirement files back to host ..."
 IMAGE_NAME=cloudreactor-ecs-quickstart-dev
