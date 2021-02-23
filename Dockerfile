@@ -19,11 +19,11 @@ RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 req
 COPY requirements.in .
 
 RUN pip-compile --allow-unsafe --generate-hashes \
-  requirements.in --output-file requirements.txt
+  requirements.in --output-file /tmp/requirements.txt
 
 # Install dependencies
 # https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
-RUN pip install --no-input --no-cache-dir -r requirements.txt
+RUN pip install --no-input --no-cache-dir -r /tmp/requirements.txt
 
 # Run as non-root user for better security
 RUN groupadd appuser && useradd -g appuser --create-home appuser

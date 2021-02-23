@@ -3,7 +3,9 @@ FROM cloudreactor-ecs-quickstart
 USER root
 WORKDIR /usr/src/app
 
-COPY ./dev-requirements.in .
+COPY ./dev-requirements.in /tmp/
+
+WORKDIR /tmp
 
 RUN pip-compile --allow-unsafe --generate-hashes \
   dev-requirements.in --output-file dev-requirements.txt
