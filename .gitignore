@@ -37,6 +37,6 @@ deploy/vars/*.yml
 
 .DS_Store
 
-# Editor files
+# IDE files
+.idea/
 .vscode/
-src/task_1.py
