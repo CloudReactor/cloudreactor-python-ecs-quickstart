@@ -29,8 +29,8 @@ This project deploys tasks by doing the following:
 
 1) Build the Docker image and send it to AWS ECR
 2) Create an ECS Task Definition and installs it in ECS
-3) Create or update a CloudReactor Task that is linked to the ECS Task Definition,
-so that it can manage it
+3) Create or update a CloudReactor Task that is linked to the ECS
+Task Definition, so that it can manage it
 
 The project uses Jinja2 templates to define ECS task definitions in JSON
 and to define CloudReactor Tasks in [YAML](https://yaml.org/).
@@ -39,6 +39,7 @@ Ansible is the glue that integrates everything together.
 Sound good? OK, let's get started!
 
 ## Prerequisites
+
 Run the [CloudReactor AWS Setup Wizard](https://github.com/CloudReactor/cloudreactor-aws-setup-wizard).
 
 This wizard:
@@ -55,18 +56,124 @@ See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of t
 
 ## Get this project's source code
 
-You'll need to get this project's source code onto a filesystem where you can make changes.
-You can either clone this project directly, or fork it first, then clone it.
+You'll need to get this project's source code onto a filesystem where you can make changes. First [fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the project,
+then clone your project:
 
-If cloning directly,
-
-    git clone https://github.com/CloudReactor/cloudreactor-ecs-quickstart.git
+    git clone https://github.com/YourOrg/cloudreactor-ecs-quickstart.git
 
 ## Deploy the tasks to AWS and CloudReactor
 
 These steps show how you can deploy the example project in this repo to ECS Fargate
 and have its tasks managed by CloudReactor. There are two methods of doing so,
-Docker Deployment and Native Deployment.
+Docker Deployment and Native Deployment. But first let's go over the common
+steps:
+
+1. Create two API keys in CloudReactor, one for deployment and one for
+your task to report its state. Go to the
+[CloudReactor dashboard](https://cloudreactor.io/api_keys) and select
+"API keys" in the menu that pops up when you click your username in the upper
+right corner. Select the button "Add new API key..." which will take you to a
+form to fill in details. Give the API key a name and associate it with the
+Run Environment you created. Ensure the Group is correct, the Enabled checkbox
+is checked, and the Access Level is `Task`. Then select the Save button. You
+should then see your new API key listed. Copy the value of the key. This is the
+`Task API key`.
+2. Repeat step 1, except select the Access Level of `Developer`. The value
+of the key is the `Deployment API key`.
+3. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where
+`<environment>` is the name of the Run Environment created by the
+CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
+4. Open the .yml file you just created, and paste the value of the
+`Deployment API key`:
+
+    ```
+    cloudreactor:
+      deploy_api_key: PASTE_DEPLOY_API_KEY_HERE
+    ```
+
+    This allows you to your local machine (or Docker container) to
+    use the CloudReactor service to deploy tasks.
+
+5. For the `Task API key`, you have two options. The first option, which is
+simpler but less secure, is to directly paste the Task API key into
+`deploy/vars/<environment>.yml`:
+
+    ```
+    cloudreactor:
+      ...
+      task_api_key: PASTE_TASK_API_KEY_HERE
+    ```
+
+    The second option uses AWS Secrets Manager to store the secret and avoids the
+    API key value from being part of the image. To do this, log into the AWS
+    console and navigate to the AWS Secrets Manager dashboard. Select
+    "Store a new secret". For "Secret Type", select "Other type of secrets" and
+    "plaintext". Paste in the Task CloudReactor API key as the entire field (i.e. no need for newline, braces, quotes etc.). On the next page, for
+    "secret name", type `CloudReactor/<env_name>/common/cloudreactor_api_key`,
+    replacing`<env_name>` with whatever your CloudReactor Run Environment is
+    called. After saving the secret, you should get a page in which you can copy
+    the ARN of the secret, in the format:
+
+        arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx
+
+    Use this value to set the task_api_key value in
+    `deploy/vars/<environment>.yml`:
+
+    cloudreactor:
+      ...
+      task_api_key: PASTE_DEPLOY_SECRET_ARN_HERE
+
+    To allow your task to read the API key, it has to run with an IAM role
+    that has the appropriate permission. First let's create the role in the [IAM Dashboard](https://console.aws.amazon.com/iam/home?region=us-west-2#)
+    in the AWS console. It should have a policy that looks like this:
+
+        {
+          "Version": "2012-10-17",
+          "Statement": {
+            "Effect": "Allow",
+            "Action": [
+                "secretsmanager:GetSecretValue"
+            ],
+            "Resource": [
+                "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/*"
+            ]
+          }
+        }
+
+    where you would substitute [aws_region] with the region you stored your
+    secret, and [aws_account_id] with your AWS account number.
+
+    If you are deploying your task using ECS, the role should also have a
+    trust relationship so that ECS can assume it:
+
+        {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": [
+                  "ecs.amazonaws.com",
+                  "ecs-tasks.amazonaws.com"
+                ]
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        }
+
+    Once you've created the role, record the ARN which should look like:
+
+        arn:aws:iam::012345678901:role/myapp-task-role-production
+
+    Finally, paste the role ARN into `deploy/vars/<environment>.yml`:
+
+        default_env_task_config:
+          command: "python src/task_1.py"
+          ecs:
+            task:
+              role_arn: "arn:aws:iam::012345678901:role/myapp-task-role-production"
 
 ### Docker Deployment
 
@@ -86,7 +193,8 @@ containing a role that has permissions to create ECS tasks. When deploying, the
 AWS CLI in the container will use the temporary access key associated with the
 role assigned to the EC2 instance.
 
-The steps for Docker Deployment are:
+Assuming you have followed the common steps, the additional steps for Docker
+Deployment are:
 
 1. Ensure you have Docker running locally, and have installed
 [Docker Compose](https://docs.docker.com/compose/install/).
@@ -98,57 +206,31 @@ You may also populate this file with a script you write yourself,
 for example with something that uses the AWS CLI to assume a role and gets
 temporary credentials. If you are running this on an EC2 instance with an instance profile
 that has deployment permissions, you can leave this file blank.
-3. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where
-`<environment>` is the name of the Run Environment created above (e.g.
-`staging`, `production`)
-4. Open the .yml file you just created, and enter your CloudReactor API key next
-to "deploy_api_key". This allows you to deploy the task from your local machine using CloudReactor.
-5. When the task runs in AWS ECS, it'll need your CloudReactor API key also. As a best practice, we'll set up a secret in AWS Secrets Manager to store the CloudReactor API key too -- this will be read when the task runs in AWS. To do this, log into the AWS console and navigate to the AWS Secrets Manager dashboard. Select "Store a new secret". For “Secret Type”, select “Other type of secrets” and “plaintext”. Paste in your CloudReactor API key as the entire field (i.e. no need for newline, braces, quotes etc.). On the next page, for “secret name”, type `CloudReactor/<env_name>/common/cloudreactor_api_key`. Replace `<env_name>` with whatever your CloudReactor Run Environment is called, as just referenced above. Finally, in the same .yml file you created immediately above, scroll down and you'll see this block:
-```
-- name: PROC_WRAPPER_API_KEY
-  valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx"
-```
-
-Replace the ARN here with the CloudReactor API key ARN you created in Secrets Manager.
-
-6. Build the Docker container that will deploy the project. In a bash shell, run:
-
-    `./docker_build_deployer.sh <environment>`
-
-   In a Windows command prompt, run:
-
-    `docker_build_deployer <environment>`
-
-`<environment>` is a required argument, which is the name of the Run Environment.
-
-This step is only necessary once, unless you add additional configuration
-to `deploy/Dockerfile`.
-
-7. To deploy, in a bash shell, run:
+3. To deploy, in a bash shell, run:
 
     `./docker_deploy.sh <environment> [task_names]`
 
-   In a Windows command prompt, run:
+    In a Windows command prompt, run:
 
     `.\docker_deploy.cmd <environment>  [task_names]`
 
-In both of these commands, `<environment>` is a required argument, which is the
-name of the Run Environment. `[task_names]` is an optional argument, which is a
-comma-separated list of tasks to be deployed. In this project, this can be one
-or more of `task_1`, `file_io`, etc, separated by commas.
-If `[task_names]` is omitted, all tasks will be deployed.
+    In both of these commands, `<environment>` is a required argument, which is the
+    name of the Run Environment. `[task_names]` is an optional argument, which is a
+    comma-separated list of tasks to be deployed. In this project, this can be one
+    or more of `task_1`, `file_io`, etc, separated by commas.
+    If `[task_names]` is omitted, all tasks will be deployed.
 
-To troubleshoot deployment issues, in a bash shell, run
+    To troubleshoot deployment issues, in a bash shell, run
 
-    ./docker_deploy_shell.sh <environment>
+        ./docker_deploy_shell.sh <environment>
 
-   In a Windows command prompt, run:
+      In a Windows command prompt, run:
 
-    .\docker_deploy_shell.cmd <environment>
+        .\docker_deploy_shell.cmd <environment>
 
-These commands will take you to a bash shell inside the deployer Docker
-container where you can re-run the deployment script with `./deploy.sh`
-and inspect the files it produces in the `build/` directory.
+    These commands will take you to a bash shell inside the deployer Docker
+    container where you can re-run the deployment script with `./deploy.sh`
+    and inspect the files it produces in the `build/` directory.
 
 ### Native Deployment
 
@@ -170,8 +252,9 @@ not been tested.
 The steps for Native Deployment are:
 
 1. Ensure you have Docker running locally
-2. If desired, create and use a virtual environment for deployment dependencies.
-The virtual environment should use python 3.8.x.
+2. If desired, create and use a virtual environment for deployment
+dependencies.
+The virtual environment should use python 3.9.x.
 3. Run
 
     `pip install -r deploy/requirements.txt`
@@ -181,11 +264,7 @@ The access key and secret would be for the AWS user you plan on using to deploy 
 possibly created in the section "Select or create user and/or role for deployment".
 You can skip this step if you are deploying from an EC2 instance that you assign
 an instance role that has the required permissions.
-5. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where
-`<environment>` is the name of the Run Environment created above (e.g.
-`staging`, `production`)
-6. Modify `deploy/vars/<environment>.yml` to contain your CloudReactor API key
-7. To deploy,
+5. To deploy,
 
     `./deploy.sh <environment> [task_names]`
 
@@ -250,14 +329,16 @@ add a build step to `deploy/deploy.yml` (search for "maven" to see an example).
 
 ## Next steps
 
-* [Additional configuration](docs/configuration.md) options can be set or overridden
-* If you want to be alerted when task executions fail, setup an
+* [Additional configuration](https://docs.cloudreactor.io/configuration.html)
+options can be set or overridden
+* If you want to be alerted when Task Executions fail, setup an
 [Alert Method](https://docs.cloudreactor.io/alerts.html)
 * To avoid leaking secrets (passwords, API keys, etc.), see the guide on
-[secret management](docs/secret_management.md)
+[secret management](https://docs.cloudreactor.io/secrets.html)
 * For more secure [networking](https://docs.cloudreactor.io/networking.html), run your tasks on private subnets
 and/or tighten your security groups.
-* If you're having problems, see the [troubleshooting guide](docs/troubleshooting.html)
+* If you're having problems, see the
+[troubleshooting guide](https://docs.cloudreactor.io/troubleshooting.html)
 
 ## Contact us
 
