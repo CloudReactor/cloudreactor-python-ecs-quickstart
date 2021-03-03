@@ -119,9 +119,9 @@ simpler but less secure, is to directly paste the Task API key into
     Use this value to set the task_api_key value in
     `deploy/vars/<environment>.yml`:
 
-    cloudreactor:
-      ...
-      task_api_key: PASTE_DEPLOY_SECRET_ARN_HERE
+        cloudreactor:
+          ...
+          task_api_key: PASTE_TASK_API_KEY_SECRET_ARN_HERE
 
     To allow your task to read the API key, it has to run with an IAM role
     that has the appropriate permission. First let's create the role in the [IAM Dashboard](https://console.aws.amazon.com/iam/home?region=us-west-2#)
