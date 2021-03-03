@@ -132,7 +132,7 @@ Add the line `enable_status_updates: True` inside this block if it's not there a
 
 ### Call `send_update` in your task
 
-1. In your .py file in `/src/`, import the status_updater library:
+1. In your .py file in `/src/`, import the status_updater class:
 
         from proc_wrapper import StatusUpdater
 
@@ -160,11 +160,11 @@ Add the line `enable_status_updates: True` inside this block if it's not there a
 
 4. The CloudReactor dashboard also shows "last status message" for each task. This allows you to report custom messages during your task execution, improving visibility into what stage each task is at.
 
-For example a given task might report status messages such as "getting auth token", "fetching data", "saving data" etc.
+    For example a given task might report status messages such as "getting auth token", "fetching data", "saving data" etc.
 
-Send a custom "status message" via StatusUpdater() like this:
+    Send a custom "status message" via StatusUpdater() like this:
 
-    updater.send_update(last_status_message="started data ingestion")
+        updater.send_update(last_status_message="started data ingestion")
 
 5. Bundle multiple row counts and status message into a single call like this:
 
@@ -193,7 +193,8 @@ The example tasks show a few helpful features of CloudReactor that can be used i
 Delete tasks within the [CloudReactor dashboard](https://dash.cloudreactor.io){:target="_blank"}. This will remove the task from AWS also.
 
 You should also remove the reference to the tasks in `./deploy/vars/common.yml`.
-- If you don't, if you run `./docker_deploy.sh [environment]` (without task names), this will (re-)push all tasks -- which might include tasks you had intended to remove.
+
+If you don't, when you run `./docker_deploy.sh [environment]` (without task names), this will (re-)push all tasks -- which might include tasks you had intended to remove.
 
 You may also want to remove the task code itself from `/src/`
 
@@ -261,7 +262,7 @@ check libraries for security vulnerabilities, To check:
 
     docker-compose run --rm safety
 
-### Adding another development dependency
+## Adding another development dependency
 
 Development dependencies are libraries used during development and
 testing but not used when the tasks are deployed. For example, `pytest`
@@ -288,7 +289,7 @@ To get a bash shell in the container that has development dependencies installed
 
 You can use this shell to run pytest, pylint, etc. with different options.
 
-# Dockerfile linting
+## Dockerfile linting
 
 Use [hadolint](https://github.com/hadolint/hadolint) to ensure your Dockerfile follows
 best practices:
