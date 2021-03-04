@@ -5,9 +5,13 @@
 # ensure the copied file is in .gitignore to avoid checking in secrets!
 
 # You can override your Run Environment's AWS settings here, but it shouldn't
-# be necessary unless you haven't specified security groups or subnets in
-# your Run Environment, or want to use custom settings for this project
-# (for security and/or isolation reasons).
+# be necessary unless:
+# a) You haven't specified security groups or subnets in
+# your Run Environment; or,
+# b) Want to use custom settings for this project (possibly for security and/or
+# isolation reasons); or,
+# c) You are not using CloudReactor to monitor and manage your tasks.
+
 #project_aws:
 #  account_id: 123456789012
 #  region: "us-west-2"
@@ -29,8 +33,6 @@
 #      role_arn: arn:aws:iam::12345678901:role/myrole
 
 cloudreactor:
-  api_base_url: https://api.cloudreactor.io
-
   # Required: the API key used to deploy the Tasks.
   # The key must have Developer access level or above and be scoped to the
   # Run Environment you are deploying to, or be unscoped.

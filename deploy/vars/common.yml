@@ -5,6 +5,11 @@ project_version_text: 1.0.0
 # project_version_number: 1
 project_url: "https://github.com/CloudReactor/cloudreactor-ecs-quickstart"
 
+default_cloudreactor:
+  api_base_url: https://api.cloudreactor.io
+  # Set to false to disable monitoring and management in CloudReactor
+  enabled: true
+
 # These settings will apply by default to all tasks and in all deployments.
 # They override the settings in your Run Environment.
 # To manage a setting in the CloudReactor UI, omit the property name and value.
