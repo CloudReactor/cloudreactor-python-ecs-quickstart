@@ -8,12 +8,13 @@
     - vars/common.yml
     - vars/{{env}}.yml
   vars:
+    resolved_cloudreactor: "{{ default_cloudreactor | default({}) | combine(cloudreactor | default({})) }}"
     env_task_name_to_config: "{{ task_name_to_env_config | default({}) }}"
     resolved_task_name_to_config: "{{ task_name_to_config | combine(env_task_name_to_config, recursive=True) }}"
     resolved_task_names: "{{ (resolved_task_name_to_config.keys() | list) if (task_names | upper) == 'ALL' else task_names.split(',') }}"
     task_version_signature: "{{ lookup('env','CLOUDREACTOR_TASK_VERSION_SIGNATURE') | default(git_hash_cmd_result.stdout, true) }}"
     docker_image_name: "{{project_name}}:{{env}}_{{task_version_signature}}"
-    run_environment_name: "{{ cloudreactor.run_environment | default(env) }}"
+    run_environment_name: "{{ resolved_cloudreactor.run_environment | default(env) }}"
     run_environment: "{{ run_environment_result.json.results[0] }}"
     run_environment_exec_method: "{{ run_environment.execution_method_capabilities | selectattr('type', 'equalto', 'AWS ECS') | first }}"
     aws: "{{ run_environment_aws | default({}) | combine(project_aws | default({}), recursive=True) }}"
@@ -41,12 +42,13 @@
 
   - name: Get configuration from CloudReactor Run Environment
     uri:
-      url: "{{ cloudreactor.api_base_url }}/api/v1/run_environments/?name={{ run_environment_name | urlencode }}"
+      url: "{{ resolved_cloudreactor.api_base_url }}/api/v1/run_environments/?name={{ run_environment_name | urlencode }}"
       headers:
         Accept: "application/json"
-        Authorization: "Token {{cloudreactor.deploy_api_key}}"
+        Authorization: "Token {{resolved_cloudreactor.deploy_api_key}}"
       return_content: yes
     register: run_environment_result
+    when: resolved_cloudreactor.enabled
     tags:
       - upload
       - create_tasks
@@ -56,6 +58,7 @@
       that:
         - run_environment_result.json.count == 1
       fail_msg: "Run Environment '{{ run_environment_name }}' not found in CloudReactor, please create it."
+    when: resolved_cloudreactor.enabled
     tags:
       - upload
       - create_tasks
@@ -63,6 +66,7 @@
   - debug:
       msg: "Runtime Environment is {{ run_environment }}, UUID = {{ run_environment.uuid }}"
       verbosity: 1
+    when: resolved_cloudreactor.enabled
 
   - name: Set default AWS configuration from Run Environment
     set_fact:
@@ -78,6 +82,7 @@
               subnets: "{{ run_environment_exec_method.default_subnets }}"
               assign_public_ip: "{{ run_environment_exec_method.default_assign_public_ip }}"
             role_arn: "{{ run_environment_exec_method.task_execution_role | default(run_environment_exec_method.default_execution_role) }}"
+    when: resolved_cloudreactor.enabled
     tags:
       - upload
       - create_tasks
@@ -104,20 +109,8 @@
     tags:
       - build
 
-  # If your code needs to be compiled, you can add steps here to compile it,
-  # for example:
-  # name: Package code using maven
-  # command: "mvn package"
-  # tags:
-  #  - build
-  #
-  # After it is compiled, your Dockerfile should COPY the binary (JAR file in
-  # the case of JDK projects).
-
-  - name: Copy runtime .env file read by python
-    copy: |
-      src=files/.env.{{env}}
-      dest=../build/{{env}}/.env
+  # Hook to perform steps before building the Docker image
+  - include_tasks: pre_build.yml
     tags:
       - build
 
@@ -143,6 +136,12 @@
     command: "docker push {{ecr_hostname}}/{{docker_image_name}}"
     tags:
       - upload
+
+    # Hook to perform steps before after building the Docker image,
+    # but before creating the Task in ECS and CloudReactor
+  - include_tasks: post_build.yml
+    tags:
+      - build
 
   - include_tasks: create_task.yml
     with_items: "{{ resolved_task_names }}"

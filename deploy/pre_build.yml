@@ -1,0 +1,16 @@
+# If your code needs to be compiled, you can add steps here to compile it,
+# for example:
+# name: Package code using maven
+# command: "mvn package"
+# tags:
+#  - build
+#
+# After it is compiled, your Dockerfile should COPY the binary (JAR file in
+# the case of JDK projects).
+
+- name: Copy runtime .env file read by application
+  copy: |
+    src=files/.env.{{env}}
+    dest=../build/{{env}}/.env
+  tags:
+    - build
