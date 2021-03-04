@@ -109,6 +109,10 @@ execution_method_capability:
   default_cluster_arn: {{ project_task_ecs.cluster_name }}
   {% endif %}
 
+  {% if project_task_ecs.platform_version is defined %}
+  default_platform_version: {{ project_task_ecs.platform_version }}
+  {% endif %}
+
   {% if subnets is none %}
   default_subnets: null
   {% else %}

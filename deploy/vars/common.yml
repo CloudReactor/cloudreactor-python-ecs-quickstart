@@ -21,6 +21,9 @@ default_task_config:
     # for supported combinations.
     cpu_units: 256
     memory_mb: 512
+    # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html
+    # for supported platform versions. Can also be set to "LATEST".
+    # platform_version: "LATEST"
     # task:
     #   network:
     #     subnets:
