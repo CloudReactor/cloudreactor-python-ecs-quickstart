@@ -31,7 +31,7 @@ def main():
     """
 
     # Load variables from the .env file into the environment. This can be used
-    # to configure settings during development, as deploy/files/.env.dev mapped
+    # to configure settings during development, as deploy_config/files/.env.dev mapped
     # to the .env file by Docker Compose. When deployed to ECS, .env.[deployment name]
     # will be loaded instead.
     load_dotenv()
