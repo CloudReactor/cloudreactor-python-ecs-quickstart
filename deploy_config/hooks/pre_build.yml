@@ -1,19 +1,36 @@
-# If your code needs to be compiled, you can add steps here to compile it,
-# for example:
-# name: Package code using maven
-# command: "mvn package"
-# tags:
-#  - build
-#
-# After it is compiled, your Dockerfile should COPY the binary (JAR file in
-# the case of JDK projects).
-
+# This pre-build step copies an environment-specific dotenv file
+# for tasks to read. Copying with ansible has the advantage that
+# files encrypted with ansible-vault will be decrypted.
+# If your task does not use dotenv, you can remove these steps.
+---
 - name: Ensures docker_context/build dir exists
   file: path=docker_context/build state=directory
-  
-- name: Copy runtime .env file read by application
+  tags:
+    - build
+
+- name: Check if runtime .env file exists
+  stat:
+    path: deploy_config/files/.env.{{env}}
+  register: dotenv_file_result
+  tags:
+    - build
+
+- name: Output message is .env does not exist
+  debug:
+    msg: "deploy_config/files/.env.{{env}} does not exist, creating an empty file"
+    verbosity: 1
+  when: not dotenv_file_result.stat.exists
+
+- name: Create the .env file if it does not exist
+  file:
+    path: docker_context/build/.env
+    state: touch
+  when: not dotenv_file_result.stat.exists
+
+- name: Copy runtime .env file read by application if it exists
   copy: |
     src=deploy_config/files/.env.{{env}}
     dest=docker_context/build/.env
   tags:
     - build
+  when: dotenv_file_result.stat.exists
