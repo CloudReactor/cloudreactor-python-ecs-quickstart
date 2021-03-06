@@ -80,7 +80,7 @@ should then see your new API key listed. Copy the value of the key. This is the
 `Task API key`.
 2. Repeat step 1, except select the Access Level of `Developer`. The value
 of the key is the `Deployment API key`.
-3. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where
+3. Copy `deploy_config/vars/example.yml` to `deploy_config/vars/<environment>.yml`, where
 `<environment>` is the name of the Run Environment created by the
 CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
 4. Open the .yml file you just created, and paste the value of the
@@ -96,7 +96,7 @@ CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
 
 5. For the `Task API key`, you have two options. The first option, which is
 simpler but less secure, is to directly paste the Task API key into
-`deploy/vars/<environment>.yml`:
+`deploy_config/vars/<environment>.yml`:
 
     ```
     cloudreactor:
@@ -117,7 +117,7 @@ simpler but less secure, is to directly paste the Task API key into
         arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx
 
     Use this value to set the task_api_key value in
-    `deploy/vars/<environment>.yml`:
+    `deploy_config/vars/<environment>.yml`:
 
         cloudreactor:
           ...
@@ -167,7 +167,7 @@ simpler but less secure, is to directly paste the Task API key into
 
         arn:aws:iam::012345678901:role/myapp-task-role-production
 
-    Finally, paste the role ARN into `deploy/vars/<environment>.yml`:
+    Finally, paste the role ARN into `deploy_config/vars/<environment>.yml`:
 
         default_env_task_config:
           command: "python src/task_1.py"
@@ -198,7 +198,7 @@ Deployment are:
 
 1. Ensure you have Docker running locally, and have installed
 [Docker Compose](https://docs.docker.com/compose/install/).
-2. Copy `deploy/docker_deploy.env.example` to `deploy/docker_deploy.env` and
+2. Copy `deploy_config/deploy.env.example` to `deploy_config/deploy.env` and
 and fill in your AWS access key, access key secret, and default
 region. The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".
@@ -232,7 +232,7 @@ that has deployment permissions, you can leave this file blank.
     container where you can re-run the deployment script with `./deploy.sh`
     and inspect the files it produces in the `build/` directory.
 
-### Native Deployment
+### Native Deployment (No longer works, may bring it back)
 
 This deployment method installs dependencies on your machine that are needed to deploy
 the project. It may either be installed in the system python environment or in
@@ -257,7 +257,7 @@ dependencies.
 The virtual environment should use python 3.9.x.
 3. Run
 
-    `pip install -r deploy/requirements.txt`
+    `pip install -r deploy_config/requirements.txt`
 
 4. Configure the AWS CLI using `aws configure`.
 The access key and secret would be for the AWS user you plan on using to deploy with,
@@ -276,7 +276,7 @@ comma-separated list of tasks to be deployed. In this project, this can be one o
 ## The example tasks
 
 Successfully deploying this example project will create two ECS tasks which are
-listed in `deploy/common.yml`. They have the following behavior:
+listed in `deploy_config/common.yml`. They have the following behavior:
 
 * *task_1* also prints 30 numbers and exits successfully. While it does so,
 it updates the successful count and the last status message that is shown in
@@ -306,14 +306,14 @@ Then to run, say `task_1`, type:
 
     docker-compose run --rm task_1
 
-Docker Compose is setup so that changes in the environment file `deploy/files/.env.dev`
+Docker Compose is setup so that changes in the environment file `deploy_config/files/.env.dev`
 and the files in `src` will be available without rebuilding the image.
 
 
 ## Deploying your own tasks
 
 Now that you have deployed the example tasks, you can move your existing code to this
-project. You can add or modify tasks in `deploy/common.yml` to call the commands you want,
+project. You can add or modify tasks in `deploy_config/common.yml` to call the commands you want,
 with configuration for the schedule, retry parameters, and environment variables.
 Feel free to delete the tasks that you don't need, just by removing the top level keys
 in `task_name_to_config`.
@@ -323,9 +323,9 @@ in `task_name_to_config`.
 See the [development guide](docs/development.md) for instructions on how to debug,
 add dependencies, and run tests and checks.
 
-To deploy non-python projects, change `deploy/Dockerfile` to have the dependencies
+To deploy non-python projects, change `deploy_config/Dockerfile` to have the dependencies
 needed to build your project (JDK, C++ compiler, etc.). Then, if necessary,
-add a build step to `deploy/deploy.yml` (search for "maven" to see an example).
+add a build step to `deploy_config/deploy.yml` (search for "maven" to see an example).
 
 ## Next steps
 

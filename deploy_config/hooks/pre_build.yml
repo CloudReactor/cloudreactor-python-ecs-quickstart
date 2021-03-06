@@ -8,9 +8,12 @@
 # After it is compiled, your Dockerfile should COPY the binary (JAR file in
 # the case of JDK projects).
 
+- name: Ensures docker_context/build dir exists
+  file: path=docker_context/build state=directory
+  
 - name: Copy runtime .env file read by application
   copy: |
-    src=files/.env.{{env}}
-    dest=../build/{{env}}/.env
+    src=deploy_config/files/.env.{{env}}
+    dest=docker_context/build/.env
   tags:
     - build

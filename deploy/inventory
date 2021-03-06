@@ -1,8 +1,0 @@
-# This file is present so that Ansible doesn't warn about a lack of
-# inventory.
-
-[localhost]
-# ansible_python_interpreter is set to /usr/local/bin/python for virtualenv
-# If you are using a different interpreter, you can either set it to a
-# different path or remove it to use the default interpreter
-127.0.0.1  ansible_connection=local ansible_python_interpreter=/usr/local/bin/python

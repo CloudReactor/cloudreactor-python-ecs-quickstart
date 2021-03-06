@@ -16,24 +16,8 @@ db.sqlite3
 instance/
 .webassets-cache
 
-# Ansible stuff
-deploy/deploy.retry
-
-# Remove these lines if you are committing encrypted secret files to source control,
-# with either ansible-vault or git-encrypt.
-deploy/docker_deploy.env
-deploy/docker_deploy.*.env
-deploy/files/.env.*
-!deploy/files/.env.example
-
-# Note: for development, we assume this file is unencrypted so
-# that changes will be picked up immediately without decryption.
-!deploy/files/.env.dev
-
-deploy/vars/*.yml
-!deploy/vars/common.yml
-!deploy/vars/example.yml
-# End lines to remove if committing encrypted secrets
+deploy.env
+deploy.*.env
 
 .DS_Store
 
