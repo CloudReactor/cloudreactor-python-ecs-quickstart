@@ -2,6 +2,8 @@
 
 ![Tests](https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart/workflows/Tests/badge.svg?branch=master)
 
+<img src="https://img.shields.io/github/license/CloudReactor/cloudreactor-python-ecs-quickstart.svg?style=flat-square" alt="License">
+
 This project serves as blueprint to get your python code
 running in [AWS ECS Fargate](https://aws.amazon.com/fargate/),
 monitored and managed by
@@ -65,8 +67,6 @@ then clone your project:
     git clone https://github.com/YourOrg/cloudreactor-python-ecs-quickstart.git
 
 ## Deploy the tasks to AWS and CloudReactor
-
-### Deployment
 
 These steps show how you can deploy the example project in this repo to ECS Fargate
 and have its tasks managed by CloudReactor.
