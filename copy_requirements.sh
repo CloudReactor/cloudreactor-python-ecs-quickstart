@@ -2,7 +2,7 @@
 set -e
 
 echo "Copying requirement files back to host ..."
-IMAGE_NAME=cloudreactor-ecs-quickstart-dev
+IMAGE_NAME=cloudreactor-python-ecs-quickstart-dev
 TEMP_CONTAINER_NAME="$IMAGE_NAME-temp"
 
 docker create --name $TEMP_CONTAINER_NAME $IMAGE_NAME

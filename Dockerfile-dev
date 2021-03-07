@@ -1,4 +1,4 @@
-FROM cloudreactor-ecs-quickstart
+FROM cloudreactor-python-ecs-quickstart
 
 USER root
 WORKDIR /usr/src/app
