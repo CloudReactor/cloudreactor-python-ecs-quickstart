@@ -1,0 +1,60 @@
+# You can use this Docker Compose file to run your deployments or
+# debug them.
+# It is especially useful in Windows environments because Docker Desktop
+# always includes Docker Compose.
+#
+# To deploy from Windows:
+#
+# set DEPLOYMENT_ENVIRONMENT=staging
+# set CLOUDREACTOR_TASK_VERSION_SIGNATURE
+# docker-compose -f docker-compose-deployer.yml run --rm deploy
+
+version: "3.7"
+
+x-deployer-base: &deployer-base
+  image: cloudreactor/aws-ecs-cloudreactor-deployer
+  build:
+    context: ./
+    dockerfile: Dockerfile
+  volumes:
+    - /var/run/docker.sock:/var/run/docker.sock
+    - ./Dockerfile:/work/docker_context/Dockerfile
+    - ./requirements.in:/work/docker_context/requirements.in
+    - ./src:/work/docker_context/src
+    - ./deploy_config:/work/deploy_config
+  entrypoint: "./deploy.sh"
+  env_file:
+    - deploy.env
+    - deploy.${DEPLOYMENT_ENVIRONMENT}.env
+  environment:
+    - DEPLOYMENT_ENVIRONMENT
+    - CLOUDREACTOR_TASK_VERSION_SIGNATURE
+    # Uncomment these to pass them from your host's environment to the deployer container.
+    # They will take precedence over the values in .env files.
+    # - AWS_ACCESS_KEY_ID
+    # - AWS_SECRET_ACCESS_KEY
+    # - AWS_DEFAULT_REGION
+    # - AWS_CA_BUNDLE
+    # - AWS_CONFIG_FILE
+    # - AWS_PROFILE
+    # - AWS_SESSION_TOKEN
+    # - AWS_SHARED_CREDENTIALS_FILE
+    # - AWS_ROLE_SESSION_NAME
+
+services:
+  deploy:
+    <<: *deployer-base
+    entrypoint: "./deploy.sh"
+
+  # For debugging your Docker build
+  deployer-shell:
+    <<: *deployer-base
+    entrypoint: bash
+
+  # Check your Dockerfile against best-practices:
+  # See https://github.com/hadolint/hadolint
+  hadolint:
+    image: hadolint/hadolint
+    volumes:
+      - ./Dockerfile:/mnt/Dockerfile
+    entrypoint: "/bin/hadolint /mnt/Dockerfile"

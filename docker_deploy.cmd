@@ -18,23 +18,18 @@ if not exist %VAR_FILENAME% (
     exit /b 1
 )
 
+REM Optional: use the latest git commit hash to set the version signature,
+REM so that the git commit can be linked in the CloudReactor dashboard.
+REM Otherwise, ansible will compute the task version signature as the
+REM timestamp when it was started.
+REM You can comment out the next block if you don't use git.
 git rev-parse HEAD > commit_hash.txt
 set /p CLOUDREACTOR_TASK_VERSION_SIGNATURE= < commit_hash.txt
 del commit_hash.txt
-
 echo CLOUDREACTOR_TASK_VERSION_SIGNATURE = %CLOUDREACTOR_TASK_VERSION_SIGNATURE%
+REM End Optional
 
 type nul >> deploy.env
 type nul >> "deploy.%DEPLOYMENT_ENVIRONMENT%.env"
 
-ECHO CWD is %~dp0
-
-docker run --rm -e DEPLOYMENT_ENVIRONMENT ^
- -e CLOUDREACTOR_TASK_VERSION_SIGNATURE --env-file deploy.env ^
- --env-file "deploy.%DEPLOYMENT_ENVIRONMENT%.env" ^
- -v /var/run/docker.sock:/var/run/docker.sock ^
- -v %~dp0/Dockerfile:/work/docker_context/Dockerfile ^
- -v %~dp0/requirements.in:/work/docker_context/requirements.in ^
- -v %~dp0/src:/work/docker_context/src ^
- -v %~dp0\deploy_config:/work/deploy_config ^
- cloudreactor/aws-ecs-cloudreactor-deployer "./deploy.sh" %*
+docker-compose -f docker-compose-deployer.yml run --rm deploy %*
