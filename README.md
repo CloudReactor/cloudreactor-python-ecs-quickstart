@@ -46,9 +46,9 @@ Sound good? OK, let's get started!
 Run the [CloudReactor AWS Setup Wizard](https://github.com/CloudReactor/cloudreactor-aws-setup-wizard).
 
 This wizard:
-* creates an ECS cluster
+* creates an ECS cluster if you don't already have one
 * creates associated VPC, subnets and security groups (or allows you to select existing VPCs, subnets and security groups to use)
-* enables CloudReactor to manage deployed tasks
+* enables CloudReactor to manage tasks deployed in your AWS account
 
 The wizard enables you to have a working ECS environment in minutes; without it, you would need to set up each of these pieces individually which would be tedious and error-prone.
 
