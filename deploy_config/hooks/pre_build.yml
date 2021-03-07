@@ -15,13 +15,13 @@
   tags:
     - build
 
-- name: Output message is .env does not exist
+- name: Output message if .env does not exist
   debug:
     msg: "deploy_config/files/.env.{{env}} does not exist, creating an empty file"
     verbosity: 1
   when: not dotenv_file_result.stat.exists
 
-- name: Create the .env file if it does not exist
+- name: Create an empty .env file if it does not exist
   file:
     path: docker_context/build/.env
     state: touch

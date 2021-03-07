@@ -83,5 +83,5 @@ services:
     image: hadolint/hadolint
     volumes:
       - ./Dockerfile:/mnt/Dockerfile
-      - ./.hadolint.yaml:/mnt/.hadolint.yaml
-    entrypoint: /bin/hadolint --config /mnt/.hadolint.yaml /mnt/Dockerfile
+      - ./hadolint.yaml:/mnt/hadolint.yaml
+    entrypoint: /bin/hadolint --config /mnt/hadolint.yaml /mnt/Dockerfile
