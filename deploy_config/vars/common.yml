@@ -1,9 +1,9 @@
-project_name: "cloudreactor-ecs-quickstart"
+project_name: "cloudreactor-python-ecs-quickstart"
 project_version_text: 1.0.0
 # Optionally, provide a steadily increasing whole number to indicate which
 # build is more updated than another.
 # project_version_number: 1
-project_url: "https://github.com/CloudReactor/cloudreactor-ecs-quickstart"
+project_url: "https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart"
 
 default_cloudreactor:
   api_base_url: https://api.cloudreactor.io

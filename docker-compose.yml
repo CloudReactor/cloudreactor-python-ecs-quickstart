@@ -1,7 +1,7 @@
 version: "3.7"
 
 x-service-base: &service-base
-  image: cloudreactor-ecs-quickstart
+  image: cloudreactor-python-ecs-quickstart
   build:
     context: ./
     args:
@@ -15,7 +15,7 @@ x-service-base: &service-base
 
 x-dev-base: &dev-base
   <<: *service-base
-  image:  cloudreactor-ecs-quickstart-dev
+  image:  cloudreactor-python-ecs-quickstart-dev
   build:
     context: ./
     dockerfile: Dockerfile-dev

@@ -1,6 +1,6 @@
 # CloudReactor ECS Quickstart
 
-![Tests](https://github.com/CloudReactor/cloudreactor-ecs-quickstart/workflows/Tests/badge.svg?branch=master)
+![Tests](https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart/workflows/Tests/badge.svg?branch=master)
 
 This project serves as blueprint to get your python code
 running in [AWS ECS Fargate](https://aws.amazon.com/fargate/),
@@ -62,7 +62,7 @@ See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of t
 You'll need to get this project's source code onto a filesystem where you can make changes. First [fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the project,
 then clone your project:
 
-    git clone https://github.com/YourOrg/cloudreactor-ecs-quickstart.git
+    git clone https://github.com/YourOrg/cloudreactor-python-ecs-quickstart.git
 
 ## Deploy the tasks to AWS and CloudReactor
 
