@@ -1,0 +1,5 @@
+# Remove this .gitignore file if you are committing encrypted secret
+# files to source control, with either ansible-vault or git-encrypt.
+*
+!.env.dev
+!.env.example
