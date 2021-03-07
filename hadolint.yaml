@@ -1,0 +1,3 @@
+ignored:
+  # Process wrapper requires shell form
+  - DL3025

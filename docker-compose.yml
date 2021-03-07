@@ -4,9 +4,11 @@ x-service-base: &service-base
   image: cloudreactor-ecs-quickstart
   build:
     context: ./
+    args:
+      ENV_FILE_PATH: deploy_config/files/.env.dev
   volumes:
     - ./src/:/home/appuser/src/
-    - ./deploy/files/.env.dev:/home/appuser/.env
+    - ./deploy_config/files/.env.dev:/home/appuser/.env
   environment: &service-env-base
       PROC_WRAPPER_OFFLINE_MODE: "TRUE"
       PROC_WRAPPER_LOG_LEVEL: DEBUG
@@ -20,7 +22,7 @@ x-dev-base: &dev-base
   volumes:
     - ./src/:/home/appuser/src/
     - ./tests/:/home/appuser/tests/
-    - ./deploy/files/.env.dev:/home/appuser/.env
+    - ./deploy_config/files/.env.dev:/home/appuser/.env
     - ./mypy.ini:/home/appuser/mypy.ini
   entrypoint: python
 
@@ -81,5 +83,5 @@ services:
     image: hadolint/hadolint
     volumes:
       - ./Dockerfile:/mnt/Dockerfile
-      - ./.hadolint.yaml:/mnt/.hadolint.yaml
-    entrypoint: /bin/hadolint --config /mnt/.hadolint.yaml /mnt/Dockerfile
+      - ./hadolint.yaml:/mnt/hadolint.yaml
+    entrypoint: /bin/hadolint --config /mnt/hadolint.yaml /mnt/Dockerfile

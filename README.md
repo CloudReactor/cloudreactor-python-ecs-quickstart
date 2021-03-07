@@ -80,7 +80,7 @@ should then see your new API key listed. Copy the value of the key. This is the
 `Task API key`.
 2. Repeat step 1, except select the Access Level of `Developer`. The value
 of the key is the `Deployment API key`.
-3. Copy `deploy/vars/example.yml` to `deploy/vars/<environment>.yml`, where
+3. Copy `deploy_config/vars/example.yml` to `deploy_config/vars/<environment>.yml`, where
 `<environment>` is the name of the Run Environment created by the
 CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
 4. Open the .yml file you just created, and paste the value of the
@@ -96,7 +96,7 @@ CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
 
 5. For the `Task API key`, you have two options. The first option, which is
 simpler but less secure, is to directly paste the Task API key into
-`deploy/vars/<environment>.yml`:
+`deploy_config/vars/<environment>.yml`:
 
     ```
     cloudreactor:
@@ -117,7 +117,7 @@ simpler but less secure, is to directly paste the Task API key into
         arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx
 
     Use this value to set the task_api_key value in
-    `deploy/vars/<environment>.yml`:
+    `deploy_config/vars/<environment>.yml`:
 
         cloudreactor:
           ...
@@ -167,7 +167,7 @@ simpler but less secure, is to directly paste the Task API key into
 
         arn:aws:iam::012345678901:role/myapp-task-role-production
 
-    Finally, paste the role ARN into `deploy/vars/<environment>.yml`:
+    Finally, paste the role ARN into `deploy_config/vars/<environment>.yml`:
 
         default_env_task_config:
           command: "python src/task_1.py"
@@ -177,8 +177,9 @@ simpler but less secure, is to directly paste the Task API key into
 
 ### Docker Deployment
 
-This deployment method builds a Docker container that is used to build and
-deploy your tasks.
+This deployment method uses the
+[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
+Docker image to build and deploy your tasks.
 (This is not to be confused with the Docker container that actually runs your tasks.)
 The Docker container has all the dependencies (python, ansible, aws-cli etc.)
 built-in, so you don't need to install anything directly on your machine.
@@ -198,7 +199,7 @@ Deployment are:
 
 1. Ensure you have Docker running locally, and have installed
 [Docker Compose](https://docs.docker.com/compose/install/).
-2. Copy `deploy/docker_deploy.env.example` to `deploy/docker_deploy.env` and
+2. Copy `deploy_config/deploy.env.example` to `deploy_config/deploy.env` and
 and fill in your AWS access key, access key secret, and default
 region. The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".
@@ -222,61 +223,30 @@ that has deployment permissions, you can leave this file blank.
 
     To troubleshoot deployment issues, in a bash shell, run
 
-        ./docker_deploy_shell.sh <environment>
+        DEPLOYMENT_ENTRYPOINT=bash ./docker_deploy.sh <environment>
 
-      In a Windows command prompt, run:
+    In a bash environment with docker-compose installed:
 
-        .\docker_deploy_shell.cmd <environment>
+        DEPLOYMENT_ENVIRONMENT=<environment> docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
+
+    In a Windows shell:
+
+        set DEPLOYMENT_ENVIRONMENT=<environment>
+        docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
+
+    In a Windows PowerShell:
+
+        $env:DEPLOYMENT_ENVIRONMENT = '<environment>'
+        docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
 
     These commands will take you to a bash shell inside the deployer Docker
     container where you can re-run the deployment script with `./deploy.sh`
     and inspect the files it produces in the `build/` directory.
 
-### Native Deployment
-
-This deployment method installs dependencies on your machine that are needed to deploy
-the project. It may either be installed in the system python environment or in
-a [virtual environment](https://docs.python.org/3/tutorial/venv.html).
-Native deployment is appropriate for when
-
-* you want to deploy from a Linux or Mac OS X machine (virtual machines included); and,
-* you have python installed on the machine (possibly in a virtual environment); and,
-* you want to use python running directly on the machine to deploy the project.
-
-It has the advantage that you can use the AWS configuration you
-already have set up on that machine for the AWS CLI.
-
-This method most likely will not work on Windows machines, though it has
-not been tested.
-
-The steps for Native Deployment are:
-
-1. Ensure you have Docker running locally
-2. If desired, create and use a virtual environment for deployment
-dependencies.
-The virtual environment should use python 3.9.x.
-3. Run
-
-    `pip install -r deploy/requirements.txt`
-
-4. Configure the AWS CLI using `aws configure`.
-The access key and secret would be for the AWS user you plan on using to deploy with,
-possibly created in the section "Select or create user and/or role for deployment".
-You can skip this step if you are deploying from an EC2 instance that you assign
-an instance role that has the required permissions.
-5. To deploy,
-
-    `./deploy.sh <environment> [task_names]`
-
-where `<environment>` is a required argument, which is the
-name of the Run Environment. `[task_names]` is an optional argument, which is a
-comma-separated list of tasks to be deployed. In this project, this can be one or more of
-`task_1`, `file_io`, etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
-
 ## The example tasks
 
 Successfully deploying this example project will create two ECS tasks which are
-listed in `deploy/common.yml`. They have the following behavior:
+listed in `deploy_config/common.yml`. They have the following behavior:
 
 * *task_1* also prints 30 numbers and exits successfully. While it does so,
 it updates the successful count and the last status message that is shown in
@@ -306,14 +276,14 @@ Then to run, say `task_1`, type:
 
     docker-compose run --rm task_1
 
-Docker Compose is setup so that changes in the environment file `deploy/files/.env.dev`
+Docker Compose is setup so that changes in the environment file `deploy_config/files/.env.dev`
 and the files in `src` will be available without rebuilding the image.
 
 
 ## Deploying your own tasks
 
 Now that you have deployed the example tasks, you can move your existing code to this
-project. You can add or modify tasks in `deploy/common.yml` to call the commands you want,
+project. You can add or modify tasks in `deploy_config/common.yml` to call the commands you want,
 with configuration for the schedule, retry parameters, and environment variables.
 Feel free to delete the tasks that you don't need, just by removing the top level keys
 in `task_name_to_config`.
@@ -323,9 +293,12 @@ in `task_name_to_config`.
 See the [development guide](docs/development.md) for instructions on how to debug,
 add dependencies, and run tests and checks.
 
-To deploy non-python projects, change `deploy/Dockerfile` to have the dependencies
-needed to build your project (JDK, C++ compiler, etc.). Then, if necessary,
-add a build step to `deploy/deploy.yml` (search for "maven" to see an example).
+To deploy non-python projects, it maybe sufficient to add pre and post build steps
+to `deploy_config/hooks`. If you require additional dependencies (like compilers)
+to be installed during build time, see the
+[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
+project for ways to add dependencies. A way to avoid adding dependencies is
+[multi-stage Dockerfiles](https://docs.docker.com/develop/develop-images/multistage-build/).
 
 ## Next steps
 
