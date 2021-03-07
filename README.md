@@ -177,8 +177,9 @@ simpler but less secure, is to directly paste the Task API key into
 
 ### Docker Deployment
 
-This deployment method builds a Docker container that is used to build and
-deploy your tasks.
+This deployment method uses the
+[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
+Docker image to build and deploy your tasks.
 (This is not to be confused with the Docker container that actually runs your tasks.)
 The Docker container has all the dependencies (python, ansible, aws-cli etc.)
 built-in, so you don't need to install anything directly on your machine.
@@ -222,56 +223,25 @@ that has deployment permissions, you can leave this file blank.
 
     To troubleshoot deployment issues, in a bash shell, run
 
-        ./docker_deploy_shell.sh <environment>
+        DEPLOYMENT_ENTRYPOINT=bash ./docker_deploy.sh <environment>
 
-      In a Windows command prompt, run:
+    In a bash environment with docker-compose installed:
 
-        .\docker_deploy_shell.cmd <environment>
+        DEPLOYMENT_ENVIRONMENT=<environment> docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
+
+    In a Windows shell:
+
+        set DEPLOYMENT_ENVIRONMENT=<environment>
+        docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
+
+    In a Windows PowerShell:
+
+        $env:DEPLOYMENT_ENVIRONMENT = '<environment>'
+        docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
 
     These commands will take you to a bash shell inside the deployer Docker
     container where you can re-run the deployment script with `./deploy.sh`
     and inspect the files it produces in the `build/` directory.
-
-### Native Deployment (No longer works, may bring it back)
-
-This deployment method installs dependencies on your machine that are needed to deploy
-the project. It may either be installed in the system python environment or in
-a [virtual environment](https://docs.python.org/3/tutorial/venv.html).
-Native deployment is appropriate for when
-
-* you want to deploy from a Linux or Mac OS X machine (virtual machines included); and,
-* you have python installed on the machine (possibly in a virtual environment); and,
-* you want to use python running directly on the machine to deploy the project.
-
-It has the advantage that you can use the AWS configuration you
-already have set up on that machine for the AWS CLI.
-
-This method most likely will not work on Windows machines, though it has
-not been tested.
-
-The steps for Native Deployment are:
-
-1. Ensure you have Docker running locally
-2. If desired, create and use a virtual environment for deployment
-dependencies.
-The virtual environment should use python 3.9.x.
-3. Run
-
-    `pip install -r deploy_config/requirements.txt`
-
-4. Configure the AWS CLI using `aws configure`.
-The access key and secret would be for the AWS user you plan on using to deploy with,
-possibly created in the section "Select or create user and/or role for deployment".
-You can skip this step if you are deploying from an EC2 instance that you assign
-an instance role that has the required permissions.
-5. To deploy,
-
-    `./deploy.sh <environment> [task_names]`
-
-where `<environment>` is a required argument, which is the
-name of the Run Environment. `[task_names]` is an optional argument, which is a
-comma-separated list of tasks to be deployed. In this project, this can be one or more of
-`task_1`, `file_io`, etc, separated by commas. If `[task_names]` is omitted, all tasks will be deployed.
 
 ## The example tasks
 
@@ -323,9 +293,12 @@ in `task_name_to_config`.
 See the [development guide](docs/development.md) for instructions on how to debug,
 add dependencies, and run tests and checks.
 
-To deploy non-python projects, change `deploy_config/Dockerfile` to have the dependencies
-needed to build your project (JDK, C++ compiler, etc.). Then, if necessary,
-add a build step to `deploy_config/deploy.yml` (search for "maven" to see an example).
+To deploy non-python projects, it maybe sufficient to add pre and post build steps
+to `deploy_config/hooks`. If you require additional dependencies (like compilers)
+to be installed during build time, see the
+[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
+project for ways to add dependencies. A way to avoid adding dependencies is
+[multi-stage Dockerfiles](https://docs.docker.com/develop/develop-images/multistage-build/).
 
 ## Next steps
 
