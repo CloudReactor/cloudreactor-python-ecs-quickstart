@@ -32,9 +32,12 @@ This project deploys tasks by doing the following:
 3) Create or update a CloudReactor Task that is linked to the ECS
 Task Definition, so that it can manage it
 
-The project uses Jinja2 templates to define ECS task definitions in JSON
-and to define CloudReactor Tasks in [YAML](https://yaml.org/).
-Ansible is the glue that integrates everything together.
+The deployment method uses the
+[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
+Docker image to build and deploy your tasks.
+(This is not to be confused with the Docker container that actually runs your tasks.)
+The Docker container has all the dependencies (python, ansible, aws-cli etc.)
+built-in, so you don't need to install anything directly on your machine.
 
 Sound good? OK, let's get started!
 
@@ -63,12 +66,15 @@ then clone your project:
 
 ## Deploy the tasks to AWS and CloudReactor
 
-These steps show how you can deploy the example project in this repo to ECS Fargate
-and have its tasks managed by CloudReactor. There are two methods of doing so,
-Docker Deployment and Native Deployment. But first let's go over the common
-steps:
+### Deployment
 
-1. Create two API keys in CloudReactor, one for deployment and one for
+These steps show how you can deploy the example project in this repo to ECS Fargate
+and have its tasks managed by CloudReactor.
+
+1. Ensure you have Docker running locally, and have installed
+[Docker Compose](https://docs.docker.com/compose/install/) if
+running on Windows.
+2. Create two API keys in CloudReactor, one for deployment and one for
 your task to report its state. Go to the
 [CloudReactor dashboard](https://cloudreactor.io/api_keys) and select
 "API keys" in the menu that pops up when you click your username in the upper
@@ -78,12 +84,12 @@ Run Environment you created. Ensure the Group is correct, the Enabled checkbox
 is checked, and the Access Level is `Task`. Then select the Save button. You
 should then see your new API key listed. Copy the value of the key. This is the
 `Task API key`.
-2. Repeat step 1, except select the Access Level of `Developer`. The value
+3. Repeat step 2, except select the Access Level of `Developer`. The value
 of the key is the `Deployment API key`.
-3. Copy `deploy_config/vars/example.yml` to `deploy_config/vars/<environment>.yml`, where
+4. Copy `deploy_config/vars/example.yml` to `deploy_config/vars/<environment>.yml`, where
 `<environment>` is the name of the Run Environment created by the
 CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
-4. Open the .yml file you just created, and paste the value of the
+5. Open the .yml file you just created, and paste the value of the
 `Deployment API key`:
 
     ```
@@ -94,7 +100,7 @@ CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
     This allows you to your local machine (or Docker container) to
     use the CloudReactor service to deploy tasks.
 
-5. For the `Task API key`, you have two options. The first option, which is
+6. For the `Task API key`, you have two options. The first option, which is
 simpler but less secure, is to directly paste the Task API key into
 `deploy_config/vars/<environment>.yml`:
 
@@ -175,31 +181,8 @@ simpler but less secure, is to directly paste the Task API key into
             task:
               role_arn: "arn:aws:iam::012345678901:role/myapp-task-role-production"
 
-### Docker Deployment
 
-This deployment method uses the
-[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
-Docker image to build and deploy your tasks.
-(This is not to be confused with the Docker container that actually runs your tasks.)
-The Docker container has all the dependencies (python, ansible, aws-cli etc.)
-built-in, so you don't need to install anything directly on your machine.
-The Docker deployment method is appropriate for when
-
-* you don't have python installed directly on your machine; or
-* you don't want add another set of dependencies to your libraries; or
-* you need to deploy from a Windows machine.
-
-You can also use this method on an EC2 instance that has an instance profile
-containing a role that has permissions to create ECS tasks. When deploying, the
-AWS CLI in the container will use the temporary access key associated with the
-role assigned to the EC2 instance.
-
-Assuming you have followed the common steps, the additional steps for Docker
-Deployment are:
-
-1. Ensure you have Docker running locally, and have installed
-[Docker Compose](https://docs.docker.com/compose/install/).
-2. Copy `deploy_config/deploy.env.example` to `deploy_config/deploy.env` and
+7. Copy `deploy.env.example` to `deploy.env` and
 and fill in your AWS access key, access key secret, and default
 region. The access key and secret would be for the AWS user you plan on using to deploy with,
 possibly created in the section "Select or create user and/or role for deployment".
@@ -207,7 +190,7 @@ You may also populate this file with a script you write yourself,
 for example with something that uses the AWS CLI to assume a role and gets
 temporary credentials. If you are running this on an EC2 instance with an instance profile
 that has deployment permissions, you can leave this file blank.
-3. To deploy, in a bash shell, run:
+8. To deploy, in a bash shell, run:
 
     `./docker_deploy.sh <environment> [task_names]`
 
@@ -288,7 +271,7 @@ with configuration for the schedule, retry parameters, and environment variables
 Feel free to delete the tasks that you don't need, just by removing the top level keys
 in `task_name_to_config`.
 
-### More development options
+## More development options
 
 See the [development guide](docs/development.md) for instructions on how to debug,
 add dependencies, and run tests and checks.
