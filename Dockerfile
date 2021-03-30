@@ -14,7 +14,7 @@ WORKDIR /usr/src/app
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-input --no-cache-dir --upgrade pip==21.0.1
-RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.24.0
+RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.25.1
 
 COPY requirements.in .
 
