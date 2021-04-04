@@ -131,3 +131,7 @@ task_name_to_env_config:
 #          - hostPort: 7070
 #            containerPort: 7070
 #            protocol: tcp
+#    links:
+#      - name: Web Server
+#        link_url_template: "http://flask-example-xxx.us-west-1.elb.amazonaws.com/"
+#        description: Main web page
