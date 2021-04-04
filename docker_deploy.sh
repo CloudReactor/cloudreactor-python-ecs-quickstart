@@ -71,4 +71,4 @@ docker run -ti --rm \
  -v $PWD/requirements.in:/work/docker_context/requirements.in \
  -v $PWD/src:/work/docker_context/src \
  -v $PWD/deploy_config:/work/deploy_config \
- cloudreactor/aws-ecs-cloudreactor-deployer $DEPLOY_ENTRYPOINT "$@"
+ cloudreactor/aws-ecs-cloudreactor-deployer:1 $DEPLOY_ENTRYPOINT "$@"
