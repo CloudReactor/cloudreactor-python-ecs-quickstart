@@ -1,7 +1,7 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
 # The one below is based on Debian 10.
-FROM python:3.9.2-slim-buster
+FROM python:3.9.4-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
 
