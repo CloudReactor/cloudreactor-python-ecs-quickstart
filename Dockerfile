@@ -1,7 +1,7 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
 # The one below is based on Debian 10.
-FROM python:3.9.4-slim-buster
+FROM python:3.9.5-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
 
@@ -13,7 +13,7 @@ WORKDIR /usr/src/app
 #  && apt-get install -y libpq-dev=11.7-0+deb10u1 build-essential=12.6 --no-install-recommends \
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-input --no-cache-dir --upgrade pip==21.0.1
+RUN pip install --no-input --no-cache-dir --upgrade pip==21.1.1
 RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.25.1
 
 COPY requirements.in .
