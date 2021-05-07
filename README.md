@@ -192,11 +192,11 @@ temporary credentials. If you are running this on an EC2 instance with an instan
 that has deployment permissions, you can leave this file blank.
 8. To deploy, in a bash shell, run:
 
-    `./docker_deploy.sh <environment> [task_names]`
+    `./deploy.sh <environment> [task_names]`
 
     In a Windows command prompt, run:
 
-    `.\docker_deploy.cmd <environment>  [task_names]`
+    `.\deploy.cmd <environment>  [task_names]`
 
     In both of these commands, `<environment>` is a required argument, which is the
     name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -206,7 +206,7 @@ that has deployment permissions, you can leave this file blank.
 
     To troubleshoot deployment issues, in a bash shell, run
 
-        DEPLOYMENT_ENTRYPOINT=bash ./docker_deploy.sh <environment>
+        DEPLOYMENT_ENTRYPOINT=bash ./deploy.sh <environment>
 
     In a bash environment with docker-compose installed:
 
@@ -265,22 +265,23 @@ and the files in `src` will be available without rebuilding the image.
 
 ## Deploying your own tasks
 
-Now that you have deployed the example tasks, you can move your existing code to this
-project. You can add or modify tasks in `deploy_config/common.yml` to call the commands you want,
-with configuration for the schedule, retry parameters, and environment variables.
-Feel free to delete the tasks that you don't need, just by removing the top level keys
-in `task_name_to_config`.
+Now that you have deployed the example tasks, you can move your existing code to
+this project. You can add or modify tasks in `deploy_config/common.yml` to call
+the commands you want, with configuration for the schedule, retry parameters,
+and environment variables.
+Feel free to delete the tasks that you don't need, just by removing the top
+level keys in `task_name_to_config`.
 
 ## More development options
 
 See the [development guide](docs/development.md) for instructions on how to debug,
 add dependencies, and run tests and checks.
 
-To deploy non-python projects, it maybe sufficient to add pre and post build steps
-to `deploy_config/hooks`. If you require additional dependencies (like compilers)
-to be installed during build time, see the
+To deploy non-python projects, it may be sufficient to add pre and post build
+steps to `deploy_config/hooks`. If you require additional dependencies
+(like compilers) to be installed during build time, see the
 [aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
-project for ways to add dependencies. A way to avoid adding dependencies is
+project for ways to add dependencies. One way to avoid adding dependencies is
 [multi-stage Dockerfiles](https://docs.docker.com/develop/develop-images/multistage-build/).
 
 ## Next steps

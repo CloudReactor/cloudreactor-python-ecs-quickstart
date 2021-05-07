@@ -84,7 +84,7 @@ development image (e.g. mypy).
             enable_status_updates: true
     ```
 
-    You can think of `common.yml` as a manifest of tasks. Running `./docker_deploy.sh` will push the files defined here to ECS, and register them with CloudReactor.
+    You can think of `common.yml` as a manifest of tasks. Running `./deploy.sh` will push the files defined here to ECS, and register them with CloudReactor.
 
 2. Add a configuration block for your new task, below `task_name_to_config:`
 
@@ -195,7 +195,7 @@ Delete tasks within the [CloudReactor dashboard](https://dash.cloudreactor.io){:
 
 You should also remove the reference to the tasks in `./deploy/vars/common.yml`.
 
-If you don't, when you run `./docker_deploy.sh [environment]` (without task names), this will (re-)push all tasks -- which might include tasks you had intended to remove.
+If you don't, when you run `./deploy.sh [environment]` (without task names), this will (re-)push all tasks -- which might include tasks you had intended to remove.
 
 You may also want to remove the task code itself from `/src/`
 

@@ -12,7 +12,7 @@
 version: "3.7"
 
 x-deployer-base: &deployer-base
-  image: cloudreactor/aws-ecs-cloudreactor-deployer
+  image: cloudreactor/aws-ecs-cloudreactor-deployer:1
   build:
     context: ./
     dockerfile: Dockerfile

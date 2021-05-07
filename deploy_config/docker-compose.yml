@@ -15,8 +15,8 @@ services:
       - /work/.git/
     command: ./deploy.sh $DEPLOYMENT_ENVIRONMENT
     env_file:
-      - docker_deploy.env
-      - docker_deploy.$DEPLOYMENT_ENVIRONMENT.env
+      - deploy.env
+      - deploy.$DEPLOYMENT_ENVIRONMENT.env
     environment:
       - DEPLOYMENT_ENVIRONMENT
       - CLOUDREACTOR_TASK_VERSION_SIGNATURE
