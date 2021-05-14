@@ -1,8 +1,9 @@
 # Copy this file to {environment}.yml where {environment} is the name of
 # your deployment environment (i.e. staging, production).
 # Then adjust the values according to your AWS settings.
-# Unless this file is encrypted with ansible-vault,
-# ensure the copied file is in .gitignore to avoid checking in secrets!
+# If you include secrets in this file, ensure that this file encrypted with
+# ansible-vault or git-crypt, or that this file is included in .gitignore.
+# Otherwise you may commit secrets to your respository.
 
 # You can override your Run Environment's AWS settings here, but it shouldn't
 # be necessary unless:
@@ -17,7 +18,8 @@
 #  region: "us-west-2"
 #  ecs:
 #    cluster_name: staging
-#    execution_role_arn: arn:aws:iam::12345678901:role/ecsTaskExecutionRole
+#    # Required when deploying a scheduled task without CloudReactor
+#    # execution_role_arn: arn:aws:iam::12345678901:role/ecsTaskExecutionRole
 #    task:
 #      network:
 #        security_groups:
@@ -59,7 +61,14 @@ cloudreactor:
 ## In this example, it gets the API key for CloudReactor from
 ## AWS Secrets Manager.
 default_env_task_config:
-#   service_instance_count: 2
+  # env:
+  #   Environment: example
+  #   VAR_1: FOO
+  #   These will be resolved to DATABASE_USERNAME and DATABASE_PASSWORD by
+  #   proc_wrapper, assuming you set a Task Role that has access to read the
+  #   secret.
+  #   AWS_SM_DATABASE_USERNAME_FOR_PROC_WRAPPER_TO_RESOLVE: arn:aws:secretsmanager:us-west-2:123456789012:secret:app/example/db|JP:$.username
+  #   AWS_SM_DATABASE_PASWORD_FOR_PROC_WRAPPER_TO_RESOLVE: arn:aws:secretsmanager:us-west-2:123456789012:secret:app/example/db|JP:$.password
   ecs:
     extra_main_container_properties:
       # Note that when ECS injects secrets into the environment, it uses the

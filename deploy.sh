@@ -48,8 +48,11 @@ set -e
 
 if [ -z "$1" ]
   then
-    echo "Usage: $0 <deployment> [task_names]"
-    exit 1
+    if [ -z "$DEPLOYMENT_ENVIRONMENT" ]
+      then
+        echo "Usage: $0 <deployment> [task_names]"
+        exit 1
+    fi
   else
     export DEPLOYMENT_ENVIRONMENT=$1
     shift
@@ -142,7 +145,7 @@ fi
 
 if [ -z "$DEPLOY_COMMAND" ]
   then
-    DEPLOY_COMMAND="python deploy.py"
+    DEPLOY_COMMAND="python deploy.py $DEPLOYMENT_ENVIRONMENT"
 fi
 
 docker run -ti --rm \
@@ -155,4 +158,4 @@ docker run -ti --rm \
   -v $DOCKER_CONTEXT_DIR:/work/docker_context \
   $EXTRA_DOCKER_RUN_OPTIONS \
   $DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG \
-  $DEPLOY_COMMAND $DEPLOYMENT_ENVIRONMENT "$@"
+  $DEPLOY_COMMAND "$@"
