@@ -183,10 +183,15 @@ task_name_to_config:
 #          assign_public_ip: true
 #      service:
 #        deployment_configuration:
-#           force_new_deployment: False
+#           force_new_deployment: false
 #           minimum_healthy_percent: 100
 #           maximum_percent: 200
-#           rollback: True
+#           enable_circuit_breaker: True
+#           rollback_on_failure: true
+#         enable_ecs_managed_tags: True
+#        propagate_tags: SERVICE # Or "TASK_EXECUTION"
+#        tags:
+#          TaskType: Service
 #      extra_main_container_properties:
 #        portMappings:
 #          - hostPort: 7070
