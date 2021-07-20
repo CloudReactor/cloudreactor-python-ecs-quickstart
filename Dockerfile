@@ -13,22 +13,28 @@ WORKDIR /usr/src/app
 #  && apt-get install -y libpq-dev=11.7-0+deb10u1 build-essential=12.6 --no-install-recommends \
 #  && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-input --no-cache-dir --upgrade pip==21.1.1
-RUN pip install --no-input --no-cache-dir pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.25.1
-
-COPY requirements.in .
-
-RUN pip-compile --allow-unsafe --generate-hashes \
-  requirements.in --output-file /tmp/requirements.txt
-
-# Install dependencies
-# https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
-RUN pip install --no-input --no-cache-dir -r /tmp/requirements.txt
-
 # Run as non-root user for better security
 RUN groupadd appuser && useradd -g appuser --create-home appuser
 USER appuser
 WORKDIR /home/appuser
+
+ENV PIP_USER 1
+ENV PIP_NO_INPUT 1
+ENV PIP_NO_CACHE_DIR 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
+ENV PIP_NO_WARN_SCRIPT_LOCATION 0
+
+RUN pip install --upgrade pip==21.1.3
+RUN pip install pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.25.1
+
+COPY requirements.in .
+
+RUN /home/appuser/.local/bin/pip-compile --allow-unsafe --generate-hashes \
+  requirements.in --output-file /tmp/requirements.txt
+
+# Install dependencies
+# https://stackoverflow.com/questions/45594707/what-is-pips-no-cache-dir-good-for
+RUN pip install -r /tmp/requirements.txt
 
 # Pre-create this directory so that it has the correct permission
 # when ECS mounts a volume, otherwise it will be owned by root.

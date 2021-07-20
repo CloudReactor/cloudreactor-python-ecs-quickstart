@@ -1,19 +1,13 @@
 FROM cloudreactor-python-ecs-quickstart
 
-USER root
-WORKDIR /usr/src/app
-
 COPY ./dev-requirements.in /tmp/
 
 WORKDIR /tmp
 
-RUN pip-compile --allow-unsafe --generate-hashes \
+RUN /home/appuser/.local/bin/pip-compile --allow-unsafe --generate-hashes \
   dev-requirements.in --output-file dev-requirements.txt
 
-RUN pip install --no-input --no-cache-dir -r requirements.txt -r dev-requirements.txt
-
-USER appuser
-WORKDIR /home/appuser
+RUN pip install -r requirements.txt -r dev-requirements.txt
 
 COPY ./mypy.ini .
 
