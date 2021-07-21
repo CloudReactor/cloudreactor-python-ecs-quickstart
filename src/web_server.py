@@ -8,4 +8,4 @@ app = Flask(__name__)
 @app.route('/')
 def hello_world():
     """Returns a sample string as the response."""
-    return 'Hello from CloudReactor!'
+    return "Hello from CloudReactor!\n"

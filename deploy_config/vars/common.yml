@@ -177,6 +177,7 @@ task_name_to_config:
 # # Uncomment to enable web server -- requires an IP target group and
 # # load balancer setup in AWS
 #  web_server:
+#    command: "/home/appuser/.local/bin/flask run -p 7070 --host=0.0.0.0"
 #    ecs:
 #      task:
 #        network:
@@ -188,7 +189,7 @@ task_name_to_config:
 #           maximum_percent: 200
 #           enable_circuit_breaker: True
 #           rollback_on_failure: true
-#         enable_ecs_managed_tags: True
+#        enable_ecs_managed_tags: True
 #        propagate_tags: SERVICE # Or "TASK_EXECUTION"
 #        tags:
 #          TaskType: Service

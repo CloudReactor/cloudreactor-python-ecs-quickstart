@@ -44,7 +44,7 @@ services:
     environment:
       <<: *service-env-base
       PROC_WRAPPER_TASK_IS_SERVICE: "TRUE"
-      TASK_COMMAND: flask run -p 7070 --host=0.0.0.0
+      TASK_COMMAND: /home/appuser/.local/bin/flask run -p 7070 --host=0.0.0.0
       FLASK_APP: "src/web_server.py"
     ports:
       - "7070:7070"
