@@ -1,4 +1,4 @@
-version: "3.7"
+version: "3.9"
 
 x-service-base: &service-base
   image: cloudreactor-python-ecs-quickstart
@@ -12,6 +12,8 @@ x-service-base: &service-base
   environment: &service-env-base
       PROC_WRAPPER_OFFLINE_MODE: "TRUE"
       PROC_WRAPPER_LOG_LEVEL: DEBUG
+  # Comment out for docker-compose that supports versions less than 3.0
+  profiles: ["dev"]
 
 x-dev-base: &dev-base
   <<: *service-base
@@ -48,6 +50,7 @@ services:
       FLASK_APP: "src/web_server.py"
     ports:
       - "7070:7070"
+    profiles: []
 
   # Not a deployed task, here for debugging your Docker build.
   shell:
@@ -85,3 +88,4 @@ services:
       - ./Dockerfile:/mnt/Dockerfile
       - ./hadolint.yaml:/mnt/hadolint.yaml
     entrypoint: /bin/hadolint --config /mnt/hadolint.yaml /mnt/Dockerfile
+    profiles: ["dev"]
