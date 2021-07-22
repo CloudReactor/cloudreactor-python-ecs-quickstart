@@ -174,27 +174,34 @@ task_name_to_config:
     env:
       <<: *default_task_env
       TEMP_FILE_DIR: "/home/appuser/scratch"
-# # Uncomment to enable web server -- requires an IP target group and
-# # load balancer setup in AWS
-#  web_server:
-#    command: "/home/appuser/.local/bin/flask run -p 7070 --host=0.0.0.0"
-#    ecs:
-#      task:
-#        network:
-#          assign_public_ip: true
-#      service:
-#        deployment_configuration:
-#           force_new_deployment: false
-#           minimum_healthy_percent: 100
-#           maximum_percent: 200
-#           enable_circuit_breaker: True
-#           rollback_on_failure: true
-#        enable_ecs_managed_tags: True
-#        propagate_tags: SERVICE # Or "TASK_EXECUTION"
-#        tags:
-#          TaskType: Service
-#      extra_main_container_properties:
-#        portMappings:
-#          - hostPort: 7070
-#            containerPort: 7070
-#            protocol: tcp
+ web_server:
+   command: "flask run -p 7070 --host=0.0.0.0"
+   # # Uncomment to enable web server -- requires an IP target group and
+   # # load balancer setup in AWS
+   deploy: false
+   description: "Web Server"
+   max_concurrency: null
+   is_service: true
+   service_instance_count: 1
+   env:
+     FLASK_APP: src/web_server.py
+   ecs:
+     task:
+       network:
+         assign_public_ip: true
+     service:
+       deployment_configuration:
+          force_new_deployment: false
+          minimum_healthy_percent: 100
+          maximum_percent: 200
+          enable_circuit_breaker: true
+          rollback_on_failure: true
+       enable_ecs_managed_tags: true
+       propagate_tags: SERVICE # Or "TASK_EXECUTION"
+       tags:
+         TaskType: Service
+     extra_main_container_properties:
+       portMappings:
+         - hostPort: 7070
+           containerPort: 7070
+           protocol: tcp

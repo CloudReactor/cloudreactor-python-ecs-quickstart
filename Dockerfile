@@ -24,12 +24,15 @@ ENV PIP_NO_CACHE_DIR 1
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 ENV PIP_NO_WARN_SCRIPT_LOCATION 0
 
+# So that tools installed by pip are available in the path
+ENV PATH $PATH:/home/appuser/.local/bin
+
 RUN pip install --upgrade pip==21.1.3
 RUN pip install pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.25.1
 
 COPY requirements.in .
 
-RUN /home/appuser/.local/bin/pip-compile --allow-unsafe --generate-hashes \
+RUN pip-compile --allow-unsafe --generate-hashes \
   requirements.in --output-file /tmp/requirements.txt
 
 # Install dependencies
