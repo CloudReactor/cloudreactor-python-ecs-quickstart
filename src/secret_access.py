@@ -15,7 +15,7 @@ def main():
     logger = logging.getLogger(__name__)
 
     with StatusUpdater() as updater:
-        logging.info('Starting secret access ...')
+        logger.info('Starting secret access ...')
         secret_value = os.environ.get('SECRET_VALUE')
 
         if secret_value:

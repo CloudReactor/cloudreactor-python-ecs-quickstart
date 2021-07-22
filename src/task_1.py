@@ -52,19 +52,19 @@ def main():
         for i in range(num_rows):
             if i == row_to_fail_at:
                 updater.send_update(error_count=1)
-                logging.error("Failed on row %i, exiting!", i)
+                logger.error("Failed on row %i, exiting!", i)
                 sys.exit(1)
             else:
-                logging.info("sleeping %i ...", i)
+                logger.info("sleeping %i ...", i)
                 time.sleep(2)
                 success_count += random.randrange(1, 10)
 
                 try:
                     updater.send_update(success_count=success_count)
                 except Exception:
-                    logging.info('Failed to send update')
+                    logger.info('Failed to send update')
 
-                logging.info("done sleeping")
+                logger.info("done sleeping")
 
         updater.send_update(last_status_message='woken up')
 
