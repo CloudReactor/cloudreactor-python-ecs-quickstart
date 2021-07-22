@@ -1,5 +1,31 @@
 #!/bin/bash
 
+# BSD 2-Clause License
+
+# Copyright (c) 2021, CloudReactor
+# All rights reserved.
+
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+
+# 1. Redistributions of source code must retain the above copyright notice, this
+#    list of conditions and the following disclaimer.
+
+# 2. Redistributions in binary form must reproduce the above copyright notice,
+#    this list of conditions and the following disclaimer in the documentation
+#    and/or other materials provided with the distribution.
+
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+# FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+# SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+# CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+# OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+# OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 # This script uses the aws-ecs-cloudreactor-deployer Docker image to
 # deploy Tasks to AWS ECS and CloudReactor.
 #
@@ -60,6 +86,17 @@ fi
 
 echo "DEPLOYMENT_ENVIRONMENT = $DEPLOYMENT_ENVIRONMENT"
 
+if [ -z "$1" ] || [[ "$1" =~ ^- ]]
+  then
+    if [ -z "$TASK_NAMES" ]
+      then
+        TASK_NAMES="ALL"
+    fi
+  else
+    export TASK_NAMES=$1
+    shift
+fi
+
 VAR_FILENAME="deploy_config/vars/$DEPLOYMENT_ENVIRONMENT.yml"
 
 echo "VAR_FILENAME = $VAR_FILENAME"
@@ -70,6 +107,13 @@ if [[ ! -f $VAR_FILENAME ]]
     exit 1
 fi
 
+ENV_FILE_OPTIONS=""
+
+if [[ -f "deploy.env" ]]
+  then
+    ENV_FILE_OPTIONS="--env-file deploy.env"
+fi
+
 # Environment-specific deployment settings are assumed to be in
 # deploy.[environment].env but you can override the location by setting
 # PER_ENV_SETTINGS_FILE.
@@ -78,13 +122,10 @@ if [ -z "$PER_ENV_SETTINGS_FILE" ]
     PER_ENV_SETTINGS_FILE="deploy.$DEPLOYMENT_ENVIRONMENT.env"
 fi
 
-if [[ ! -f deploy.env ]] && [[ ! -f $PER_ENV_SETTINGS_FILE ]]
-then
-  echo "WARNING: neither deploy.env nor $PER_ENV_SETTINGS_FILE we found, creating empty ones."
+if [[ -f $PER_ENV_SETTINGS_FILE ]]
+  then
+    ENV_FILE_OPTIONS="$ENV_FILE_OPTIONS --env-file $PER_ENV_SETTINGS_FILE"
 fi
-
-touch -a deploy.env
-touch -a $PER_ENV_SETTINGS_FILE
 
 # The default Docker context directory is the current directory.
 # Override by setting DOCKER_CONTEXT_DIR to an absolute path.
@@ -125,6 +166,32 @@ fi
 
 echo "Docker image tag = $DOCKER_IMAGE_TAG"
 
+if [ -z "$EXTRA_DOCKER_RUN_OPTIONS" ]
+  then
+    EXTRA_DOCKER_RUN_OPTIONS=""
+fi
+
+if [ "$DEBUG_MODE" == "TRUE" ]
+  then
+    EXTRA_DOCKER_RUN_OPTIONS="-ti $EXTRA_DOCKER_RUN_OPTIONS"
+fi
+
+if [ "$USE_USER_AWS_CONFIG" == "TRUE" ]
+  EXTRA_DOCKER_RUN_OPTIONS="-v $HOME/.aws:/root/.aws $EXTRA_DOCKER_RUN_OPTIONS"
+  then
+    if [ -n "$AWS_PROFILE" ]
+      then
+        EXTRA_DOCKER_RUN_OPTIONS="-e AWS_PROFILE=$AWS_PROFILE $EXTRA_DOCKER_RUN_OPTIONS"
+    fi
+fi
+
+if [ -n "$AWS_DEFAULT_REGION" ]
+    then
+      EXTRA_DOCKER_RUN_OPTIONS="-e AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION $EXTRA_DOCKER_RUN_OPTIONS"
+fi
+
+echo "Extra Docker run options = '$EXTRA_DOCKER_RUN_OPTIONS'"
+
 # Optional: use the latest git commit hash to set the version signature,
 # so that the git commit can be linked in the CloudReactor dashboard.
 # Otherwise, ansible will use the current date/time as the task version signature.
@@ -145,14 +212,24 @@ fi
 
 if [ -z "$DEPLOY_COMMAND" ]
   then
-    DEPLOY_COMMAND="python deploy.py $DEPLOYMENT_ENVIRONMENT"
+    if [ "$DEBUG_MODE" == "TRUE" ]
+      then
+        DEPLOY_COMMAND="bash"
+      else
+        DEPLOY_COMMAND="python deploy.py $DEPLOYMENT_ENVIRONMENT $TASK_NAMES"
+
+        if [ -n "$EXTRA_ANSIBLE_OPTIONS" ]
+          then
+            DEPLOY_COMMAND="$DEPLOY_COMMAND --ansible-args $EXTRA_ANSIBLE_OPTIONS"
+        fi
+    fi
 fi
 
-docker run -ti --rm \
+docker run --rm \
   -e CLOUDREACTOR_TASK_VERSION_SIGNATURE=$CLOUDREACTOR_TASK_VERSION_SIGNATURE \
   -e DOCKERFILE_PATH=$DOCKERFILE_PATH \
-  --env-file deploy.env \
-  --env-file $PER_ENV_SETTINGS_FILE \
+  -e HOST_PWD=$PWD \
+  $ENV_FILE_OPTIONS \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v $PWD/deploy_config:/work/deploy_config \
   -v $DOCKER_CONTEXT_DIR:/work/docker_context \
