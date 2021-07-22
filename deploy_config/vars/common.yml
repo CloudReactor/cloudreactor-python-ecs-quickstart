@@ -33,7 +33,7 @@ default_task_config:
     # Required when deploying a scheduled task without CloudReactor
     # execution_role_arn: arn:aws:iam::123456789012:role/ecsEventsRole
 
-    # enable_ecs_managed_tags: True
+    # enable_ecs_managed_tags: true
 
     task:
     #   network:
@@ -43,13 +43,13 @@ default_task_config:
     #     security_groups:
     #       - sg_1
     #       - sg_2
-    #     assign_public_ip: True
+    #     assign_public_ip: true
       tags:
         ManagedBy: CloudReactor
         Application: Cloudreactor Python Quickstart
 
     # Uncomment to add properties to the main container:
-    # extra_main_container_properties
+    # extra_main_container_properties:
     #   secrets:
     #     - name: environment_variable_name
     #       valueFrom: arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:[secret_name]
@@ -88,7 +88,7 @@ default_task_config:
     # work_dir: .
     # # Enable/disable secret resolution (fetching from Secrets Manager and
     # # JSON path splitting)
-    resolve_secrets: True
+    resolve_secrets: true
     process_timeout_seconds: 600
     process_max_retries: 1
     # process_retry_delay_seconds: 120
@@ -103,9 +103,9 @@ default_task_config:
     #   embedded:
     #     c: 'd'
     #     f: 1
-    # send_pid: True
-    # send_hostname: True
-    # send_runtime_metadata: True
+    # send_pid: true
+    # send_hostname: true
+    # send_runtime_metadata: true
     # api_heartbeat_interval_seconds: 120
     # api_error_timeout_seconds: 300
     # api_retry_delay_seconds: 120
@@ -115,11 +115,11 @@ default_task_config:
     # api_task_execution_creation_conflict_retry_delay_seconds: 300
     # api_final_update_timeout_seconds: 300
     # api_request_timeout_seconds: 300
-    enable_status_update_listener: True
+    enable_status_update_listener: true
     # status_update_interval_seconds: 60
     # status_update_socket_port: 2373
     # log_level: DEBUG
-    # log_secrets: False
+    # log_secrets: false
     # # Optional Rollbar token used by the wrapper script.
     # # Can point to AWS Secrets Manager, or be the access token itself.
     # rollbar_access_token: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/rollbar_access_token-xxx"
