@@ -14,3 +14,13 @@
     dest=../build/{{env}}/.env
   tags:
     - build
+
+# Alternatively, you can upload the .env file to Secrets Manager.
+# This requires permissions to write secrets.
+# - name: Upload .env file to AWS Secrets Manager
+#   community.aws.aws_secret:
+#     name: '{{project_name}}/{{env}}/env'
+#     state: present
+#     secret_type: 'string'
+#     secret: "{{ lookup('file', '/work/deploy_config/files/.env.' + env)  }}"
+#   register: create_dotenv_secret_result

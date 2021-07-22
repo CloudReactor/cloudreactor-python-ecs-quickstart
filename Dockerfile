@@ -56,10 +56,11 @@ ENV PYTHONFAULTHANDLER 1
 
 ENV PYTHONPATH /home/appuser/src
 
+# Copy deployment environment settings. If storing the .env file in
+# Secrets Manager or S3, remove the following lines:
 ARG ENV_FILE_PATH=build/.env
-
-# copy deployment environment settings
 COPY --chown=appuser:appuser ${ENV_FILE_PATH} .env
+# End .env file copy
 
 COPY --chown=appuser:appuser src ./src
 

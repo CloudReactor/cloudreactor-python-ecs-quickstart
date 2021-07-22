@@ -9,7 +9,18 @@ from proc_wrapper import StatusUpdater
 
 
 def main():
-    load_dotenv()
+    """
+    Print a secret value injected into the environment.
+    """
+
+    # Load variables from the .env file into the environment. This can be used
+    # to configure settings during development, as
+    # deploy_config/files/.env.dev is mapped to the .env file by Docker Compose.
+    # When deployed to ECS, .env.[deployment name] will be loaded instead,
+    # unless you have specified locations to load into the environment with
+    # PROC_WRAPPER_ENV_LOCATIONS.
+    if not os.environ.get('PROC_WRAPPER_ENV_LOCATIONS'):
+        load_dotenv()
 
     logging.basicConfig(level=logging.DEBUG, format="%(asctime)s %(levelname)s: %(message)s")
     logger = logging.getLogger(__name__)

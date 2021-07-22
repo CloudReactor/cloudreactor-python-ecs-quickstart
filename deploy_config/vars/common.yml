@@ -130,6 +130,10 @@ default_task_config:
   env: &default_task_env
     DEPLOYMENT: "{{env}}"
 
+    # Uncomment the line below if you upload the .env file to Secrets Manager in
+    # deploy_config/hooks/pre_build.yml
+    # PROC_WRAPPER_ENV_LOCATIONS: "{{ create_dotenv_secret_result.secret.arn }}"
+
   # alert_methods:
   #   - Alert Method 1
   # links:
