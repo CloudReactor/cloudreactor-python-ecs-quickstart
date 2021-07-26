@@ -192,11 +192,11 @@ temporary credentials. If you are running this on an EC2 instance with an instan
 that has deployment permissions, you can leave this file blank.
 8. To deploy, in a bash shell, run:
 
-    `./deploy.sh <environment> [task_names]`
+    `./cr_deploy.sh <environment> [task_names]`
 
     In a Windows command prompt, run:
 
-    `.\deploy.cmd <environment>  [task_names]`
+    `.\cr_deploy.cmd <environment>  [task_names]`
 
     In both of these commands, `<environment>` is a required argument, which is the
     name of the Run Environment. `[task_names]` is an optional argument, which is a
@@ -206,7 +206,7 @@ that has deployment permissions, you can leave this file blank.
 
     To troubleshoot deployment issues, in a bash shell, run
 
-        DEPLOYMENT_ENTRYPOINT=bash ./deploy.sh <environment>
+        DEPLOYMENT_ENTRYPOINT=bash ./cr_deploy.sh <environment>
 
     In a bash environment with docker-compose installed:
 
@@ -223,7 +223,7 @@ that has deployment permissions, you can leave this file blank.
         docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
 
     These commands will take you to a bash shell inside the deployer Docker
-    container where you can re-run the deployment script with `./deploy.sh`
+    container where you can re-run the deployment script with `./cr_deploy.sh`
     and inspect the files it produces in the `build/` directory.
 
 ## The example tasks

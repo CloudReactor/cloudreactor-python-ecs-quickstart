@@ -22,7 +22,7 @@ x-deployer-base: &deployer-base
     - ./requirements.in:/work/docker_context/requirements.in
     - ./src:/work/docker_context/src
     - ./deploy_config:/work/deploy_config
-  entrypoint: "./deploy.sh"
+  entrypoint: "./cr_deploy.sh"
   env_file:
     - deploy.env
     - deploy.${DEPLOYMENT_ENVIRONMENT}.env
@@ -44,7 +44,7 @@ x-deployer-base: &deployer-base
 services:
   deploy:
     <<: *deployer-base
-    entrypoint: "./deploy.sh"
+    entrypoint: "./cr_deploy.sh"
 
   # For debugging your Docker build
   deployer-shell:

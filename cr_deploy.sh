@@ -38,11 +38,11 @@
 # For example, to use secrets encrypted with ansible-vault
 # and get the encryption password from the command-line during deployment:
 #
-# ./deploy.sh staging --ansible-args --ask-vault-pass
+# ./cr_deploy.sh staging --ansible-args --ask-vault-pass
 #
 # Alternatively, you can use a password file:
 #
-# ./deploy.sh staging --ansible-args --vault-password-file pw.txt
+# ./cr_deploy.sh staging --ansible-args --vault-password-file pw.txt
 #
 # The password file could be a plaintext file, or a script like this:
 #
