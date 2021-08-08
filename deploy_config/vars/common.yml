@@ -5,6 +5,10 @@ project_version_text: 1.0.0
 # project_version_number: 1
 project_url: "https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart"
 
+default_build_options:
+  dockerfile_path: Dockerfile
+  extra_docker_build_args: ""
+
 default_cloudreactor:
   api_base_url: https://api.cloudreactor.io
   # Set to false to disable monitoring and management in CloudReactor
@@ -16,7 +20,7 @@ default_cloudreactor:
 # To clear a property name and value, using the default value in the Run Environment,
 # set the property value to null.
 default_task_config:
-  # enabled: true
+  # enabled: true # Set to false to disable schedule/service in CloudReactor
   # max_concurrency: 1 # null for no concurrency limit
   # max_age_seconds: 7200
   # max_manual_start_delay_seconds: 60
@@ -26,35 +30,35 @@ default_task_config:
     # for supported combinations.
     cpu_units: 256
     memory_mb: 512
-    # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html
-    # for supported platform versions. Can also be set to "LATEST".
+    # # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html
+    # # for supported platform versions. Can also be set to "LATEST".
     # platform_version: "LATEST"
 
-    # Required when deploying a scheduled task without CloudReactor
+    # # Required when deploying a scheduled task without CloudReactor
     # execution_role_arn: arn:aws:iam::123456789012:role/ecsEventsRole
 
     # enable_ecs_managed_tags: true
 
     task:
-    #   network:
-    #     subnets:
-    #       - subnet_1
-    #       - subnet_2
-    #     security_groups:
-    #       - sg_1
-    #       - sg_2
-    #     assign_public_ip: true
+      # network:
+      #   subnets:
+      #     - subnet_1
+      #     - subnet_2
+      #   security_groups:
+      #     - sg_1
+      #     - sg_2
+      #   assign_public_ip: true
       tags:
         ManagedBy: CloudReactor
-        Application: Cloudreactor Python Quickstart
+        Application:  Cloudreactor Python Quickstart
 
-    # Uncomment to add properties to the main container:
-    # extra_main_container_properties:
+    # # Uncomment to add properties to the main container:
+    # extra_main_container_properties
     #   secrets:
     #     - name: environment_variable_name
     #       valueFrom: arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:[secret_name]
 
-    # Uncomment to add properties to the top-level ECS task definition:
+    # # Uncomment to add properties to the top-level ECS task definition:
     # extra_task_definition_properties:
     #   volumes:
     #     - name: "database_scratch"
@@ -64,15 +68,15 @@ default_task_config:
     # # Extra CPU/memory allocated to the extra containers,
     # # will be taken away from the total cpu_units and memory_mb
     # # allocated for the entire task.
-    # extra_container_cpu_units: 32
-    # extra_container_memory_mb: 128
+    #extra_container_cpu_units: 32
+    #extra_container_memory_mb: 128
     # # Each definition has the properties for containers in an AWS ECS task
     # # definition,
     # # The following example uses nginx as a reverse proxy. It assumed that a Docker image
     # # based on nginx, with configuration, is available in ECR already.
     # # See https://medium.com/@stefanofrancavilla/deploy-web-apps-nginx-to-ecs-with-docker-580c6af827e8
     # # except ECS cluster configuration is not needed since we're using Fargate.
-    # additional_container_definitions:
+    # # additional_container_definitions:
     #  - name: Some Container Name
     #    image: XXXXXXXXXX.dkr.ecr.us-west-2.amazonaws.com/configured-nginx
     #    cpu: 256
@@ -86,18 +90,90 @@ default_task_config:
   wrapper: &default_task_wrapper
     # # Working directory to execute command in
     # work_dir: .
-    # # Enable/disable secret resolution (fetching from Secrets Manager and
-    # # JSON path splitting)
+
+    # # Top-level .env secret locations. The values in later locations take
+    # # precedence over those in earlier locations.
+    # env_locations:
+    #   - arn:aws:secretsmanager:us-west-2:123456789012:secret:app/{{env}}/env
+    #   - arn:aws:s3:::examplebucket/{{env}}/app/config.json
+    #   - file:///home/appuser/.env
+
+    # # proc_wrapper can also load a configuration dictionary, merged from
+    # # the sources below.
+    # config_locations:
+    #   - arn:aws:secretsmanager:us-east-2:1234567890:secret:myapp/{{env}}/env
+    #   - arn:aws:s3:::examplebucket/{{env}}/app1/config.json
+
+    # # Merge stategy for configuration / environment. Can be one of these:
+    # # SHALLOW, REPLACE, ADDITIVE, TYPESAFE_REPLACE, TYPESAFE_ADDITIVE
+    # # Strategies other than SHALLOW require merge_deep to be installed.
+    # # config_merge_strategy: SHALLOW
+
+    # # Normally secrets fetched externally do not overwrite environment
+    # # variables that are already set, since they could be set when manually
+    # # starting a Task. Change this to false to allow overwriting.
+    # overwrite_env_with_secrets: false
+
+    # # Time-To-Live for cached secret values, in seconds. If the process
+    # # fails, before it restarts, if the TTL has been exceeded, the secrets
+    # # will be re-fetched. The default value is -1 which means values are
+    # # cached indefinitely.
+    # config_ttl_seconds: -1
+
+    # # Enable/disable secret resolution
     resolve_secrets: true
-    process_timeout_seconds: 600
+
+    # # Secret values may be dictionaries that contain embedded values that
+    # # need to be resolved. proc_wrapper resolves embedded secret values
+    # # up to a maximum depth, which is 5 by default.
+    # max_config_resolution_depth: 5
+
+    # # When a secret value is fetched, it may contain a dictionary that also
+    # # has values that need to be resolved. Therefore proc_wrapper makes
+    # # multiple passes to try to resolve all secrets. The default maximum
+    # # number of passes is 3.
+    # max_config_resolution_iterations: 3
+
+    # # Set to true to immediately stop execution if any error happens during
+    # # secrets resolution. This is the default behavior. You may set this to
+    # # false to debug configuration issues, in which case secret fetching
+    # # and resolution won't fail until all possible fetching and resolution
+    # # is attempted.
+    # fail_fast_config_resolution: true
+
+    # # proc_wrapper looks for environment variable names that begin with a
+    # # specific prefix and a specific suffix. Those variables with have
+    # # values used to fetch a secret. The secret is given the environment
+    # # variable name with the prefix and suffix removed. By default, no
+    # # name prefix is necessary, but the name suffix is
+    # # "_FOR_PROC_WRAPPER_TO_RESOLVE".
+    # resolvable_env_var_name_prefix: ""
+    # resolvable_env_var_name_suffix: "_FOR_PROC_WRAPPER_TO_RESOLVE"
+
+    # # proc_wrapper looks for configuration property names that begin with a
+    # # specific prefix and a specific suffix. Those variables with have
+    # # values used to fetch a secret. The secret is given the property
+    # # name with the prefix and suffix removed. By default, no name prefix is
+    # # necessary, but the name suffix is "__to_resolve" (with 2 leading
+    # # underscores).
+    # resolvable_config_property_name_prefix: ""
+    # resolvable_config_property_name_suffix: "__to_resolve"
+
+    # # After the configuration dictionary is resolved, proc_wrapper can set
+    # # an environment variable to the JSON-encoded configuration dictionary,
+    # # if you give the variable a name below. By default, proc_wrapper does not
+    # # set the configuration dictionary in the environment.
+    # env_var_name_for_config: null
+
+
     process_max_retries: 1
     # process_retry_delay_seconds: 120
     # process_timeout_seconds: null
     # process_check_interval: 10
     # process_termination_grace_period: 30
-    ## This data is sent back from the wrapper to CloudReactor when it starts.
-    ## It may be used to identify properties about instance of the task that is
-    ## running.
+    # # This data is sent back from the wrapper to CloudReactor when it starts.
+    # # It may be used to identify properties about instance of the task that is
+    # # running.
     # other_instance_metadata:
     #   a: 'b'
     #   embedded:
@@ -118,6 +194,7 @@ default_task_config:
     enable_status_update_listener: true
     # status_update_interval_seconds: 60
     # status_update_socket_port: 2373
+    # # Default log level is INFO, set to DEBUG here for initial deployments.
     # log_level: DEBUG
     # log_secrets: false
     # # Optional Rollbar token used by the wrapper script.
@@ -129,11 +206,6 @@ default_task_config:
 
   env: &default_task_env
     DEPLOYMENT: "{{env}}"
-
-    # Uncomment the line below if you upload the .env file to Secrets Manager in
-    # deploy_config/hooks/pre_build.yml
-    # PROC_WRAPPER_ENV_LOCATIONS: "{{ create_dotenv_secret_result.secret.arn }}"
-
   # alert_methods:
   #   - Alert Method 1
   # links:
