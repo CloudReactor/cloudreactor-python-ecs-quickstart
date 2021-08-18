@@ -34,3 +34,16 @@
   tags:
     - build
   when: dotenv_file_result.stat.exists
+
+# Uncomment to upload your locally encrypted file to Secrets Manager
+# each time you deploy:
+# - name: Upload .env file to AWS Secrets Manager
+#   community.aws.aws_secret:
+#     name: 'myorg/{{project_name}}/secrets/{{env}}/env'
+#     state: present
+#     secret_type: 'string'
+#     secret: "{{ lookup('file', '/work/deploy_config/files/.env.' + env)  }}"
+#   register: create_dotenv_secret_result
+
+# - debug:
+#     msg: "Secret: {{create_dotenv_secret_result}}"
