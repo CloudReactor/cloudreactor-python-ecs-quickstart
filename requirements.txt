@@ -4,13 +4,13 @@
 #
 #    pip-compile --allow-unsafe --generate-hashes --output-file=/tmp/requirements.txt requirements.in
 #
-boto3==1.18.3 \
-    --hash=sha256:13e60f88d13161df951d6e52bd483cdbe1a36a31f818746289d8ba0879465710 \
-    --hash=sha256:3be2f259b279d69495433e3288db3670817fdb1813cfde92abf867bba3ad8148
+boto3==1.18.16 \
+    --hash=sha256:23e55b7cde2b35c79c63d4d52c761fdc2141f70f02df76f68882776a33dfcb63 \
+    --hash=sha256:806111acfb70715dfbe9d9f0d6089e7a9661a6d6bb422b17e035fc32e17f3f37
     # via -r requirements.in
-botocore==1.21.3 \
-    --hash=sha256:0b6f378c9efbc72eee61aba1e16cab90bde53a37bd2d861f6435552fd7030adf \
-    --hash=sha256:285ab9459cdd49d4a9322692c6e13772b97af723a03c0eed519b589446491a5b
+botocore==1.21.16 \
+    --hash=sha256:697b577d62a8893bce56c74ee53e54f04e69b14e42a6591e109c49b5675c19ed \
+    --hash=sha256:b0e342b8c554f34f9f1cb028fbc20aff535fefe0c86a4e2cae7201846cd6aa4a
     # via
     #   boto3
     #   s3transfer
@@ -18,9 +18,9 @@ click==8.0.1 \
     --hash=sha256:8c04c11192119b1ef78ea049e0a6f0463e4c48ef00a30160c704337586f3ad7a \
     --hash=sha256:fba402a4a47334742d782209a7c79bc448911afe1149d07bdabdf480b3e2f4b6
     # via flask
-cloudreactor-procwrapper==3.0.0 \
-    --hash=sha256:15438cba338df948a1e5d4dd6e7e27de39fd899500e413f00453a06c57a172b6 \
-    --hash=sha256:c891c2e07e733c51b884c0d0199d8c6322d5b6a867936d9e89b84daeb7778c1f
+cloudreactor-procwrapper==3.0.1 \
+    --hash=sha256:b1714c96919dc8c725fae718f342b7b57b8872c2f5cb44f64175a628dbadaed7 \
+    --hash=sha256:b35c0273f2a023d8af99eb83e52bfa99e7eeff9d0d908e3c1ad68c21e60ae63d
     # via -r requirements.in
 decorator==5.0.9 \
     --hash=sha256:6e5c199c16f7a9f0e3a61a4a54b3d27e7dad0dbdde92b944426cb20914376323 \
@@ -97,9 +97,9 @@ python-dateutil==2.8.2 \
     --hash=sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86 \
     --hash=sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9
     # via botocore
-python-dotenv==0.18.0 \
-    --hash=sha256:dd8fe852847f4fbfadabf6183ddd4c824a9651f02d51714fa075c95561959c7d \
-    --hash=sha256:effaac3c1e58d89b3ccb4d04a40dc7ad6e0275fda25fd75ae9d323e2465e202d
+python-dotenv==0.19.0 \
+    --hash=sha256:aae25dc1ebe97c420f50b81fb0e5c949659af713f31fdb63c749ca68748f34b1 \
+    --hash=sha256:f521bc2ac9a8e03c736f62911605c5d83970021e3fa95b37d769e2bbbe9b6172
     # via -r requirements.in
 pyyaml==5.4.1 \
     --hash=sha256:08682f6b72c722394747bddaf0aa62277e02557c0fd1c42cb853016a38f8dedf \

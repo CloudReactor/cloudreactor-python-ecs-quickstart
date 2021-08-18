@@ -1,4 +1,4 @@
-cloudreactor-procwrapper==3.0.0
+cloudreactor-procwrapper==3.0.1
 
 # Requirements for secrets resolution
 boto3>=1.16.56
