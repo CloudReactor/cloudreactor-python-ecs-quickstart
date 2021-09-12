@@ -36,7 +36,7 @@ jobs:
       uses: CloudReactor/aws-ecs-cloudreactor-deployer@v0.1.4-alpha
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: "us-east-1"
         # Omit or change to https://api.cloudreactor.io for you own projects
         cloudreactor-api-base-url: ${{ secrets.CLOUDREACTOR_API_BASE_URL }}
