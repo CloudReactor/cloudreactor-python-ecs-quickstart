@@ -4,33 +4,33 @@
 # If your task does not use dotenv, you can remove these steps.
 ---
 - name: Ensures docker_context/build dir exists
-  file: path=docker_context/build state=directory
+  file: path={{docker_context_dir}}/build state=directory
   tags:
     - build
 
 - name: Check if runtime .env file exists
   stat:
-    path: deploy_config/files/.env.{{env}}
+    path: "{{deploy_config_dir}}/files/.env.{{env}}"
   register: dotenv_file_result
   tags:
     - build
 
 - name: Output message if .env does not exist
   debug:
-    msg: "deploy_config/files/.env.{{env}} does not exist, creating an empty file"
+    msg: "{{deploy_config_dir}}/files/.env.{{env}} does not exist, creating an empty file"
     verbosity: 1
   when: not dotenv_file_result.stat.exists
 
 - name: Create an empty .env file if it does not exist
   file:
-    path: docker_context/build/.env
+    path: "{{deploy_config_dir}}/build/.env"
     state: touch
   when: not dotenv_file_result.stat.exists
 
 - name: Copy runtime .env file read by application if it exists
   copy: |
-    src=deploy_config/files/.env.{{env}}
-    dest=docker_context/build/.env
+    src={{deploy_config_dir}}/files/.env.{{env}}
+    dest={{docker_context_dir}}/build/.env
   tags:
     - build
   when: dotenv_file_result.stat.exists
@@ -42,7 +42,7 @@
 #     name: 'myorg/{{project_name}}/secrets/{{env}}/env'
 #     state: present
 #     secret_type: 'string'
-#     secret: "{{ lookup('file', '/work/deploy_config/files/.env.' + env)  }}"
+#     secret: "{{ lookup('file', deploy_config_dir + '/files/.env.' + env)  }}"
 #   register: create_dotenv_secret_result
 
 # - debug:

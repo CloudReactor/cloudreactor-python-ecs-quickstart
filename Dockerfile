@@ -56,16 +56,10 @@ ENV PYTHONFAULTHANDLER 1
 
 ENV PYTHONPATH /home/appuser/src
 
-# Copy deployment environment settings. If storing the .env file in
-# Secrets Manager or S3, remove the following lines:
-ARG ENV_FILE_PATH=build/.env
-COPY --chown=appuser:appuser ${ENV_FILE_PATH} .env
-# End .env file copy
-
 COPY --chown=appuser:appuser src ./src
 
 # For the web-server task example only.
-# If you are not deploying the web-server, you can comment out this line.
+# If you are not deploying the web server, you can comment out this line.
 EXPOSE 7070
 
 ENTRYPOINT python -m proc_wrapper $TASK_COMMAND
