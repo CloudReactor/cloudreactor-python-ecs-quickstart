@@ -6,7 +6,7 @@ project_version_text: 1.0.0
 project_url: "https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart"
 
 default_build_options:
-  dockerfile_path: Dockerfile
+  #dockerfile_path: "{{docker_context_dir}/Dockerfile"
   extra_docker_build_args: ""
 
 default_cloudreactor:
