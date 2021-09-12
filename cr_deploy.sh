@@ -173,12 +173,12 @@ fi
 
 if [ "$DEBUG_MODE" == "TRUE" ]
   then
-    EXTRA_DOCKER_RUN_OPTIONS="-ti $EXTRA_DOCKER_RUN_OPTIONS"
+    EXTRA_DOCKER_RUN_OPTIONS="-ti $EXTRA_DOCKER_RUN_OPTIONS --entrypoint bash"
 fi
 
 if [ "$USE_USER_AWS_CONFIG" == "TRUE" ]
-  EXTRA_DOCKER_RUN_OPTIONS="-v $HOME/.aws:/root/.aws $EXTRA_DOCKER_RUN_OPTIONS"
   then
+    EXTRA_DOCKER_RUN_OPTIONS="-v $HOME/.aws:/root/.aws $EXTRA_DOCKER_RUN_OPTIONS"
     if [ -n "$AWS_PROFILE" ]
       then
         EXTRA_DOCKER_RUN_OPTIONS="-e AWS_PROFILE=$AWS_PROFILE $EXTRA_DOCKER_RUN_OPTIONS"
@@ -214,9 +214,9 @@ if [ -z "$DEPLOY_COMMAND" ]
   then
     if [ "$DEBUG_MODE" == "TRUE" ]
       then
-        DEPLOY_COMMAND="bash"
+        DEPLOY_COMMAND=""
       else
-        DEPLOY_COMMAND="python deploy.py $DEPLOYMENT_ENVIRONMENT $TASK_NAMES"
+        DEPLOY_COMMAND="$DEPLOYMENT_ENVIRONMENT $TASK_NAMES"
 
         if [ -n "$EXTRA_ANSIBLE_OPTIONS" ]
           then
