@@ -33,7 +33,7 @@ jobs:
       env:
         PYTHONPATH: src
     - name: Deploy to AWS ECS and CloudReactor
-      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v0.1.6-alpha
+      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v0.1.7-alpha
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -48,9 +48,7 @@ jobs:
         # pushing. This normally is a staging environment that has the same
         # name as the Run Environment in CloudReactor.
         deployment-environment: staging
-        version-signature: ${{ github.sha }}
         log-level: DEBUG
       if: github.ref == 'refs/heads/master'
-
     - name: Print final message
       run: "echo Complete!"
