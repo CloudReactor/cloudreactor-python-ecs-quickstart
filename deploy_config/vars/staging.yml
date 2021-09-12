@@ -5,6 +5,10 @@ default_env_task_config:
   command: "python src/task_1.py"
   ecs:
     platform_version: "1.4.0"
+    extra_main_container_properties:
+      secrets:
+        - name: PROC_WRAPPER_API_KEY
+          valueFrom: "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:CloudReactor/{{env}}/common/cloudreactor_api_key"
   wrapper:
       process_max_retries: 0
       api_heartbeat_interval_seconds: 120
