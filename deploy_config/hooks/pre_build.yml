@@ -15,26 +15,6 @@
   tags:
     - build
 
-- name: Output message if .env does not exist
-  debug:
-    msg: "{{deploy_config_dir}}/files/.env.{{env}} does not exist, creating an empty file"
-    verbosity: 1
-  when: not dotenv_file_result.stat.exists
-
-- name: Create an empty .env file if it does not exist
-  file:
-    path: "{{deploy_config_dir}}/build/.env"
-    state: touch
-  when: not dotenv_file_result.stat.exists
-
-- name: Copy runtime .env file read by application if it exists
-  copy: |
-    src={{deploy_config_dir}}/files/.env.{{env}}
-    dest={{docker_context_dir}}/build/.env
-  tags:
-    - build
-  when: dotenv_file_result.stat.exists
-
 # Uncomment to upload your locally encrypted file to Secrets Manager
 # each time you deploy:
 # - name: Upload .env file to AWS Secrets Manager
@@ -44,6 +24,7 @@
 #     secret_type: 'string'
 #     secret: "{{ lookup('file', deploy_config_dir + '/files/.env.' + env)  }}"
 #   register: create_dotenv_secret_result
+#   when: not dotenv_file_result.stat.exists
 
 # - debug:
 #     msg: "Secret: {{create_dotenv_secret_result}}"
