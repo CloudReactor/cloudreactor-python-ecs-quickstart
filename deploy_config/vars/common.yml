@@ -165,7 +165,6 @@ default_task_config:
     # # set the configuration dictionary in the environment.
     # env_var_name_for_config: null
 
-
     process_max_retries: 1
     # process_retry_delay_seconds: 120
     # process_timeout_seconds: null
@@ -197,6 +196,11 @@ default_task_config:
     # # Default log level is INFO, set to DEBUG here for initial deployments.
     # log_level: DEBUG
     # log_secrets: false
+
+    # Temporary for debugging
+    log_level: DEBUG
+    log_secrets: false
+
     # # Optional Rollbar token used by the wrapper script.
     # # Can point to AWS Secrets Manager, or be the access token itself.
     # rollbar_access_token: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/rollbar_access_token-xxx"
