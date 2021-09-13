@@ -15,16 +15,15 @@
   tags:
     - build
 
-# Uncomment to upload your locally encrypted file to Secrets Manager
-# each time you deploy:
+# Uploads your locally encrypted file to Secrets Manager each time you deploy:
 # - name: Upload .env file to AWS Secrets Manager
 #   community.aws.aws_secret:
-#     name: 'myorg/{{project_name}}/secrets/{{env}}/env'
+#     name: 'CloudReactor/{{project_name}}/secrets/{{env}}/env'
 #     state: present
 #     secret_type: 'string'
 #     secret: "{{ lookup('file', deploy_config_dir + '/files/.env.' + env)  }}"
 #   register: create_dotenv_secret_result
-#   when: not dotenv_file_result.stat.exists
+#   when: dotenv_file_result.stat.exists
 
 # - debug:
 #     msg: "Secret: {{create_dotenv_secret_result}}"
