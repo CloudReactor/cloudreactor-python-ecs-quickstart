@@ -33,7 +33,7 @@ jobs:
       env:
         PYTHONPATH: src
     - name: Deploy to AWS ECS and CloudReactor
-      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v0.1.8-alpha
+      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v0.1.9-alpha
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
