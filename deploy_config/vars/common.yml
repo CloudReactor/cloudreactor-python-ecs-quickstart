@@ -93,10 +93,10 @@ default_task_config:
 
     # # Top-level .env secret locations. The values in later locations take
     # # precedence over those in earlier locations.
-    # env_locations:
-    #   - arn:aws:secretsmanager:us-west-2:123456789012:secret:app/{{env}}/env
-    #   - arn:aws:s3:::examplebucket/{{env}}/app/config.json
-    #   - file:///home/appuser/.env
+    env_locations:
+      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:CloudReactor/{{project_name}}/secrets/{{env}}/env"
+      # - arn:aws:s3:::examplebucket/{{env}}/app/config.json
+      # - file:///home/appuser/.env
 
     # # proc_wrapper can also load a configuration dictionary, merged from
     # # the sources below.
