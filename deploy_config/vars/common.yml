@@ -10,7 +10,7 @@ default_build_options:
   extra_docker_build_args: ""
 
 default_cloudreactor:
-  api_base_url: https://api.cloudreactor.io
+  # api_base_url: https://api.cloudreactor.io
   # Set to false to disable monitoring and management in CloudReactor
   enabled: true
 
@@ -48,6 +48,10 @@ default_task_config:
       #     - sg_1
       #     - sg_2
       #   assign_public_ip: true
+      ecs:
+        task:
+          role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name | replace("-", "_") }}_{{env}}"
+
       tags:
         ManagedBy: CloudReactor
         Application:  Cloudreactor Python Quickstart
@@ -94,7 +98,7 @@ default_task_config:
     # # Top-level .env secret locations. The values in later locations take
     # # precedence over those in earlier locations.
     env_locations:
-      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:CloudReactor/{{project_name}}/secrets/{{env}}/env"
+      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:{{project_name}}/{{env}}/tasks/env"
       # - arn:aws:s3:::examplebucket/{{env}}/app/config.json
       # - file:///home/appuser/.env
 
@@ -254,6 +258,8 @@ task_name_to_config:
     env:
       <<: *default_task_env
       TEMP_FILE_DIR: "/home/appuser/scratch"
+  secret_access:
+    command: "python src/secret_access.py"
   web_server:
     command: "flask run -p 7070 --host=0.0.0.0"
     # Uncomment to enable web server -- requires an IP target group and

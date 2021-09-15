@@ -22,10 +22,3 @@ task_name_to_env_config:
       NUM_ROWS: 300
     wrapper:
       process_timeout_seconds: 10
-  secret_access:
-    command: "python src/secret_access.py"
-    ecs:
-      task:
-        role_arn: "arn:aws:iam::{{ aws.account_id }}:role/app-task-role-{{env}}"
-    env:
-      SECRET_VALUE_FOR_PROC_WRAPPER_TO_RESOLVE: "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:app/{{env}}/source_db|JP:$.dbname"

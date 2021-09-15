@@ -1,4 +1,4 @@
-# Remove this line if you are committing encrypted secret
+# Uncomment this line if you are committing encrypted secret
 # files to source control, with either ansible-vault or git-encrypt.
 # *
 
