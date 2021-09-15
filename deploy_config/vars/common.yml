@@ -48,13 +48,11 @@ default_task_config:
       #     - sg_1
       #     - sg_2
       #   assign_public_ip: true
-      ecs:
-        task:
-          role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name | replace('-', '_') }}_{{env}}"
+      role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name | replace('-', '_') }}_{{env}}"
 
       tags:
         ManagedBy: CloudReactor
-        Application:  Cloudreactor Python Quickstart
+        Application:  {{ project_name }}
 
     # # Uncomment to add properties to the main container:
     # extra_main_container_properties
