@@ -1,4 +1,4 @@
-name: Tests
+name: Check and Deploy
 on:
   push:
     branches: [ "**" ]
@@ -11,6 +11,11 @@ on:
         description: "Set to 'true' to deploy to AWS ECS and CloudReactor"
         required: false
         default: "true"
+      deployment-environment:
+        description: "Environment to deploy to"
+        required: false
+        default: "staging"
+
 jobs:
   check_and_deploy:
     runs-on: ubuntu-latest
