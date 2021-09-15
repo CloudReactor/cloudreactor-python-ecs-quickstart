@@ -2,7 +2,6 @@ cloudreactor:
   run_environment: "simon-staging-us-east-1"
 
 default_env_task_config:
-  command: "python src/task_1.py"
   ecs:
     platform_version: "1.4.0"
   wrapper:
