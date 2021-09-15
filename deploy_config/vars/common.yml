@@ -20,6 +20,8 @@ default_cloudreactor:
 # To clear a property name and value, using the default value in the Run Environment,
 # set the property value to null.
 default_task_config:
+  command: "python src/task_1.py"
+
   # enabled: true # Set to false to disable schedule/service in CloudReactor
   # max_concurrency: 1 # null for no concurrency limit
   # max_age_seconds: 7200
@@ -233,7 +235,6 @@ task_name_to_config:
   # This task sends status back to CloudReactor as it is running
   task_1:
     description: "This description shows up in CloudReactor dashboard"
-    command: "python src/task_1.py"
     schedule: cron(9 15 * * ? *)
     # scheduled_instance_count: 1
     wrapper:
