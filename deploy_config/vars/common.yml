@@ -48,7 +48,7 @@ default_task_config:
       #     - sg_1
       #     - sg_2
       #   assign_public_ip: true
-      role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name }}_{{env}}"
+      role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name }}_task_{{env}}"
 
       tags:
         ManagedBy: CloudReactor
