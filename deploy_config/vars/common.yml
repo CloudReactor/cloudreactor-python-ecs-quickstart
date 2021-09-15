@@ -197,13 +197,10 @@ default_task_config:
     enable_status_update_listener: true
     # status_update_interval_seconds: 60
     # status_update_socket_port: 2373
+
     # # Default log level is INFO, set to DEBUG here for initial deployments.
     # log_level: DEBUG
     # log_secrets: false
-
-    # Temporary for debugging
-    log_level: DEBUG
-    log_secrets: false
 
     # # Optional Rollbar token used by the wrapper script.
     # # Can point to AWS Secrets Manager, or be the access token itself.
