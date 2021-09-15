@@ -50,7 +50,7 @@ default_task_config:
       #   assign_public_ip: true
       ecs:
         task:
-          role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name | replace("-", "_") }}_{{env}}"
+          role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name | replace('-', '_') }}_{{env}}"
 
       tags:
         ManagedBy: CloudReactor
