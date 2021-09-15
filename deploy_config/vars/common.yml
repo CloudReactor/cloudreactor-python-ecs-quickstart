@@ -96,7 +96,7 @@ default_task_config:
     # # Top-level .env secret locations. The values in later locations take
     # # precedence over those in earlier locations.
     env_locations:
-      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:{{project_name | replace('-', '_') }}/{{env}}/tasks/env"
+      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
       # - arn:aws:s3:::examplebucket/{{env}}/app/config.json
       # - file:///home/appuser/.env
 

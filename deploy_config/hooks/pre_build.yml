@@ -19,7 +19,7 @@
 # deploy
 - name: Upload .env file to AWS Secrets Manager
   community.aws.aws_secret:
-    name: "{{project_name}}/{{env}}/tasks/env"
+    name: "{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
     state: present
     secret_type: 'string'
     secret: "{{ lookup('file', deploy_config_dir + '/files/.env.' + env)  }}"
