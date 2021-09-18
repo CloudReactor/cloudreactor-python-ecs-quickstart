@@ -24,3 +24,6 @@ deploy.*.env
 # IDE files
 .idea/
 .vscode/
+
+# Contains local development specific settings
+dev_deploy.sh
