@@ -167,14 +167,14 @@ fi
 
 echo "Docker image name = $DOCKER_IMAGE_NAME"
 
-# By default, the Docker image tag is 1, since this project uses
+# By default, the Docker image tag is 2, since this project uses
 # semantic versioning and non-compatible changes will increment the
 # major version number.
 # For repeatable builds, pin the DOCKER_IMAGE_TAG to a version that is
 # known to work.
 if [ -z "$DOCKER_IMAGE_TAG" ]
   then
-    DOCKER_IMAGE_TAG="1"
+    DOCKER_IMAGE_TAG="2"
 fi
 
 echo "Docker image tag = $DOCKER_IMAGE_TAG"

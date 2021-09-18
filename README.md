@@ -23,7 +23,8 @@ top-level python library dependencies
 [mypy](http://mypy-lang.org/) (static type checking), and
 [safety](https://github.com/pyupio/safety) (security vulnerability checking)
 for quality control
-* Uses [GitHub Actions](https://github.com/features/actions) for Continuous Integration (CI)
+* Uses [GitHub Actions](https://github.com/features/actions) for
+Continuous Integration (CI) and Continuous Deployment (CD)
 
 ## How it works
 
