@@ -11,7 +11,7 @@ on:
         description: "Set to 'true' to deploy to AWS ECS and CloudReactor"
         required: false
         default: "true"
-      deployment-environment:
+      deployment_environment:
         description: "Environment to deploy to"
         required: false
         default: "staging"
@@ -44,7 +44,7 @@ jobs:
       env:
         PYTHONPATH: src
     - name: Deploy to AWS ECS and CloudReactor
-      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v2.0.0
+      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v2.0.1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -58,7 +58,7 @@ jobs:
         # Change to the name of the deployment environment to deploy to after
         # pushing. This normally is a staging environment that has the same
         # name as the Run Environment in CloudReactor.
-        deployment-environment: staging
+        deployment-environment: ${{ github.event.inputs.deployment_environment || 'staging' }}
         log-level: DEBUG
       if: (github.ref == 'refs/heads/master') || (github.event.inputs.deploy == 'true')
     - name: Print final message
