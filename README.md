@@ -216,12 +216,12 @@ that has deployment permissions, you can leave this file blank.
     In a Windows shell:
 
         set DEPLOYMENT_ENVIRONMENT=<environment>
-        docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
+        docker compose -f docker-compose-deployer.yml run --rm deployer-shell
 
     In a Windows PowerShell:
 
         $env:DEPLOYMENT_ENVIRONMENT = '<environment>'
-        docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
+        docker compose -f docker-compose-deployer.yml run --rm deployer-shell
 
     These commands will take you to a bash shell inside the deployer Docker
     container where you can re-run the deployment script with `./cr_deploy.sh`
@@ -251,14 +251,14 @@ container to receive inbound requests:
 The tasks are setup to be run with Docker Compose in `docker-compose.yml`. For example,
 you can build the Docker image that runs the tasks by typing:
 
-    docker-compose build
+    docker compose build
 
 (You only need to run this again when you change the dependencies required by
 the project.)
 
 Then to run, say `task_1`, type:
 
-    docker-compose run --rm task_1
+    docker compose run --rm task_1
 
 Docker Compose is setup so that changes in the environment file `deploy_config/files/.env.dev`
 and the files in `src` will be available without rebuilding the image.
@@ -301,5 +301,5 @@ and/or tighten your security groups.
 ## Contact us
 
 Hopefully, this example project has helped you get up and running with ECS and
-CloudReactor. Feel free to reach out to us at support@cloudreactor.io to setup
-an account, or if you have any questions or issues!
+CloudReactor. Feel free to reach out to us at support@cloudreactor.io
+if you have any questions or issues!

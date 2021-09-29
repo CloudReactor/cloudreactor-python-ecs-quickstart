@@ -7,7 +7,7 @@
 #
 # set DEPLOYMENT_ENVIRONMENT=staging
 # set CLOUDREACTOR_TASK_VERSION_SIGNATURE
-# docker-compose -f docker-compose-deployer.yml run --rm deploy
+# docker compose -f docker-compose-deployer.yml run --rm deploy
 
 version: "3.7"
 

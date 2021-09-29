@@ -32,4 +32,4 @@ REM End Optional
 type nul >> deploy.env
 type nul >> "deploy.%DEPLOYMENT_ENVIRONMENT%.env"
 
-docker-compose -f docker-compose-deployer.yml run --rm deploy %*
+docker compose -f docker-compose-deployer.yml run --rm deploy %*

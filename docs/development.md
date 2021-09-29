@@ -5,14 +5,14 @@
 The tasks are setup to be run with Docker Compose in `docker-compose.yml`. For example,
 you can build the Docker image that runs `task_1` by typing:
 
-    docker-compose build task_1
+    docker compose build task_1
 
 (You only need to run this again when you change the dependencies required by
 the project.)
 
 Then to run `task_1`, type:
 
-    docker-compose run --rm task_1
+    docker compose run --rm task_1
 
 Docker Compose is setup so that changes in the environment file
 `deploy_config/files/.env.dev`
@@ -20,11 +20,11 @@ and the files in `src` will be available without rebuilding the image.
 
 The web server can be started with:
 
-    docker-compose up -d web_server
+    docker compose up -d web_server
 
 and stopped with
 
-    docker-compose stop web_server
+    docker compose stop web_server
 
 ## Adding your own tasks
 
@@ -52,7 +52,7 @@ To adding a python library to your runtime dependencies, follow these steps:
 1. Add the library name to `requirements.in`
 2. Rebuild your task code:
 
-    docker-compose build task_1
+    docker compose build task_1
 
 Now you can start using the dependency in your code.
 3. You should also rebuild the development requirements so that the
@@ -61,7 +61,7 @@ will warn you about bad import statements unless the development Docker image
 has the libraries that the main Docker image has.
 To rebuild the development image so that it has these requirements, run:
 
-    docker-compose build pylint
+    docker compose build pylint
 
 `pylint` was used above but it could be any Docker Compose service that uses the
 development image (e.g. mypy).
@@ -112,7 +112,7 @@ development image (e.g. mypy).
 
   Now you can run your task locally, like this:
 
-      docker-compose run --rm new_task
+      docker compose run --rm new_task
 
 ## Tracking items processed, custom status messages
 
@@ -220,7 +220,7 @@ For example, if you want to delete the `task_1` task:
 For debugging or adding dependencies, it is useful to enter a bash shell in
 the Docker container:
 
-    docker-compose run --rm shell
+    docker compose run --rm shell
 
 Running python commands is typically much faster once in the shell, compared to
 running them individually with docker-compose.
@@ -233,26 +233,26 @@ framework to run tests. The test code is located in `/tests`. For
 now there is only a trivial test which you can delete once you've
 added your own. To run tests:
 
-    docker-compose run --rm pytest
+    docker compose run --rm pytest
 
 ## View test coverage
 
 This project uses the [pytest-cov](https://github.com/pytest-dev/pytest-cov)
 framework to report test coverage. To get a report:
 
-    docker-compose run --rm pytest-cov
+    docker compose run --rm pytest-cov
 
 ## Check syntax
 
 This project uses [pylint](https://www.pylint.org/) to check syntax. To check:
 
-    docker-compose run --rm pylint
+    docker compose run --rm pylint
 
 ## Type checking
 
 This project uses [mypy](http://mypy-lang.org/) to do type checking. To check:
 
-    docker-compose run --rm mypy
+    docker compose run --rm mypy
 
 The configuration for mypy is in `mypy.ini` in the project root.
 
@@ -261,7 +261,7 @@ The configuration for mypy is in `mypy.ini` in the project root.
 This project uses [safety](https://github.com/pyupio/safety) to
 check libraries for security vulnerabilities, To check:
 
-    docker-compose run --rm safety
+    docker compose run --rm safety
 
 ## Adding another development dependency
 
@@ -275,7 +275,7 @@ To add a python library to your development dependencies,
 1. Add the library name to `dev-requirements.in`:
 2. Rebuild the development image:
 
-    docker-compose build pylint
+    docker compose build pylint
 
 `pylint` was used above but it could be any Docker Compose service that uses the
 development image (e.g. mypy).
@@ -286,7 +286,7 @@ Now you can start using the development dependency.
 
 To get a bash shell in the container that has development dependencies installed:
 
-    docker-compose run --rm dev-shell
+    docker compose run --rm dev-shell
 
 You can use this shell to run pytest, pylint, etc. with different options.
 
@@ -295,7 +295,7 @@ You can use this shell to run pytest, pylint, etc. with different options.
 Use [hadolint](https://github.com/hadolint/hadolint) to ensure your Dockerfile follows
 best practices:
 
-    docker-compose run --rm hadolint
+    docker compose run --rm hadolint
 
 ## Continuous Integration using GitHub Actions
 
