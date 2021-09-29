@@ -18,6 +18,19 @@ RUN groupadd appuser && useradd -g appuser --create-home appuser
 USER appuser
 WORKDIR /home/appuser
 
+# Output directly to the terminal to prevent logs from being lost
+# https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file
+ENV PYTHONUNBUFFERED 1
+
+# Don't write *.pyc files
+ENV PYTHONDONTWRITEBYTECODE 1
+
+# Enable the fault handler for segfaults
+# https://docs.python.org/3/library/faulthandler.html
+ENV PYTHONFAULTHANDLER 1
+
+ENV PYTHONPATH /home/appuser/src
+
 ENV PIP_USER 1
 ENV PIP_NO_INPUT 1
 ENV PIP_NO_CACHE_DIR 1
@@ -42,19 +55,6 @@ RUN pip install -r /tmp/requirements.txt
 # Pre-create this directory so that it has the correct permission
 # when ECS mounts a volume, otherwise it will be owned by root.
 RUN mkdir scratch
-
-# Output directly to the terminal to prevent logs from being lost
-# https://stackoverflow.com/questions/59812009/what-is-the-use-of-pythonunbuffered-in-docker-file
-ENV PYTHONUNBUFFERED 1
-
-# Don't write *.pyc files
-ENV PYTHONDONTWRITEBYTECODE 1
-
-# Enable the fault handler for segfaults
-# https://docs.python.org/3/library/faulthandler.html
-ENV PYTHONFAULTHANDLER 1
-
-ENV PYTHONPATH /home/appuser/src
 
 COPY --chown=appuser:appuser src ./src
 
