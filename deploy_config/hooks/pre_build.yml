@@ -10,7 +10,7 @@
 
 - name: Check if runtime .env file exists
   stat:
-    path: "{{deploy_config_dir}}/files/.env.{{env}}"
+    path: "{{deploy_config_dir}}/files/.env.{{config_filename_stem}}"
   register: dotenv_file_result
   tags:
     - build
@@ -22,7 +22,7 @@
     name: "{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
     state: present
     secret_type: 'string'
-    secret: "{{ lookup('file', deploy_config_dir + '/files/.env.' + env)  }}"
+    secret: "{{ lookup('file', deploy_config_dir + '/files/.env.' + config_filename_stem) }}"
   register: create_dotenv_secret_result
   when: dotenv_file_result.stat.exists
 
