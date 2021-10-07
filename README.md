@@ -44,7 +44,7 @@ built-in, so you don't need to install anything directly on your machine.
 
 Sound good? OK, let's get started!
 
-## Prerequisites
+## Pre-requisites
 
 Run the [CloudReactor AWS Setup Wizard](https://github.com/CloudReactor/cloudreactor-aws-setup-wizard).
 
@@ -55,10 +55,13 @@ This wizard:
 
 The wizard enables you to have a working ECS environment in minutes; without it, you would need to set up each of these pieces individually which would be tedious and error-prone.
 
-Finally, if you want to use CloudReactor to manage tasks, [create a user and role that can be used to deploy
-tasks to ECS](https://docs.cloudreactor.io/#optional-setting-up-a-new-aws-user-with-deployment-permissions).
-You can also use an administrator user or power user to deploy.
-See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of the permissions required.
+Additionally, create a user and/or role that can be used to deploy
+tasks to ECS.You can also use an administrator user or power user to deploy.
+See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of the permissions required. You can also create a user and role with the exact permissions required
+by uploading the
+[CloudReactor AWS deployer CloudFormation template](https://raw.githubusercontent.com/CloudReactor/aws-role-template/master/cloudreactor-aws-deploy-role-template.json)
+to CloudFormation. For instructions on how to do that, see the main project page
+for [aws-role-template](https://github.com/CloudReactor/aws-role-template/).
 
 ## Get this project's source code
 
@@ -67,167 +70,42 @@ then clone your project:
 
     git clone https://github.com/YourOrg/cloudreactor-python-ecs-quickstart.git
 
-## Deploy the tasks to AWS and CloudReactor
+## Deploy the tasks to AWS ECS and CloudReactor
 
-These steps show how you can deploy the example project in this repo to ECS Fargate
-and have its tasks managed by CloudReactor.
+First, setup AWS and CloudReactor by following the
+[pre-requisites](https://docs.cloudreactor.io/full_integration.html#pre-requisites).
+You'll be granting CloudReactor permission to start Tasks on your behalf,
+creating API keys, and optionally creating an IAM user/role that has permission
+to deploy your Tasks.
 
-1. Ensure you have Docker running locally, and have installed
-[Docker Compose](https://docs.docker.com/compose/install/) if
-running on Windows.
-2. Create two API keys in CloudReactor, one for deployment and one for
-your task to report its state. Go to the
-[CloudReactor dashboard](https://cloudreactor.io/api_keys) and select
-"API keys" in the menu that pops up when you click your username in the upper
-right corner. Select the button "Add new API key..." which will take you to a
-form to fill in details. Give the API key a name and associate it with the
-Run Environment you created. Ensure the Group is correct, the Enabled checkbox
-is checked, and the Access Level is `Task`. Then select the Save button. You
-should then see your new API key listed. Copy the value of the key. This is the
-`Task API key`.
-3. Repeat step 2, except select the Access Level of `Developer`. The value
-of the key is the `Deployment API key`.
-4. Copy `deploy_config/vars/example.yml` to `deploy_config/vars/<environment>.yml`, where
-`<environment>` is the name of the Run Environment created by the
-CloudReactor AWS Setup Wizard (e.g.`staging`, `production`)
-5. Open the .yml file you just created, and paste the value of the
-`Deployment API key`:
+Then follow the remaining instructions starting from
+[Set Task properties](https://docs.cloudreactor.io/full_integration.html#set-task-properties).
+You'll be setting the API keys and AWS credentials, optionally in a secure
+way using Secrets Manager. Finally you'll deploy the Tasks with the command
 
-    ```
-    cloudreactor:
-      deploy_api_key: PASTE_DEPLOY_API_KEY_HERE
-    ```
+    ./cr_deploy.sh <environment>
 
-    This allows you to your local machine (or Docker container) to
-    use the CloudReactor service to deploy tasks.
+or a wrapper script that calls `cr_deploy.sh` with some options.
 
-6. For the `Task API key`, you have two options. The first option, which is
-simpler but less secure, is to directly paste the Task API key into
-`deploy_config/vars/<environment>.yml`:
+## Deploying with the GitHub Action
 
-    ```
-    cloudreactor:
-      ...
-      task_api_key: PASTE_TASK_API_KEY_HERE
-    ```
+This project is configured to use the deployer image as a GitHub Action. After
+forking the source code, you should set these secrets in yout GitHub account:
 
-    The second option uses AWS Secrets Manager to store the secret and avoids the
-    API key value from being part of the image. To do this, log into the AWS
-    console and navigate to the AWS Secrets Manager dashboard. Select
-    "Store a new secret". For "Secret Type", select "Other type of secrets" and
-    "plaintext". Paste in the Task CloudReactor API key as the entire field (i.e. no need for newline, braces, quotes etc.). On the next page, for
-    "secret name", type `CloudReactor/<env_name>/common/cloudreactor_api_key`,
-    replacing`<env_name>` with whatever your CloudReactor Run Environment is
-    called. After saving the secret, you should get a page in which you can copy
-    the ARN of the secret, in the format:
+* AWS_ACCESS_KEY_ID
+* AWS_SECRET_ACCESS_KEY
+* CLOUDREACTOR_DEPLOY_API_KEY
 
-        arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx
+For other configuration properties, view or modify
+[`push.yml`](.github/workflows/push.yml)
+which configures the GitHub Action.
+You should change the `aws-region` to the region containing your ECS
+Cluster, and set the `CLOUDREACTOR_API_BASE_URL` secret value to
+`https://api.cloudreactor.io`. You may also want to change the
+`deployment-environment` to the name of your deployment environment
+(it default to `staging`).
 
-    Use this value to set the task_api_key value in
-    `deploy_config/vars/<environment>.yml`:
-
-        cloudreactor:
-          ...
-          task_api_key: PASTE_TASK_API_KEY_SECRET_ARN_HERE
-
-    To allow your task to read the API key, it has to run with an IAM role
-    that has the appropriate permission. First let's create the role in the [IAM Dashboard](https://console.aws.amazon.com/iam/home?region=us-west-2#)
-    in the AWS console. It should have a policy that looks like this:
-
-        {
-          "Version": "2012-10-17",
-          "Statement": {
-            "Effect": "Allow",
-            "Action": [
-                "secretsmanager:GetSecretValue"
-            ],
-            "Resource": [
-                "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/*"
-            ]
-          }
-        }
-
-    where you would substitute [aws_region] with the region you stored your
-    secret, and [aws_account_id] with your AWS account number.
-
-    If you are deploying your task using ECS, the role should also have a
-    trust relationship so that ECS can assume it:
-
-        {
-          "Version": "2012-10-17",
-          "Statement": [
-            {
-              "Sid": "",
-              "Effect": "Allow",
-              "Principal": {
-                "Service": [
-                  "ecs.amazonaws.com",
-                  "ecs-tasks.amazonaws.com"
-                ]
-              },
-              "Action": "sts:AssumeRole"
-            }
-          ]
-        }
-
-    Once you've created the role, record the ARN which should look like:
-
-        arn:aws:iam::012345678901:role/myapp-task-role-production
-
-    Finally, paste the role ARN into `deploy_config/vars/<environment>.yml`:
-
-        default_env_task_config:
-          command: "python src/task_1.py"
-          ecs:
-            task:
-              role_arn: "arn:aws:iam::012345678901:role/myapp-task-role-production"
-
-
-7. Copy `deploy.env.example` to `deploy.env` and
-and fill in your AWS access key, access key secret, and default
-region. The access key and secret would be for the AWS user you plan on using to deploy with,
-possibly created in the section "Select or create user and/or role for deployment".
-You may also populate this file with a script you write yourself,
-for example with something that uses the AWS CLI to assume a role and gets
-temporary credentials. If you are running this on an EC2 instance with an instance profile
-that has deployment permissions, you can leave this file blank.
-8. To deploy, in a bash shell, run:
-
-    `./cr_deploy.sh <environment> [task_names]`
-
-    In a Windows command prompt, run:
-
-    `.\cr_deploy.cmd <environment>  [task_names]`
-
-    In both of these commands, `<environment>` is a required argument, which is the
-    name of the Run Environment. `[task_names]` is an optional argument, which is a
-    comma-separated list of tasks to be deployed. In this project, this can be one
-    or more of `task_1`, `file_io`, etc, separated by commas.
-    If `[task_names]` is omitted, all tasks will be deployed.
-
-    To troubleshoot deployment issues, in a bash shell, run
-
-        DEPLOYMENT_ENTRYPOINT=bash ./cr_deploy.sh <environment>
-
-    In a bash environment with docker-compose installed:
-
-        DEPLOYMENT_ENVIRONMENT=<environment> docker-compose -f docker-compose-deployer.yml run --rm deployer-shell
-
-    In a Windows shell:
-
-        set DEPLOYMENT_ENVIRONMENT=<environment>
-        docker compose -f docker-compose-deployer.yml run --rm deployer-shell
-
-    In a Windows PowerShell:
-
-        $env:DEPLOYMENT_ENVIRONMENT = '<environment>'
-        docker compose -f docker-compose-deployer.yml run --rm deployer-shell
-
-    These commands will take you to a bash shell inside the deployer Docker
-    container where you can re-run the deployment script with `./cr_deploy.sh`
-    and inspect the files it produces in the `build/` directory.
-
-## The example tasks
+## The example Tasks
 
 Successfully deploying this example project will create two ECS tasks which are
 listed in `deploy_config/common.yml`. They have the following behavior:
