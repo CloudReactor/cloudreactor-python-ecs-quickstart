@@ -46,42 +46,27 @@ Sound good? OK, let's get started!
 
 ## Pre-requisites
 
-Run the [CloudReactor AWS Setup Wizard](https://github.com/CloudReactor/cloudreactor-aws-setup-wizard).
-
-This wizard:
-* creates an ECS cluster if you don't already have one
-* creates associated VPC, subnets and security groups (or allows you to select existing VPCs, subnets and security groups to use)
-* enables CloudReactor to manage tasks deployed in your AWS account
-
-The wizard enables you to have a working ECS environment in minutes; without it, you would need to set up each of these pieces individually which would be tedious and error-prone.
-
-Additionally, create a user and/or role that can be used to deploy
-tasks to ECS.You can also use an administrator user or power user to deploy.
-See [deployer AWS permissions](docs/deployer_aws_permissions.md) for a list of the permissions required. You can also create a user and role with the exact permissions required
-by uploading the
-[CloudReactor AWS deployer CloudFormation template](https://raw.githubusercontent.com/CloudReactor/aws-role-template/master/cloudreactor-aws-deploy-role-template.json)
-to CloudFormation. For instructions on how to do that, see the main project page
-for [aws-role-template](https://github.com/CloudReactor/aws-role-template/).
-
-## Get this project's source code
-
-You'll need to get this project's source code onto a filesystem where you can make changes. First [fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo) the project,
-then clone your project:
-
-    git clone https://github.com/YourOrg/cloudreactor-python-ecs-quickstart.git
-
-## Deploy the tasks to AWS ECS and CloudReactor
-
 First, setup AWS and CloudReactor by following the
 [pre-requisites](https://docs.cloudreactor.io/full_integration.html#pre-requisites).
 You'll be granting CloudReactor permission to start Tasks on your behalf,
 creating API keys, and optionally creating an IAM user/role that has permission
 to deploy your Tasks.
 
-Then follow the remaining instructions starting from
+## Get this project's source code
+
+Next, you'll need to get this project's source code onto a filesystem where you
+can make changes. First
+[fork](https://docs.github.com/en/github/getting-started-with-github/fork-a-repo)
+the project, then clone your project:
+
+    git clone https://github.com/YourOrg/cloudreactor-python-ecs-quickstart.git
+
+## Deploy the Tasks to AWS ECS and CloudReactor
+
+Afterwards, follow the remaining instructions starting from
 [Set Task properties](https://docs.cloudreactor.io/full_integration.html#set-task-properties).
 You'll be setting the API keys and AWS credentials, optionally in a secure
-way using Secrets Manager. Finally you'll deploy the Tasks with the command
+way using Secrets Manager. Finally, you'll deploy the Tasks with the command
 
     ./cr_deploy.sh <environment>
 
@@ -90,7 +75,7 @@ or a wrapper script that calls `cr_deploy.sh` with some options.
 ## Deploying with the GitHub Action
 
 This project is configured to use the deployer image as a GitHub Action. After
-forking the source code, you should set these secrets in yout GitHub account:
+forking the source code, you should set these secrets in your GitHub account:
 
 * AWS_ACCESS_KEY_ID
 * AWS_SECRET_ACCESS_KEY
@@ -103,7 +88,7 @@ You should change the `aws-region` to the region containing your ECS
 Cluster, and set the `CLOUDREACTOR_API_BASE_URL` secret value to
 `https://api.cloudreactor.io`. You may also want to change the
 `deployment-environment` to the name of your deployment environment
-(it default to `staging`).
+(it defaults to `staging`).
 
 ## The example Tasks
 
