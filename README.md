@@ -39,7 +39,7 @@ The deployment method uses the
 [aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
 Docker image to build and deploy your tasks.
 (This is not to be confused with the Docker container that actually runs your tasks.)
-The Docker container has all the dependencies (python, ansible, aws-cli etc.)
+The deployer Docker image has all the dependencies (python, ansible, aws-cli etc.)
 built-in, so you don't need to install anything directly on your machine.
 
 Sound good? OK, let's get started!
@@ -74,7 +74,7 @@ or a wrapper script that calls `cr_deploy.sh` with some options.
 
 ## Deploying with the GitHub Action
 
-This project is configured to use the deployer image as a GitHub Action. After
+This project is configured to use the deployer image as a [GitHub Action](https://github.com/marketplace/actions/cloudreactor-aws-ecs-deployer). After
 forking the source code, you should set these secrets in your GitHub account:
 
 * AWS_ACCESS_KEY_ID
