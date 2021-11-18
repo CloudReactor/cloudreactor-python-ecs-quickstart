@@ -7,7 +7,7 @@ x-service-base: &service-base
     args:
       ENV_FILE_PATH: deploy_config/files/.env.dev
   volumes:
-    - ./src/:/home/appuser/src/
+    - ./src:/home/appuser/src
     - ./deploy_config/files/.env.dev:/home/appuser/.env
   environment: &service-env-base
       PROC_WRAPPER_OFFLINE_MODE: "TRUE"
@@ -22,8 +22,8 @@ x-dev-base: &dev-base
     context: ./
     dockerfile: Dockerfile-dev
   volumes:
-    - ./src/:/home/appuser/src/
-    - ./tests/:/home/appuser/tests/
+    - ./src:/home/appuser/src
+    - ./tests:/home/appuser/tests
     - ./deploy_config/files/.env.dev:/home/appuser/.env
     - ./mypy.ini:/home/appuser/mypy.ini
   entrypoint: python
@@ -59,6 +59,7 @@ services:
 
   pytest:
     <<: *dev-base
+    entrypoint: pytest
 
   pytest-cov:
     <<: *dev-base
