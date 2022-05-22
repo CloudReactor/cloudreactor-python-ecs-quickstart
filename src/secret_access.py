@@ -1,5 +1,10 @@
 #!/usr/local/bin/python
 
+"""
+An example task that reads secrets from the environment.
+When running in AWS, the secrets are normally injected using proc_wrapper.
+"""
+
 import logging
 import os
 

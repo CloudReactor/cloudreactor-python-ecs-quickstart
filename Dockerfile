@@ -1,7 +1,7 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
 # The one below is based on Debian 10.
-FROM python:3.9.7-slim-buster
+FROM python:3.9.13-slim-buster
 
 LABEL maintainer="jeff@cloudreactor.io"
 
@@ -40,8 +40,8 @@ ENV PIP_NO_WARN_SCRIPT_LOCATION 0
 # So that tools installed by pip are available in the path
 ENV PATH $PATH:/home/appuser/.local/bin
 
-RUN pip install --upgrade pip==21.1.3
-RUN pip install pip-tools==5.5.0 MarkupSafe==1.1.1 requests==2.25.1
+RUN pip install --upgrade pip==22.0.4
+RUN pip install pip-tools==6.6.1 MarkupSafe==1.1.1 click==8.1.2 requests==2.27.1
 
 COPY requirements.in .
 

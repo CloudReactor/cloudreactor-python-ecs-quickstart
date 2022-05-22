@@ -19,13 +19,13 @@ def run():
 
     total = 0
     i = 1
-    with open(filename, 'w') as f:
+    with open(filename, 'w', encoding='utf-8') as f:
         for i in range(1, num_rows):
             total = total + i
             logging.info('Writing sum %i ...', total)
             f.write(str(total) + '\n')
 
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='utf-8') as f:
         for i in range(1, num_rows):
             s = f.readline()
             logging.info('Read sum %s', s.rstrip())
