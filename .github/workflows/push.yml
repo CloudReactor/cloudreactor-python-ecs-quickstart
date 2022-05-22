@@ -49,14 +49,14 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: "us-east-1"
-        # Omit or change to https://api.cloudreactor.io for you own projects
+        # Omit or change to https://api.cloudreactor.io for your own projects
         cloudreactor-api-base-url: ${{ secrets.CLOUDREACTOR_API_BASE_URL }}
         cloudreactor-deploy-api-key:  ${{ secrets.CLOUDREACTOR_DEPLOY_API_KEY }}
         # Fill this in if you encrypt deploy_config/vars/xxx.yml because it
         # contains secret values.
         # ansible-vault-password: ""
-        # Change to the name of the deployment environment to deploy to after
-        # pushing. This normally is a staging environment that has the same
+        # # Change to the name of the deployment environment to deploy to after
+        # # pushing. This normally is a staging environment that has the same
         # name as the Run Environment in CloudReactor.
         deployment-environment: ${{ github.event.inputs.deployment_environment || 'staging' }}
         log-level: DEBUG

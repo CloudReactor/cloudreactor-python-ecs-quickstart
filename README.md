@@ -1,4 +1,4 @@
-# CloudReactor ECS Quickstart
+# CloudReactor ECS Python Quickstart
 
 ![Tests](https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart/workflows/Tests/badge.svg?branch=master)
 
@@ -18,7 +18,7 @@ It has these features built-in:
 * Sets up tasks to be monitored and managed by CloudReactor
 * Uses [pip-tools](https://github.com/jazzband/pip-tools) to manage only
 top-level python library dependencies
-* Uses [pytest](https://docs.pytest.org/en/latest/) (testing),
+* Uses [pytest](https://docs.pytest.org/en/latest/) (automated tests),
 [pylint](https://www.pylint.org/) (static code analysis),
 [mypy](http://mypy-lang.org/) (static type checking), and
 [safety](https://github.com/pyupio/safety) (security vulnerability checking)
