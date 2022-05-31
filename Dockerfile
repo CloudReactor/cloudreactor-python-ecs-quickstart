@@ -1,7 +1,7 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
-# The one below is based on Debian 10.
-FROM python:3.9.13-slim-buster
+# The one below is based on Debian 11.
+FROM python:3.9.13-slim-bullseye
 
 LABEL maintainer="jeff@cloudreactor.io"
 
@@ -62,4 +62,4 @@ COPY --chown=appuser:appuser src ./src
 # If you are not deploying the web server, you can comment out this line.
 EXPOSE 7070
 
-ENTRYPOINT python -m proc_wrapper $TASK_COMMAND
+ENTRYPOINT ["python", "-m", "proc_wrapper"]
