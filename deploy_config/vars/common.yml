@@ -245,8 +245,8 @@ default_task_config:
 
     # # Top-level .env secret locations. The values in later locations take
     # # precedence over those in earlier locations.
-    # env_locations:
-    #   - arn:aws:secretsmanager:{{aws_region}}:{{aws.account_id}}:secret:app/{{env}}/env
+    env_locations:
+      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
     #   - arn:aws:s3:::examplebucket/{{env}}/app/config.json
     #   - file:///home/appuser/.env
 
@@ -368,7 +368,7 @@ default_task_config:
 
     # # Listen for status updates from the process, sent on the status socket
     # # port via UDP.
-    # enable_status_update_listener: true
+    enable_status_update_listener: true
 
     # # Minimum of number of seconds to wait between sending status updates to
     # # the API server. -1 means to not send status updates except with
@@ -424,14 +424,12 @@ task_name_to_config:
     schedule: cron(9 15 * * ? *)
     # scheduled_instance_count: 1
     wrapper:
-      <<: *default_task_wrapper
       enable_status_update_listener: true
   # This task shows how to use the temporary file system provided by ECS
   file_io:
     description: "File I/O"
     command: "python src/file_io.py"
     ecs:
-      <<: *default_task_ecs
       extra_main_container_properties:
         mountPoints:
           - sourceVolume: "database_scratch"
@@ -441,7 +439,6 @@ task_name_to_config:
           - name: "database_scratch"
             host: {}
     env:
-      <<: *default_task_env
       TEMP_FILE_DIR: "/home/appuser/scratch"
   secret_access:
     command: "python src/secret_access.py"
