@@ -1,35 +1,129 @@
 project_name: "cloudreactor-python-ecs-quickstart"
-project_version_text: 1.0.0
+project_version_text: 1.1.0
 # Optionally, provide a steadily increasing whole number to indicate which
 # build is more updated than another.
-# project_version_number: 1
+# project_version_number: 100100000
 project_url: "https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart"
 
 default_build_options:
-  #dockerfile_path: "{{docker_context_dir}/Dockerfile"
+  # dockerfile_path: "{{ docker_context_dir }}/Dockerfile"
+
+  # Options passed after "docker" to all docker commands
+  # docker_common_general_options: ""
+
+  # Options passed after "docker" and "build"
+  # docker_build_general_options: "--debug"
+
+  # Additional options passed after "docker build"
   extra_docker_build_args: ""
 
+  # # Options passed between "docker" and "tag"
+  # docker_tag_general_options: ""
+
+  # # Additional options passed after "docker tag"
+  # extra_docker_tag_args: ""
+
+  # # Options passed between "docker" and "push"
+  # docker_push_general_options: ""
+
+  # # Additional options passed after "docker push"
+  # extra_docker_push_args: ""
+
 default_cloudreactor:
+  # # Base URL of API server. Can be overridden if you're running your own
+  # # instance of the CloudReactor Task Manager.
   # api_base_url: https://api.cloudreactor.io
-  # Set to false to disable monitoring and management in CloudReactor
+
+  # # Set to false to disable monitoring and management in CloudReactor.
   enabled: true
 
 # These settings will apply by default to all tasks and in all deployments.
 # They override the settings in your Run Environment.
 # To manage a setting in the CloudReactor UI, omit the property name and value.
-# To clear a property name and value, using the default value in the Run Environment,
-# set the property value to null.
+# To clear a property name and value, using the default value in the
+# Run Environment, set the property value to null.
+# See https://apidocs.cloudreactor.io/#operation/tasks_create for a list of all
+# properties.
+# These properties can also be applied to task_name_to_config[task_name] and
+# default_env_task_config[task_name], which will override those set here.
 default_task_config:
   command: "python src/task_1.py"
 
-  # enabled: true # Set to false to disable schedule/service in CloudReactor
-  # max_concurrency: 1 # null for no concurrency limit
+  # # Set to false to skip this Task's deployment. This is usually set per-Task
+  # # in task_name_to_config[task_name].deployed
+  # deployed: false
+
+  # # Set to false to disable the Tasks's schedule/service in CloudReactor.
+  # # Usually you should leave this unset and manage the setting in the
+  # # CloudReactor dashboard. This is usually set per-Task in
+  # # task_name_to_config[task_name].enabled
+  # enabled: true
+
+  # # To execute the Task on a schedule, a cron or rate expression can be used.
+  # # Expression syntax is documented here:
+  # # https://docs.aws.amazon.com/AmazonCloudWatch/latest/events/ScheduledEvents.html
+  # # This is usually set per-Task in task_name_to_config[task_name].schedule
+  # schedule: cron(0 12 * * ? *)
+
+  # # The number of Task Executions to create at the scheduled time.
+  # scheduled_instance_count: 1
+
+  # # The number of Task Executions to keep running continuously. Setting this
+  # # to 1 or greater makes the Task a service. Setting this to null or 0 makes
+  # # the Task a non-service.
+  # service_instance_count: 1
+
+  # # Maximum number of concurrent Task Executions of the same Task.
+  # # CloudReactor will block attempts to start Task Executions when the
+  # # existing number of running Task Executions reaches this limit.
+  # # -1 means no limit.
+  # max_concurrency: 1
+
+  # min_service_instance_count
+
   # max_age_seconds: 7200
-  # max_manual_start_delay_seconds: 60
-  # max_heartbeat_lateness_seconds: 120
-  ecs: &default_task_ecs
-    # See https://aws.amazon.com/fargate/pricing/
-    # for supported combinations.
+
+  # # The number of seconds after which a Task is manually started, but
+  # # before the Task actually reports it started, before an alert is
+  # # triggered.
+  # max_manual_start_delay_before_alert_seconds: 60
+
+  # max_manual_start_delay_before_abandonment_seconds:
+
+  # # Tolerance for late heartbearts, in seconds, before a missing heartbeat
+  # # alert is triggered.
+  # max_heartbeat_lateness_before_alert_seconds: 120
+
+  # max_heartbeat_lateness_before_abandonment_seconds:
+  # postponed_failure_before_success_seconds
+  # max_postponed_failure_count
+  # max_postponed_timeout_count
+  # postponed_missing_execution_before_start_seconds
+  # max_postponed_missing_execution_count
+  # min_missing_execution_delay_seconds
+  # should_clear_failure_alerts_on_success
+  # should_clear_timeout_alerts_on_success
+
+  # # Environment variables to set in the process environment
+  env:
+    DEPLOYMENT: "{{env}}"
+
+  # alert_methods:
+  #   - Alert Method 1
+  # links:
+  #  - name: Rollbar
+  #    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
+  #    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
+  #  - name: SumoLogic
+  #    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
+  #    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
+  #    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
+  #    icon_url: "https://www.sumologic.com/favicon.ico"
+  #    description: "{{log_query}}"
+
+  ecs:
+    # # See https://aws.amazon.com/fargate/pricing/
+    # # for supported combinations.
     cpu_units: 256
     memory_mb: 512
     # # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html
@@ -42,6 +136,8 @@ default_task_config:
     # enable_ecs_managed_tags: true
 
     task:
+      role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name }}_task_{{env}}"
+
       # network:
       #   subnets:
       #     - subnet_1
@@ -50,11 +146,20 @@ default_task_config:
       #     - sg_1
       #     - sg_2
       #   assign_public_ip: true
-      role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name }}_task_{{env}}"
-
       tags:
         ManagedBy: CloudReactor
         Application: "{{ project_name }}"
+
+    # # By default, the entrypoint is run with the tinit init process so that
+    # # commands in shell form (like calling proc_wrapper) pass on SIGTERM to
+    # # the underlying commands. This is so AWS ECS can gracefully shutdown a
+    # # container, if the command handles the SIGTERM signal.
+    # # To enable tinit, we set the containerDefinitions[0].linuxParameters
+    # # property to { "initProcessEnabled" true }. However, if you need to set
+    # # other linuxParameter properties, you can set
+    # # use_default_linux_parameters to false and pass them in via
+    # # extra_main_container_properties.
+    # use_default_linux_parameters: true
 
     # # Uncomment to add properties to the main container:
     # extra_main_container_properties
@@ -72,8 +177,8 @@ default_task_config:
     # # Extra CPU/memory allocated to the extra containers,
     # # will be taken away from the total cpu_units and memory_mb
     # # allocated for the entire task.
-    #extra_container_cpu_units: 32
-    #extra_container_memory_mb: 128
+    # extra_container_cpu_units: 32
+    # extra_container_memory_mb: 128
     # # Each definition has the properties for containers in an AWS ECS task
     # # definition,
     # # The following example uses nginx as a reverse proxy. It assumed that a Docker image
@@ -91,16 +196,59 @@ default_task_config:
     #      - hostPort: 8000    # port of the target group
     #      - protocol: tcp
 
-  wrapper: &default_task_wrapper
+  # Properties sent to the wrapper, normally CloudReactor python proc_wrapper.
+  # See https://github.com/CloudReactor/cloudreactor-procwrapper
+  wrapper:
     # # Working directory to execute command in
     # work_dir: .
 
+    # # The shell mode determines whether or not the process command is
+    # # executed in the shell. Options:
+    # # auto: Try to auto-detect from the command (the default mode)
+    # # enable: Force the shell to be used
+    # # disable: Force the shell not to be used
+    # shell_mode: auto
+
+    # # Normally proc_wrapper strips extra wrapping of process commands with
+    # # shell invocations. For example, it changes the command-line
+    # # "/bin/sh -c 'java -jar app.jar'" to
+    # # "java -jar app.jar" and uses the shell to execute the command.
+    # # Extra wrapping can be introduced by Docker when using shell
+    # # form of ENTRYPOINT and CMD.
+    # # Set the "strip_shell_wrapping" parameter to false to disable the
+    # # stripping.
+    # strip_shell_wrapping: true
+
+    # Maximum number of times to retry failed processes.
+    # -1 means to retry forever.
+    process_max_retries: 1
+
+    # # Number of seconds to wait before retrying a process.
+    # process_retry_delay_seconds: 60
+
+    # Timeout for process, in seconds. -1 means no timeout.
+    # process_timeout_seconds: -1
+
+    # # Number of seconds to wait between checking the status of processes.
+    # process_check_interval: 10
+
+    # # Number of seconds to wait after sending SIGTERM to a process, but
+    # # before killing it with SIGKILL.
+    # process_termination_grace_period: 30
+
+    # # Send termination and kill signals to the process group of the wrapped
+    # # process only, instead of only the wrapped process. Sending to the
+    # # process group allows all child processes to receive the signals, even if
+    # # the wrapped process does not forward signals. This is especially
+    # # important when running wrapped processes in a shell.
+    # process_group_termination: true
+
     # # Top-level .env secret locations. The values in later locations take
     # # precedence over those in earlier locations.
-    env_locations:
-      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
-      # - arn:aws:s3:::examplebucket/{{env}}/app/config.json
-      # - file:///home/appuser/.env
+    # env_locations:
+    #   - arn:aws:secretsmanager:{{aws_region}}:{{aws.account_id}}:secret:app/{{env}}/env
+    #   - arn:aws:s3:::examplebucket/{{env}}/app/config.json
+    #   - file:///home/appuser/.env
 
     # # proc_wrapper can also load a configuration dictionary, merged from
     # # the sources below.
@@ -111,7 +259,7 @@ default_task_config:
     # # Merge stategy for configuration / environment. Can be one of these:
     # # SHALLOW, REPLACE, ADDITIVE, TYPESAFE_REPLACE, TYPESAFE_ADDITIVE
     # # Strategies other than SHALLOW require merge_deep to be installed.
-    # # config_merge_strategy: SHALLOW
+    # config_merge_strategy: SHALLOW
 
     # # Normally secrets fetched externally do not overwrite environment
     # # variables that are already set, since they could be set when manually
@@ -169,60 +317,101 @@ default_task_config:
     # # set the configuration dictionary in the environment.
     # env_var_name_for_config: null
 
-    process_max_retries: 1
-    # process_retry_delay_seconds: 120
-    # process_timeout_seconds: null
-    # process_check_interval: 10
-    # process_termination_grace_period: 30
+    # # If true, do not start processes if the API server is unavailable or the
+    # # wrapper is misconfigured.
+    # prevent_offline_execution: false
+
+    # # Send the process ID to CloudReactor for debugging.
+    # send_pid: true
+
+    # # Send the hostname to CloudReactor for debugging.
+    # send_hostname: true
+
+    # # Send metadata about the runtime environment (such as the ECS Task ARN)
+    # # to CloudReactor for debugging and management purposes.
+    # send_runtime_metadata: true
+
+    # # Number of seconds to wait between sending heartbeats to CloudReactor.
+    # # -1 means to not send heartbeats.
+    # api_heartbeat_interval_seconds: 300
+
+    # # Number of seconds to wait while receiving recoverable errors from
+    # # CloudReactor.
+    # api_error_timeout_seconds: 300
+
+    # # Number of seconds to wait before retrying an API request.
+    # api_retry_delay_seconds: 120
+
+    # # Number of seconds to wait before resuming API requests, after retries
+    # # are exhausted. -1 means to never resume.
+    # api_resume_delay_seconds: 600
+
+    # # Number of seconds to keep retrying Task Execution creation while
+    # # receiving error responses from CloudReactor. -1 means to keep trying
+    # # indefinitely.
+    # api_task_execution_creation_error_timeout_seconds: 300
+
+    # # Number of seconds to keep retrying Task Execution creation while
+    # # a conflict is detected. -1 means to keep trying indefinitely.
+    # api_task_execution_creation_conflict_timeout_seconds: 300
+
+    # # Number of seconds between attempts to retry Task Execution creation
+    # # after a conflict is detected.
+    # api_task_execution_creation_conflict_retry_delay_seconds: 120
+
+    # # Number of seconds to wait while receiving recoverable errors from
+    # # CloudReactor when sending the final update before exiting.
+    # api_final_update_timeout_seconds: 1800
+
+    # # Timeout for contacting the CloudReactor API server, in seconds.
+    # api_request_timeout_seconds: 30
+
+    # # Listen for status updates from the process, sent on the status socket
+    # # port via UDP.
+    # enable_status_update_listener: true
+
+    # # Minimum of number of seconds to wait between sending status updates to
+    # # the API server. -1 means to not send status updates except with
+    # # heartbeats.
+    # status_update_interval_seconds: 60
+
+    # # The port used to receive status updates from the process.
+    # status_update_socket_port: 2373
+
+    # # Default log level is INFO, set to DEBUG here for initial deployments.
+    # # Valid choices are DEBUG, INFO, WARNING, ERROR, and CRITICAL.
+    log_level: DEBUG
+
+    # # Log sensitive information, such as the API key and fetched secrets.
+    # log_secrets: true
+
     # # This data is sent back from the wrapper to CloudReactor when it starts.
     # # It may be used to identify properties about instance of the task that is
     # # running.
-    # other_instance_metadata:
+    # other_metadata:
     #   a: 'b'
     #   embedded:
     #     c: 'd'
     #     f: 1
-    # send_pid: true
-    # send_hostname: true
-    # send_runtime_metadata: true
-    # api_heartbeat_interval_seconds: 120
-    # api_error_timeout_seconds: 300
-    # api_retry_delay_seconds: 120
-    # api_resume_delay_seconds: 300
-    # api_task_execution_creation_error_timeout_seconds: 300
-    # api_task_execution_creation_conflict_timeout_seconds: 300
-    # api_task_execution_creation_conflict_retry_delay_seconds: 300
-    # api_final_update_timeout_seconds: 300
-    # api_request_timeout_seconds: 300
-    enable_status_update_listener: true
-    # status_update_interval_seconds: 60
-    # status_update_socket_port: 2373
-
-    # # Default log level is INFO, set to DEBUG here for initial deployments.
-    # log_level: DEBUG
-    # log_secrets: false
 
     # # Optional Rollbar token used by the wrapper script.
     # # Can point to AWS Secrets Manager, or be the access token itself.
     # rollbar_access_token: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/rollbar_access_token-xxx"
+
+    # # Number of retries per Rollbar request.
     # rollbar_retries: 2
+
+    # # Number of seconds to wait before retrying a Rollbar request.
     # rollbar_retry_delay_seconds: 120
+
+    # # Timeout for contacting Rollbar server, in seconds.
     # rollbar_timeout_seconds: 30
 
-  env: &default_task_env
-    DEPLOYMENT: "{{env}}"
-  # alert_methods:
-  #   - Alert Method 1
-  # links:
-  #  - name: Rollbar
-  #    link_url_template: "https://rollbar.com/YourCompanyName/YourProject/"
-  #    icon_url: "https://cdn.rollbar.com/static/img/favicon.ico"
-  #  - name: SumoLogic
-  #    # We have to do some tricks because this file is parsed as Jinja2, then re-parsed on upload.
-  #    link_url_template: "https://service.us2.sumologic.com/ui/index.html#section/search/@{% raw %}{{ '{{' }}(current_timestamp * 1000) - 3600000{{ '}}' }},{{ '{{' }}current_timestamp * 1000{{ '}}' }}{% endraw %}@_sourceHost={{log_query | urlencode}}"
-  #    # Unfortunately, this icon does not show up, probably due to some cross-site inclusion limitations.
-  #    icon_url: "https://www.sumologic.com/favicon.ico"
-  #    description: "{{log_query}}"
+# These are per-task settings that will inherit and override the settings in
+# default_task_config, in all environments.
+# To add a task, add an additional property to task_name_to_config (e.g. task_1, file_io)
+# Each task must at a minimum define which command to run i.e.
+# `command: python main.py`
 
 # These are per-task settings that will inherit and override the settings in
 # default_task_config, in all environments.
@@ -260,7 +449,7 @@ task_name_to_config:
     command: "flask run -p 7070 --host=0.0.0.0"
     # Uncomment to enable web server -- requires an IP target group and
     # load balancer setup in AWS
-    deploy: false
+    deployed: false
     description: "Web Server"
     max_concurrency: null
     is_service: true

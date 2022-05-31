@@ -20,7 +20,7 @@ jobs:
   check_and_deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python 3.9
       uses: actions/setup-python@v2
       with:
@@ -44,7 +44,7 @@ jobs:
       env:
         PYTHONPATH: src
     - name: Deploy to AWS ECS and CloudReactor
-      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v2.0.3
+      uses: CloudReactor/aws-ecs-cloudreactor-deployer@v3.0.1
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

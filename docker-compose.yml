@@ -31,22 +31,24 @@ x-dev-base: &dev-base
 services:
   task_1:
     <<: *service-base
+    entrypoint: python src/task_1.py
     environment:
       <<: *service-env-base
-      TASK_COMMAND: python src/task_1.py
+
 
   file_io:
     <<: *service-base
+    entrypoint: python src/task_1.py
     environment:
       <<: *service-env-base
-      TASK_COMMAND: python src/file_io.py
 
   web_server:
     <<: *service-base
+    entrypoint: flask run -p 7070 --host=0.0.0.0
     environment:
       <<: *service-env-base
       PROC_WRAPPER_TASK_IS_SERVICE: "TRUE"
-      TASK_COMMAND: flask run -p 7070 --host=0.0.0.0
+
       FLASK_APP: "src/web_server.py"
     ports:
       - "7070:7070"
