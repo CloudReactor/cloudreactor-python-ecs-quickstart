@@ -55,8 +55,11 @@ RUN pip install -r /tmp/requirements.txt
 # Pre-create this directory so that it has the correct permission
 # when ECS mounts a volume, otherwise it will be owned by root.
 RUN mkdir scratch
+RUN touch /home/appuser/scratch/test.txt
+VOLUME [ "/home/appuser/scratch" ]
 
 COPY --chown=appuser:appuser src ./src
+
 
 # For the web-server task example only.
 # If you are not deploying the web server, you can comment out this line.
