@@ -35,10 +35,9 @@ services:
     environment:
       <<: *service-env-base
 
-
   file_io:
     <<: *service-base
-    entrypoint: python src/task_1.py
+    entrypoint: python src/file_io.py
     environment:
       <<: *service-env-base
 

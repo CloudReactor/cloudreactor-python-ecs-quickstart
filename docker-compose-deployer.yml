@@ -18,10 +18,10 @@ x-deployer-base: &deployer-base
     dockerfile: Dockerfile
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock
-    - ./Dockerfile:/work/docker_context/Dockerfile
-    - ./requirements.in:/work/docker_context/requirements.in
-    - ./src:/work/docker_context/src
-    - ./deploy_config:/work/deploy_config
+    - ./Dockerfile:/home/appuser/work/docker_context/Dockerfile
+    - ./requirements.in:/home/appuser/work/docker_context/requirements.in
+    - ./src:/home/appuser/work/docker_context/src
+    - ./deploy_config:/home/appuser/work/deploy_config
   entrypoint: "./cr_deploy.sh"
   env_file:
     - deploy.env
