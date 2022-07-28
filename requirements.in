@@ -1,11 +1,11 @@
-cloudreactor-procwrapper==4.0.1
+cloudreactor-procwrapper==5.0.0
 
 # Requirements for secrets resolution
 boto3>=1.16.56
 jsonpath-ng>=1.5.2
 mergedeep>=1.3.4
 python-dotenv>=0.17.1
-pyyaml>=5.4.1
+pyyaml>=6.0
 
 # App specific requirements
 # For the web_server task example, remove if not deploying

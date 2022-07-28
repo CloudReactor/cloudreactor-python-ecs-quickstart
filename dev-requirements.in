@@ -4,3 +4,4 @@ pytest-cov==2.12.1
 pylint==2.13.9
 mypy==0.942
 safety==1.10.3
+types-PyYAML>=6.0.11
