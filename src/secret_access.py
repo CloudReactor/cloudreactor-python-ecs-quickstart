@@ -20,7 +20,7 @@ def main():
 
     # Load variables from the .env file into the environment. This can be used
     # to configure settings during development, as
-    # deploy_config/files/.env.dev is mapped to the .env file by Docker Compose.
+    # deploy_config/env/.env.dev is mapped to the .env file by Docker Compose.
     # When deployed to ECS, .env.[deployment name] will be loaded instead,
     # unless you have specified locations to load into the environment with
     # PROC_WRAPPER_ENV_LOCATIONS.

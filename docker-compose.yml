@@ -5,10 +5,10 @@ x-service-base: &service-base
   build:
     context: ./
     args:
-      ENV_FILE_PATH: deploy_config/files/.env.dev
+      ENV_FILE_PATH: deploy_config/env/.env.dev
   volumes:
     - ./src:/home/appuser/src
-    - ./deploy_config/files/.env.dev:/home/appuser/.env
+    - ./deploy_config/env/.env.dev:/home/appuser/.env
   environment: &service-env-base
       PROC_WRAPPER_OFFLINE_MODE: "TRUE"
       PROC_WRAPPER_LOG_LEVEL: DEBUG
@@ -24,7 +24,7 @@ x-dev-base: &dev-base
   volumes:
     - ./src:/home/appuser/src
     - ./tests:/home/appuser/tests
-    - ./deploy_config/files/.env.dev:/home/appuser/.env
+    - ./deploy_config/env/.env.dev:/home/appuser/.env
     - ./mypy.ini:/home/appuser/mypy.ini
   entrypoint: python
 

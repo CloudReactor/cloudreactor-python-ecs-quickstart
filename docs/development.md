@@ -15,8 +15,8 @@ Then to run `task_1`, type:
     docker compose run --rm task_1
 
 Docker Compose is setup so that changes in the environment file
-`deploy_config/files/.env.dev`
-and the files in `src` will be available without rebuilding the image.
+`deploy_config/env/.env.dev`
+and the files in `env` will be available without rebuilding the image.
 
 The web server can be started with:
 

@@ -123,7 +123,7 @@ Then to run, say `task_1`, type:
 
     docker compose run --rm task_1
 
-Docker Compose is setup so that changes in the environment file `deploy_config/files/.env.dev`
+Docker Compose is setup so that changes in the environment file `deploy_config/env/.env.dev`
 and the files in `src` will be available without rebuilding the image.
 
 
