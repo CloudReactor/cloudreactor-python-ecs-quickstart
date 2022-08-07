@@ -15,7 +15,7 @@ This project is designed with best practices and smart defaults in mind, but als
 It has these features built-in:
 * Runs, tests, and deploys everything with Docker, no local python installation required
 * Deploys to AWS ECS Fargate. Tasks can be scheduled, used as services, or executed only on demand.
-* Sets up tasks to be monitored and managed by CloudReactor
+* Sets up Tasks to be monitored and managed by CloudReactor
 * Uses [pip-tools](https://github.com/jazzband/pip-tools) to manage only
 top-level python library dependencies
 * Uses [pytest](https://docs.pytest.org/en/latest/) (automated tests),
@@ -140,13 +140,6 @@ level keys in `task_name_to_config`.
 
 See the [development guide](docs/development.md) for instructions on how to debug,
 add dependencies, and run tests and checks.
-
-To deploy non-python projects, it may be sufficient to add pre and post build
-steps to `deploy_config/hooks`. If you require additional dependencies
-(like compilers) to be installed during build time, see the
-[aws-ecs-cloudreactor-deployer](https://github.com/CloudReactor/aws-ecs-cloudreactor-deployer)
-project for ways to add dependencies. One way to avoid adding dependencies is
-[multi-stage Dockerfiles](https://docs.docker.com/develop/develop-images/multistage-build/).
 
 ## Next steps
 
