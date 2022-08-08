@@ -4,12 +4,13 @@
 #
 #    pip-compile --allow-unsafe --generate-hashes --output-file=/tmp/requirements.txt requirements.in
 #
-boto3==1.24.39 \
-    --hash=sha256:057b4132e81f5ba63dc7d9d989023f3e81216999d76edabffade5bad5ae9bd3e
+boto3==1.24.46 \
+    --hash=sha256:44026e44549148dbc5b261ead5f6b339e785680c350ef621bf85f7e2fca05b49 \
+    --hash=sha256:b2d9d55f123a9a91eea2fd8e379d90abf37634420fbb45c22d67e10b324ec71b
     # via -r requirements.in
-botocore==1.27.39 \
-    --hash=sha256:12d9f5866da51738201d00f6df76571e2f46233d8effb5cdcfe871616bff6197 \
-    --hash=sha256:b5eb8731542e7e987465be80ce206d72de6774e16d4e808e636d92c467779d7e
+botocore==1.27.46 \
+    --hash=sha256:747b7e94aef41498f063fc0be79c5af102d940beea713965179e1ead89c7e9ec \
+    --hash=sha256:f66d8305d1f59d83334df9b11b6512bb1e14698ec4d5d6d42f833f39f3304ca7
     # via
     #   boto3
     #   s3transfer
@@ -25,10 +26,14 @@ decorator==5.1.1 \
     --hash=sha256:637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330 \
     --hash=sha256:b8c3f85900b9dc423225913c5aace94729fe1fa9763b38939a95226f02d37186
     # via jsonpath-ng
-flask==1.1.2 \
-    --hash=sha256:4efa1ae2d7c9865af48986de8aeb8504bf32c7f3d6fdc9353d34b21f4b127060 \
-    --hash=sha256:8a4fdd8936eba2512e9c85df320a37e694c93945b33ef33c89946a340a238557
+flask==2.2.1 \
+    --hash=sha256:3c604c48c3d5b4c63e72134044c0b4fe90ff01ef65280b9fe2d38c8860d99fe5 \
+    --hash=sha256:9c2b81b9b1edcc835af72d600f1955e713a065e7cb41d7e51ee762b449d9c65d
     # via -r requirements.in
+importlib-metadata==4.12.0 \
+    --hash=sha256:637245b8bab2b6502fcbc752cc4b7a6f6243bb02b31c5c26156ad103d3d45670 \
+    --hash=sha256:7401a975809ea1fdc658c3aa4f78cc2195a0e019c5cbc4c06122884e9ae80c23
+    # via flask
 itsdangerous==2.1.2 \
     --hash=sha256:2c2349112351b88699d8d4b6b075022c0808887cb7ad10069318a8b0bc88db44 \
     --hash=sha256:5dbbc68b317e5e42f327f9021763545dc3fc3bfe22e6deb96aaf1fc38874156a
@@ -163,3 +168,7 @@ werkzeug==2.2.1 \
     --hash=sha256:4d7013ef96fd197d1cdeb03e066c6c5a491ccb44758a5b2b91137319383e5a5a \
     --hash=sha256:7e1db6a5ba6b9a8be061e47e900456355b8714c0f238b0313f53afce1a55a79a
     # via flask
+zipp==3.8.1 \
+    --hash=sha256:05b45f1ee8f807d0cc928485ca40a07cb491cf092ff587c0df9cb1fd154848d2 \
+    --hash=sha256:47c40d7fe183a6f21403a199b3e4192cca5774656965b0a4988ad2f8feb5f009
+    # via importlib-metadata

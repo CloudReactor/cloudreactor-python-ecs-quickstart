@@ -9,4 +9,4 @@ pyyaml>=6.0
 
 # App specific requirements
 # For the web_server task example, remove if not deploying
-Flask==1.1.2
+Flask==2.2.1
