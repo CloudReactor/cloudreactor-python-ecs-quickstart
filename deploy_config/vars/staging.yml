@@ -21,3 +21,5 @@ task_name_to_env_config:
       NUM_ROWS: 300
     wrapper:
       process_timeout_seconds: 10
+  web_server:
+    deployed: true

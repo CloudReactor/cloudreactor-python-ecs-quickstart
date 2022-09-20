@@ -51,7 +51,7 @@ default_task_config:
 
   # # Set to false to skip this Task's deployment. This is usually set per-Task
   # # in task_name_to_config[task_name].deployed
-  # deployed: false
+  # deployed: "{{ env == 'staging' }}"
 
   # # Set to false to disable the Tasks's schedule/service in CloudReactor.
   # # Usually you should leave this unset and manage the setting in the
@@ -94,15 +94,23 @@ default_task_config:
   # # alert is triggered.
   # max_heartbeat_lateness_before_alert_seconds: 120
 
-  # max_heartbeat_lateness_before_abandonment_seconds:
-  # postponed_failure_before_success_seconds
-  # max_postponed_failure_count
-  # max_postponed_timeout_count
-  # postponed_missing_execution_before_start_seconds
-  # max_postponed_missing_execution_count
-  # min_missing_execution_delay_seconds
-  # should_clear_failure_alerts_on_success
-  # should_clear_timeout_alerts_on_success
+  # max_heartbeat_lateness_before_abandonment_seconds: 0
+  # postponed_failure_before_success_seconds: 0
+  # max_postponed_failure_count: 0
+  # max_postponed_timeout_count: 0
+  # postponed_missing_execution_before_start_seconds: 0
+  # max_postponed_missing_execution_count: 0
+  # min_missing_execution_delay_seconds: 0
+  # should_clear_failure_alerts_on_success: true
+  # should_clear_timeout_alerts_on_success: true
+  # is_scheduling_managed: true
+  # is_service_managed: true
+  # default_input_value: null
+  # input_value_schema: null
+  # output_value_schema: null
+  # managed_probability: 1.0
+  # failure_report_probability: 1.0
+  # timeout_report_probability: 1.0
 
   # # Environment variables to set in the process environment
   env:
@@ -382,6 +390,12 @@ default_task_config:
     # # Valid choices are DEBUG, INFO, WARNING, ERROR, and CRITICAL.
     log_level: DEBUG
 
+    # Set to false to exclude timestamps from the log output, in case
+    # are timestamps are added by the logging provider. The deployer sets up
+    # CloudWatch Logs (which adds timestamps) for this project, so we
+    # set this to false here.
+    include_timestamps_in_log: false
+
     # # Log sensitive information, such as the API key and fetched secrets.
     # log_secrets: true
 
@@ -413,12 +427,12 @@ default_task_config:
 # Each task must at a minimum define which command to run i.e.
 # `command: python main.py`
 
-# These are per-task settings that will inherit and override the settings in
+# These are per-Task settings that will inherit and override the settings in
 # default_task_config, in all environments.
-# To add a task, add an additional property to task_name_to_config (e.g. task_1, file_io)
-# Each task must at a minimum define which command to run i.e. `command: python main.py`
+# To add a Task, add an additional property to task_name_to_config (e.g. task_1, file_io)
+# Each Task must at a minimum define which command to run i.e. `command: python main.py`
 task_name_to_config:
-  # This task sends status back to CloudReactor as it is running
+  # This Task sends status back to CloudReactor as it is running
   task_1:
     description: "This description shows up in CloudReactor dashboard"
     schedule: cron(9 15 * * ? *)
@@ -473,3 +487,49 @@ task_name_to_config:
           - hostPort: 7070
             containerPort: 7070
             protocol: tcp
+
+# env_to_default_task_config is a mapping from deployment environment name to
+# non-secret Task settings common to all Tasks.
+env_to_default_task_config:
+  staging:
+    env:
+      FEATURE_A_ENABLED: "TRUE"
+
+  production:
+    env:
+      FEATURE_A_ENABLED: "FALSE"
+
+
+# env_to_task_name_to_config is a mapping from deployment environment name to
+# another mapping from Task name to non-secret Task settings.
+env_to_task_name_to_config:
+  staging:
+    smoke:
+      schedule: cron(9 0 * * ? *)
+
+  production:
+    smoke:
+      schedule: cron(12 0 * * ? *)
+
+# # Uncomment to set non-secret properties web server in production.
+#  web_server:
+#    deployed: true
+#    service_instance_count: 2
+#    ecs:
+#      task:
+#        network:
+#         security_groups:
+#           - sg-1
+#           - sg-2
+#         subnets:
+#           - subnet-public-1
+#           - subnet-public-2
+#        role_arn: arn:aws:iam::12345678901:role/myrole
+#      service:
+#        load_balancers:
+#          - target_group_arn: arn:aws:elasticloadbalancing:us-west-1:xxx:targetgroup/example-web/xxx
+#            container_port: 7070
+#    links:
+#      - name: Web Server
+#        link_url_template: "http://flask-example-xxx.us-west-1.elb.amazonaws.com/"
+#        description: Main web page

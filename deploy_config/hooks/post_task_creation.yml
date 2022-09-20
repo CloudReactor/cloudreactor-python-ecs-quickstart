@@ -1,27 +1,56 @@
 # Override this file with after the Task has been created in ECS and
-# CloudReactor. The Task creation response will be available in the variable
-# cloudreactor_task, so you can use it start a Task Execution immediately.
+# CloudReactor.
 ---
 - debug:
     msg: "Post-Task creation: nothing to do"
     verbosity: 1
 
-# - name: Run the Task immediately with CloudReactor
+# # Below is an example of running a Task immediately after it is deployed,
+# # in the case a DB migration Task which should appear first in
+# # task_name_to_config. This ensures the Task is run before the other Tasks
+# # are deployed. The Task creation response will be available in the variable
+# # cloudreactor_task, so you can use it start a Task Execution immediately.
+#
+# - name: Run the DB migration Task immediately with CloudReactor
 #   uri:
-#     url: "{{ resolved_cloudreactor.api_base_url }}/api/v1/task_executions/"
+#     url: "https://api.cloudreactor.io/api/v1/task_executions/"
 #     method: POST
 #     headers:
-#       Authorization: "Token {{resolved_cloudreactor.deploy_api_key}}"
+#       Authorization: "Bearer {{resolved_cloudreactor.deploy_api_key}}"
 #     return_content: yes
 #     body:
 #       task:
-#         name: uuid: "{{ saved_cloudreactor_task.uuid }}"
+#         uuid: "{{ saved_cloudreactor_task.uuid }}"
 #       status: MANUALLY_STARTED
 #     body_format: json
 #     status_code:
 #       - 200
 #       - 201
 #   register: create_cloudreactor_task_execution_result
-#   when: resolved_cloudreactor.enabled
+#   when: (item == 'db_migrator')
 #   tags:
-#     - always
+#     - migrate
+
+# - name: Wait for DB migration Task to finish
+#   uri:
+#     url: "{{ create_cloudreactor_task_execution_result.json.url }}"
+#     method: GET
+#     headers:
+#       Authorization: "Bearer {{resolved_cloudreactor.deploy_api_key}}"
+#     return_content: yes
+#     body_format: json
+#     status_code:
+#       - 200
+#       - 201
+#   register: check_cloudreactor_task_execution_result
+#   when: (item == 'db_migrator')
+#   until: (check_cloudreactor_task_execution_result.json.status != 'MANUALLY_STARTED') and (check_cloudreactor_task_execution_result.json.status != 'RUNNING')
+#   delay: 30
+#   retries: 1000
+#   tags:
+#     - migrate
+
+# - name: Ensure migration succeeded
+#   assert:
+#     that: check_cloudreactor_task_execution_result.json.status == 'SUCCEEDED'
+#   when: (item == 'db_migrator')
