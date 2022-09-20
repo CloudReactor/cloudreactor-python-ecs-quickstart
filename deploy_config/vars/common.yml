@@ -421,12 +421,6 @@ default_task_config:
     # # Timeout for contacting Rollbar server, in seconds.
     # rollbar_timeout_seconds: 30
 
-# These are per-task settings that will inherit and override the settings in
-# default_task_config, in all environments.
-# To add a task, add an additional property to task_name_to_config (e.g. task_1, file_io)
-# Each task must at a minimum define which command to run i.e.
-# `command: python main.py`
-
 # These are per-Task settings that will inherit and override the settings in
 # default_task_config, in all environments.
 # To add a Task, add an additional property to task_name_to_config (e.g. task_1, file_io)
