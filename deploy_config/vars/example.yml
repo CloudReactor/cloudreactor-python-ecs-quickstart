@@ -66,51 +66,6 @@ default_env_task_config:
     # #  secret.
     #  DATABASE_USERNAME_FOR_PROC_WRAPPER_TO_RESOLVE: arn:aws:secretsmanager:us-west-2:123456789012:secret:app/example/db|JP:$.username
     #  DATABASE_PASWORD_FOR_PROC_WRAPPER_TO_RESOLVE: arn:aws:secretsmanager:us-west-2:123456789012:secret:app/example/db|JP:$.password
-  ecs:
-    extra_main_container_properties:
-      # # Note that when ECS injects secrets into the environment, it uses the
-      # # permissions of the Task Execution role (ecs.execution_role_arn),
-      # # NOT the permissions of the Task Role (ecs.task.role_arn).
-      # # The CloudReactor permissions CloudFormation template gives access to the default
-      # # Task Execution role of Run Environments to secrets with names starting with:
-      # #
-      # # CloudReactor/[deployment_environment]/common/
-      # #
-      # # (where deployment_environment was chosen when you installed the template /
-      # # ran the AWS ECS Setup Wizard from CloudReactor).
-      # #
-      # # You can put secrets there to be shared with all Tasks in the Run Environment.
-      # secrets:
-      #   - name: PROC_WRAPPER_API_KEY
-      #     valueFrom: "arn:aws:secretsmanager:[aws_region]:[aws_account_id]:secret:CloudReactor/example/common/cloudreactor_api_key-xxx"
-
-      # execution_role_arn: arn:aws:iam::12345678901:role/myrole
-      # task:
-      #   network:
-      #     security_groups:
-      #      - sg-1
-      #      - sg-2
-      #     subnets:
-      #      - subnet-private-1
-      #      - subnet-private-2
-      #     assign_public_ip: true
-      # # ARN of ECS Task Role that can give the task access to your AWS resources,
-      # # for example, so that your task can read or write to files in S3.
-      # # See https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-iam-roles.html
-      # # for instructions on how to create a ECS Task Role.
-      #  role_arn: arn:aws:iam::12345678901:role/myrole
-      #  tags:
-      #    Environment: example
-
-# # These properties go in the main container definition for the task
-# # (containerDefinitions[0])
-#     extra_main_container_properties:
-#       volumes:
-#          - name: "more_storage"
-#            host: {}
-#
-#   alert_methods:
-#     - Some Alert Method
 
 # For any tasks that require overrides vs. common.yml, enter those overrides here.
 # For example, the schedule for task_1 in this deployment differs from the

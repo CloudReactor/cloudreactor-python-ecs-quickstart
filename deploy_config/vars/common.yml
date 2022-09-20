@@ -481,6 +481,7 @@ task_name_to_config:
         enable_ecs_managed_tags: true
         propagate_tags: SERVICE # Or "TASK_EXECUTION"
         tags:
+          Environment: "{{env}}"
           TaskType: Service
       extra_main_container_properties:
         portMappings:
@@ -516,6 +517,7 @@ env_to_task_name_to_config:
 #    deployed: true
 #    service_instance_count: 2
 #    ecs:
+#      execution_role_arn: arn:aws:iam::12345678901:role/myrole
 #      task:
 #        network:
 #         security_groups:
