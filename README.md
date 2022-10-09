@@ -85,10 +85,11 @@ For other configuration properties, view or modify
 [`push.yml`](.github/workflows/push.yml)
 which configures the GitHub Action.
 You should change the `aws-region` to the region containing your ECS
-Cluster, and set the `CLOUDREACTOR_API_BASE_URL` secret value to
-`https://api.cloudreactor.io`. You may also want to change the
+Cluster. You may also want to change the
 `deployment-environment` to the name of your deployment environment
-(it defaults to `staging`).
+(it defaults to `staging`). If you are running a private copy of the
+CloudReactor API server, set the `CLOUDREACTOR_API_BASE_URL` secret value to
+the base URL of your server (without the trailing slash).
 
 ## The example Tasks
 
