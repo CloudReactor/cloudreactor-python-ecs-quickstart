@@ -14,7 +14,7 @@ on:
       deployment_environment:
         description: "Environment to deploy to"
         required: false
-        default: "staging"
+        default: "production"
 
 jobs:
   check_and_deploy:

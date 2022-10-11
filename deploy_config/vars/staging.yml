@@ -1,5 +1,5 @@
 cloudreactor:
-  run_environment: "simon-staging-us-east-1"
+  run_environment: staging
 
 default_env_task_config:
   ecs:
@@ -22,4 +22,4 @@ task_name_to_env_config:
     wrapper:
       process_timeout_seconds: 10
   web_server:
-    deployed: true
+    deployed: false
