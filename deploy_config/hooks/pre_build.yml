@@ -12,6 +12,7 @@
   stat:
     path: "{{deploy_config_dir}}/env/.env.{{config_filename_stem}}"
   register: dotenv_file_result
+  when: use_secrets_manager
   tags:
     - build
 
@@ -19,12 +20,13 @@
 # deploy
 - name: Upload .env file to AWS Secrets Manager
   community.aws.aws_secret:
-    name: "{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
+    name: "{{ secrets_manager_env_path }}"
     state: present
     secret_type: 'string'
     secret: "{{ lookup('file', deploy_config_dir + '/env/.env.' + config_filename_stem) }}"
   register: create_dotenv_secret_result
-  when: dotenv_file_result.stat.exists
+  when: use_secrets_manager and dotenv_file_result.stat.exists
 
 - debug:
     msg: "Secret: {{create_dotenv_secret_result}}"
+  when: use_secrets_manager

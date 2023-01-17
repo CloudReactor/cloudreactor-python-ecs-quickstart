@@ -5,6 +5,12 @@ project_version_text: 1.1.0
 # project_version_number: 100100000
 project_url: "https://github.com/CloudReactor/cloudreactor-python-ecs-quickstart"
 
+task_role_name: "{{ project_name }}_task_{{env}}"
+use_task_role: "{{ (task_role_name is defined) and task_role_name }}"
+
+secrets_manager_env_path: "{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
+use_secrets_manager: "{{ (secrets_manager_env_path is defined) and secrets_manager_env_path }}"
+
 default_build_options:
   # dockerfile_path: "{{ docker_context_dir }}/Dockerfile"
 
@@ -144,7 +150,7 @@ default_task_config:
     # enable_ecs_managed_tags: true
 
     task:
-      role_arn: "arn:aws:iam::{{ aws.account_id }}:role/{{ project_name }}_task_{{env}}"
+      role_arn: "{{ ('arn:aws:iam::' + aws.account_id + ':role/' + task_role_name) if use_task_role else '' }}"
 
       # network:
       #   subnets:
@@ -254,7 +260,7 @@ default_task_config:
     # # Top-level .env secret locations. The values in later locations take
     # # precedence over those in earlier locations.
     env_locations:
-      - "arn:aws:secretsmanager:{{ aws_region }}:{{ aws.account_id }}:secret:{{ project_name | replace('-', '_') }}/{{env}}/tasks/env"
+      - "{{ ('arn:aws:secretsmanager:' + aws_region + ':' + aws.account_id + ':secret:' + secrets_manager_env_path) if use_secrets_manager else '' }}"
     #   - arn:aws:s3:::examplebucket/{{env}}/app/config.json
     #   - file:///home/appuser/.env
 
