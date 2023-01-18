@@ -21,7 +21,7 @@ top-level python library dependencies
 * Uses [pytest](https://docs.pytest.org/en/latest/) (automated tests),
 [pylint](https://www.pylint.org/) (static code analysis),
 [mypy](http://mypy-lang.org/) (static type checking), and
-[safety](https://github.com/pyupio/safety) (security vulnerability checking)
+[pip-audit](https://github.com/pypa/pip-audit) (security vulnerability checking)
 for quality control
 * Uses [GitHub Actions](https://github.com/features/actions) for
 Continuous Integration (CI) and Continuous Deployment (CD)

@@ -26,6 +26,7 @@ x-dev-base: &dev-base
     - ./tests:/home/appuser/tests
     - ./deploy_config/env/.env.dev:/home/appuser/.env
     - ./mypy.ini:/home/appuser/mypy.ini
+    - ./requirements.txt:/home/appuser/requirements.txt
   entrypoint: python
 
 services:
@@ -74,9 +75,9 @@ services:
     <<: *dev-base
     entrypoint: mypy src
 
-  safety:
+  pip-audit:
     <<: *dev-base
-    entrypoint: safety check
+    entrypoint: pip-audit -r requirements.txt
 
   dev-shell:
     <<: *dev-base

@@ -258,10 +258,10 @@ The configuration for mypy is in `mypy.ini` in the project root.
 
 ## Check for security vulnerabilities
 
-This project uses [safety](https://github.com/pyupio/safety) to
+This project uses [pip-audit](https://github.com/pypa/pip-audit) to
 check libraries for security vulnerabilities, To check:
 
-    docker compose run --rm safety
+    docker compose run --rm pip-audit
 
 ## Adding another development dependency
 

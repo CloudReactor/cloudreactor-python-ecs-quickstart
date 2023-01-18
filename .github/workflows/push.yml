@@ -43,6 +43,8 @@ jobs:
       run: "mypy src"
       env:
         PYTHONPATH: src
+    - name: Check for library vulnerabilities with pip-audit
+      run: "python -m pip_audit -r requirements.txt"
     - name: Deploy to AWS ECS and CloudReactor
       uses: CloudReactor/aws-ecs-cloudreactor-deployer@v3.2.2
       with:
