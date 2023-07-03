@@ -1,7 +1,7 @@
 # Alpine base image can lead to long compilation times and errors.
 # https://pythonspeed.com/articles/base-image-python-docker-images/
 # The one below is based on Debian 11.
-FROM python:3.10.7-slim-bullseye
+FROM public.ecr.aws/docker/library/python:3.11.3-slim-bullseye
 
 LABEL maintainer="jeff@cloudreactor.io"
 
