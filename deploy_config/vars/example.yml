@@ -19,7 +19,7 @@
 #   ecs:
 #     cluster_name: staging
 #     # Required when deploying a scheduled task without CloudReactor
-#     # execution_role_arn: arn:aws:iam::12345678901:role/ecsTaskExecutionRole
+#     # execution_role_arn: arn:aws:iam::123456789012:role/ecsTaskExecutionRole
 #     task:
 #       network:
 #         security_groups:
@@ -32,7 +32,7 @@
 #          # for example public subnets.
 #          # If you are running on private subnets, this must be false.
 #          assign_public_ip: false
-#       role_arn: arn:aws:iam::12345678901:role/myrole
+#       role_arn: arn:aws:iam::123456789012:role/myrole
 
 cloudreactor:
   # Required: the API key used to deploy the Tasks.

@@ -267,7 +267,7 @@ default_task_config:
     # # proc_wrapper can also load a configuration dictionary, merged from
     # # the sources below.
     # config_locations:
-    #   - arn:aws:secretsmanager:us-east-2:1234567890:secret:myapp/{{env}}/env
+    #   - arn:aws:secretsmanager:us-east-2:123456789012:secret:myapp/{{env}}/env
     #   - arn:aws:s3:::examplebucket/{{env}}/app1/config.json
 
     # # Merge stategy for configuration / environment. Can be one of these:
@@ -460,7 +460,7 @@ task_name_to_config:
     command: "flask run -p 7070 --host=0.0.0.0"
     # Uncomment to enable web server -- requires an IP target group and
     # load balancer setup in AWS
-    deployed: false
+    deployed: true
     description: "Web Server"
     max_concurrency: null
     is_service: true
@@ -480,6 +480,7 @@ task_name_to_config:
           rollback_on_failure: true
         enable_ecs_managed_tags: true
         propagate_tags: SERVICE # Or "TASK_EXECUTION"
+        load_balancer_health_check_grace_period_seconds: 210
         tags:
           Environment: "{{env}}"
           TaskType: Service
@@ -517,7 +518,7 @@ env_to_task_name_to_config:
 #    deployed: true
 #    service_instance_count: 2
 #    ecs:
-#      execution_role_arn: arn:aws:iam::12345678901:role/myrole
+#      execution_role_arn: arn:aws:iam::123456789012:role/myrole
 #      task:
 #        network:
 #         security_groups:
@@ -526,7 +527,7 @@ env_to_task_name_to_config:
 #         subnets:
 #           - subnet-public-1
 #           - subnet-public-2
-#        role_arn: arn:aws:iam::12345678901:role/myrole
+#        role_arn: arn:aws:iam::123456789012:role/myrole
 #      service:
 #        load_balancers:
 #          - target_group_arn: arn:aws:elasticloadbalancing:us-west-1:xxx:targetgroup/example-web/xxx
